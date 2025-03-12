@@ -220,7 +220,7 @@ $(document).ready(function () {
         };
         console.log("Request data:", requestData);
         $.ajax({
-            url: 'http://localhost:8000/sso/v1/land-existing-dms-user/',
+            url: `${API_AUTH_URL}/sso/v1/land-existing-dms-user/`,
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(requestData),
@@ -718,7 +718,7 @@ function openReceiveBagModal() {
 function fetchArticleDetails(articleId) {
     let token = getCookie("access");
     console.log("Access token:", token);
-    let url = `http://localhost:8002/v1/dms-legacy-core-logs/get-bag-item-detail/?item_id=${articleId}`;
+    let url = `${API_GET_URL}/v1/dms-legacy-core-logs/get-bag-item-detail/?item_id=${articleId}`;
 
     $.ajax({
         url: url,
@@ -1044,7 +1044,7 @@ function fetchMailLineOptions() {
     let token = getCookie("access");
     console.log("Access token:", token);
     $.ajax({
-        url: "http://localhost:8002/v1/dms-legacy-core-logs/get-line-list/",
+        url: `${API_GET_URL}/v1/dms-legacy-core-logs/get-line-list/`,
         method: "GET",
         dataType: "json",
         headers: { "Authorization": `Bearer ${token}` },
