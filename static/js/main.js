@@ -96,7 +96,8 @@ $(document).ready(function () {
     }
     );
 
-    document.getElementById("filter_apply").addEventListener("click", function () {
+    // document.getElementById("filter_apply").addEventListener("click", function () {
+    $(document).on("click", "#filter_apply", function () {
         // Get values from input fields
         let createdAtFrom = document.getElementById("created_at_from").value;
         let createdAtTo = document.getElementById("created_at_to").value;
@@ -488,6 +489,46 @@ function fetchBags(token, queryParams) {
     });
 }
 
+// function updateBagTable(data) {
+//     console.log("Updating bag list with data:", data);
+//     $("#bagList").empty(); // Clear existing data
+
+//     if (data.length === 0) {
+//         $("#bagList").append("<ons-list-item>No records found</ons-list-item>");
+//         return;
+//     }
+
+//     // Append headers
+//     $("#bagList").append(`
+//         <ons-list-item>
+//             <div class="header-row" style="display: flex; font-weight: bold; padding: 10px; width: 100%;">
+//                 <div style="width: 25%;">Bag ID</div>
+//                 <div style="width: 30%;">Articles</div>
+//                 <div style="width: 25%;">Create Date</div>
+//                 <div style="width: 20%;">Status</div>
+//             </div>
+//         </ons-list-item>
+//     `);
+
+//     // Append each bag as a list item
+//     data.forEach(bag => {
+//         $("#bagList").append(`
+//             <ons-list-item modifier="chevron" class="bag-row" bag_id="${bag.Bag_ID}" tappable>
+//                 <div class="bag-item" style="display: flex; justify-content: space-between; width: 100%;">
+//                     <div style="width: 25%;">${bag.Bag_ID}</div>
+//                     <div style="width: 30%;">
+//                         ${bag.Create_Total_Item_Count} 
+//                         (<span style="color: green">${bag.Delivered_Item_Count}</span> /
+//                         <span style="color: #ff2800">${bag.Create_Total_Item_Count - bag.Delivered_Item_Count}</span>)
+//                     </div>
+//                     <div style="width: 25%;">${bag.Create_Date} ${bag.Create_Time}</div>
+//                     <div style="width: 20%;">${bag.Status}</div>
+//                 </div>
+//             </ons-list-item>
+//         `);
+//     });
+// }
+
 function updateBagTable(data) {
     console.log("Updating bag table with data:", data);
     $("#bagTable tbody").empty();
@@ -780,138 +821,6 @@ function updateArticleDetailsModal(data) {
 function closeArticleDetailsModal() {
     $("#article-details-backdrop").hide();
 }
-
-// function updateBagPagination(currentPage, totalRecords, perPage) {
-//     let totalPages = Math.ceil(totalRecords / perPage);
-//     let paginationContainer = $("#bag-pagination");
-
-//     document.getElementById("total_bags").innerText = `Total Bags : ${totalRecords}`;
-
-//     // Select the correct per_page option in the dropdown
-//     $("#bag_per_page").val(perPage);
-
-//     // Ensure UI reflects the selection
-//     $("#bag_per_page").trigger("change");
-
-//     // Clear existing pagination buttons
-//     paginationContainer.find(".bag-pagination-btn, .pos-pagination-dots").remove();
-//     console.log("Total pages:", totalPages);
-//     console.log("Current page:", currentPage);
-//     console.log("Total records:", totalRecords);
-
-//     let paginationHtml = '';
-
-//     if (totalPages <= 6) {
-//         // Show all pages if 6 or less
-//         for (let i = 1; i <= totalPages; i++) {
-//             paginationHtml += `<button class="bag-pagination-btn ${i == currentPage ? 'page-active' : ''}" data-page="${i}">${i}</button>`;
-//         }
-//     } else {
-//         // First 4 pages
-//         for (let i = 1; i <= 4; i++) {
-//             paginationHtml += `<button class="bag-pagination-btn ${i == currentPage ? 'page-active' : ''}" data-page="${i}">${i}</button>`;
-//         }
-
-//         if (currentPage > 4 && currentPage < totalPages - 2) {
-//             paginationHtml += `<span class="pos-pagination-dots">...</span>`;
-//             paginationHtml += `<button class="bag-pagination-btn page-active" data-page="${currentPage}">${currentPage}</button>`;
-//         } else {
-//             paginationHtml += `<span class="pos-pagination-dots">...</span>`;
-//         }
-
-//         // Last 2 pages
-//         paginationHtml += `<button class="bag-pagination-btn ${totalPages - 1 == currentPage ? 'page-active' : ''}" data-page="${totalPages - 1}">${totalPages - 1}</button>`;
-//         paginationHtml += `<button class="bag-pagination-btn ${totalPages == currentPage ? 'page-active' : ''}" data-page="${totalPages}">${totalPages}</button>`;
-//     }
-
-//     // Append buttons before the next arrow
-//     $("#nextBagPage").before(paginationHtml);
-
-//     // **Remove previous event handlers before adding new ones**
-//     $(document).off("click", "#nextBagPage");
-
-//     // Add click event listener to pagination buttons
-//     $(document).on("click", ".bag-pagination-btn", function () {
-//         let token = getCookie("access");
-//         console.log("Access token:", token);
-
-//         let newPage = parseInt($(this).attr("data-page"));
-//         queryParams.page = newPage;
-
-//         fetchBags(token, queryParams);
-//     });
-
-//     // Disable prev/next buttons if necessary
-//     $("#prevPage").prop("disabled", currentPage === 1);
-//     $("#nextPage").prop("disabled", currentPage === totalPages);
-// }
-
-
-
-// function updateBagItemPagination(currentPage, totalRecords, perPage) {
-//     let totalPages = Math.ceil(totalRecords / perPage);
-//     let paginationContainer = $("#scan-bag-item-pagination");
-
-//     document.getElementById("total_scanned_bag_items").innerText = `Total Bag Items : ${totalRecords}`;
-
-//     // Select the correct per_page option in the dropdown
-//     $("#scabag_per_page").val(perPage);
-
-//     // Ensure UI reflects the selection
-//     $("#bag_per_page").trigger("change");
-
-//     // Clear existing pagination buttons
-//     paginationContainer.find(".bag-pagination-btn, .pos-pagination-dots").remove();
-//     console.log("Total pages:", totalPages);
-//     console.log("Current page:", currentPage);
-//     console.log("Total records:", totalRecords);
-
-//     let paginationHtml = '';
-
-//     if (totalPages <= 6) {
-//         // Show all pages if 6 or less
-//         for (let i = 1; i <= totalPages; i++) {
-//             paginationHtml += `<button class="bag-pagination-btn ${i == currentPage ? 'page-active' : ''}" data-page="${i}">${i}</button>`;
-//         }
-//     } else {
-//         // First 4 pages
-//         for (let i = 1; i <= 4; i++) {
-//             paginationHtml += `<button class="bag-pagination-btn ${i == currentPage ? 'page-active' : ''}" data-page="${i}">${i}</button>`;
-//         }
-
-//         if (currentPage > 4 && currentPage < totalPages - 2) {
-//             paginationHtml += `<span class="pos-pagination-dots">...</span>`;
-//             paginationHtml += `<button class="bag-pagination-btn page-active" data-page="${currentPage}">${currentPage}</button>`;
-//         } else {
-//             paginationHtml += `<span class="pos-pagination-dots">...</span>`;
-//         }
-
-//         // Last 2 pages
-//         paginationHtml += `<button class="bag-pagination-btn ${totalPages - 1 == currentPage ? 'page-active' : ''}" data-page="${totalPages - 1}">${totalPages - 1}</button>`;
-//         paginationHtml += `<button class="bag-pagination-btn ${totalPages == currentPage ? 'page-active' : ''}" data-page="${totalPages}">${totalPages}</button>`;
-//     }
-
-//     // Append buttons before the next arrow
-//     $("#nextBagPage").before(paginationHtml);
-
-//     // **Remove previous event handlers before adding new ones**
-//     $(document).off("click", "#nextBagPage");
-
-//     // Add click event listener to pagination buttons
-//     $(document).on("click", ".bag-pagination-btn", function () {
-//         let token = getCookie("access");
-//         console.log("Access token:", token);
-
-//         let newPage = parseInt($(this).attr("data-page"));
-//         queryParams.page = newPage;
-
-//         fetchBags(token, queryParams);
-//     });
-
-//     // Disable prev/next buttons if necessary
-//     $("#prevPage").prop("disabled", currentPage === 1);
-//     $("#nextPage").prop("disabled", currentPage === totalPages);
-// }
 
 function updatePagination(tableId, paginationContainerId, currentPage, totalRecords, perPage, fetchFunction) {
     let totalPages = Math.ceil(totalRecords / perPage);

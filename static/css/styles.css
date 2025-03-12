@@ -28,6 +28,7 @@ p {
     background: #006A4E;
     color: white;
     padding: 5px 10px;
+    width: 100%;
 }
 
 .logo {
@@ -40,6 +41,7 @@ p {
     padding-left: 5px;
     font-size: 18px;
     font-weight: bold;
+    color: white;
 }
 
 .logo-container {
