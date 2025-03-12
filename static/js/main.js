@@ -551,7 +551,8 @@ function constructBagItemQueryString(bagItemQueryParams) {
 // Function to fetch bag items
 function fetchBagItems(bagId, token) {
     bagItemQueryParams.bag_id = bagId;
-    let queryParams = { ...bagItemQueryParams, bagId: bagId };
+    let queryParams = bagItemQueryParams; // bagId: bagId 
+    queryParams.bag_id = bagId;
     console.log("Query params:", queryParams);
     let url = constructBagItemQueryString(queryParams);
     console.log("Fetching from URL:", url);
