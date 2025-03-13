@@ -92,7 +92,11 @@ $(document).ready(function () {
     document.getElementById("logout-btn").addEventListener("click", function () {
         deleteCookie("access");
         deleteCookie("refresh");
-        window.location.reload();
+        console.log("No token found. Showing login form.");
+        $(".authenticating").hide();
+        $("#login-container").show();
+        $(".login-form").show();
+        // window.location.reload();
     }
     );
 
