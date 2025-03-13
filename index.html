@@ -344,7 +344,13 @@
     <!-- Article Details Modal -->
     <div id="article-details-backdrop" class="backdrop" style="display: none;">
         <div class="article-details-container">
-            <h2 class="article-details-title">Article Details</h2>
+            <div style="display: flex; justify-content: space-between;">
+                <p class="article-details-title">Article Details</p>
+                <div class="pos-btn-container" style="width: 200px;">
+                    <button class="pos-btn" onclick="closeArticleDetailsModal()"
+                        style="background-color: #0070f3;color: white;">Window Delivery</button>
+                </div>
+            </div>
 
             <div class="article-info">
                 <p><strong>Item ID:</strong> <span id="article-item-id"></span></p>
@@ -364,11 +370,14 @@
             </div>
 
             <h3>Tracking History</h3>
-            <div id="tracking-stepper">
+            <div id="tracking-table-container">
                 <!-- Stepper items will be inserted here dynamically -->
             </div>
+            <div class="pos-btn-container" style="display: flex; justify-content: center;margin-top: 10px;">
+                <button class="pos-btn" onclick="closeArticleDetailsModal()"
+                    style="background-color: #009879;width: 200px;color: white;">Close</button>
+            </div>
 
-            <button onclick="closeArticleDetailsModal()">Close</button>
         </div>
     </div>
 

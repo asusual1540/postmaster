@@ -1,9 +1,9 @@
-const API_AUTH_URL = "https://sso.ekdak.com";
-const API_GET_URL = "https://ekdak.com";
-const API_POST_URL = "https://t.ekdak.com";
-// const API_AUTH_URL = "http://192.168.1.18:8000";
-// const API_GET_URL = "http://192.168.1.18:8002";
-// const API_POST_URL = "http://192.168.1.18:8002";
+// const API_AUTH_URL = "https://sso.ekdak.com";
+// const API_GET_URL = "https://ekdak.com";
+// const API_POST_URL = "https://t.ekdak.com";
+const API_AUTH_URL = "http://192.168.1.18:8000";
+const API_GET_URL = "http://192.168.1.18:8002";
+const API_POST_URL = "http://192.168.1.18:8002";
 
 // Define queryParams globally so it can be accessed across filters & pagination
 let current_date = new Date();
@@ -148,11 +148,11 @@ $(document).ready(function () {
     });
 
     // Attach event to article row click
-    // $(document).on("click", ".bag-article-row", function () {
-    //     let articleId = $(this).attr("article_id");
-    //     console.log("Fetching article details for:", articleId);
-    //     openArticleDetailsModal(articleId);
-    // });
+    $(document).on("click", ".bag-article-row", function () {
+        let articleId = $(this).attr("article_id");
+        console.log("Fetching article details for:", articleId);
+        openArticleDetailsModal(articleId);
+    });
     // Attach event to add bag click
     $(document).on("click", "#receive_bag", function () {
         openReceiveBagModal();
@@ -641,7 +641,7 @@ function updateBagItemsTable(data, bagId) {
             _status = "Received";
         }
         tbody.append(`
-            <tr class="bag-article-row" article_id="${item.Bag_ID}">
+            <tr class="bag-article-row" article_id="${item.Item_Bag_ID}">
                 <td>${item.Item_Bag_ID}</td>
                 <td>${_status}</td>
                 <td>${item.Booked_Create_Date}</td>
@@ -740,7 +740,47 @@ function fetchArticleDetails(articleId) {
     });
 }
 
-// Function to update modal content
+// // Function to update modal content
+// function updateArticleDetailsModal(data) {
+//     let details = data.article_details;
+//     let trackingLogs = data.tracking_logs;
+
+//     $("#article-item-id").text(details.Item_ID);
+//     $("#article-item-type").text(details.Item_Type);
+//     $("#article-vas-type").text(details.VAS_Type);
+
+//     // Check if optional fields should be displayed
+//     if (details.ben_name !== "0" || details.sen_name !== "0") {
+//         $("#optional-fields").show();
+//         $("#article-sen-name").text(details.sen_name);
+//         $("#article-sen-address").text(details.sen_address);
+//         $("#article-ben-name").text(details.ben_name);
+//         $("#article-ben-address").text(details.ben_address);
+//         $("#article-sen-contact").text(details.Sen_Contact);
+//         $("#article-status").text(details.Status_Item);
+//         $("#article-total-weight").text(`${details.Total_Weight} ${details.Unit_Weight}`);
+//         $("#article-total-charge").text(`৳ ${details.Total_Charge}`);
+//     } else {
+//         $("#optional-fields").hide();
+//     }
+
+//     // Construct vertical stepper
+//     let stepperHtml = trackingLogs.map(log => `
+//         <div class="step">
+//             <div class="step-circle"></div>
+//             <div class="step-content">
+//                 <p><strong>${log.Status}</strong></p>
+//                 <p>${log.Remarks}</p>
+//                 <p><small>${log.Event_Date} ${log.Event_Time}</small></p>
+//                 <p><small>${log.Branch_Info}</small></p>
+//             </div>
+//         </div>
+//     `).join("");
+
+//     $("#tracking-stepper").html(stepperHtml);
+// }
+
+// Function to update modal content with table instead of stepper
 function updateArticleDetailsModal(data) {
     let details = data.article_details;
     let trackingLogs = data.tracking_logs;
@@ -764,21 +804,36 @@ function updateArticleDetailsModal(data) {
         $("#optional-fields").hide();
     }
 
-    // Construct vertical stepper
-    let stepperHtml = trackingLogs.map(log => `
-        <div class="step">
-            <div class="step-circle"></div>
-            <div class="step-content">
-                <p><strong>${log.Status}</strong></p>
-                <p>${log.Remarks}</p>
-                <p><small>${log.Event_Date} ${log.Event_Time}</small></p>
-                <p><small>${log.Branch_Info}</small></p>
-            </div>
-        </div>
-    `).join("");
+    // Construct table rows for tracking history
+    let tableHtml = `
+        <table class="pm_table_style">
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>Remarks</th>
+                    <th>Event Date</th>
+                    <th>Event Time</th>
+                    <th>Branch Info</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${trackingLogs.map(log => `
+                    <tr>
+                        <td><strong>${log.Status}</strong></td>
+                        <td>${log.Remarks}</td>
+                        <td>${log.Event_Date}</td>
+                        <td>${log.Event_Time}</td>
+                        <td>${log.Branch_Info}</td>
+                    </tr>
+                `).join("")}
+            </tbody>
+        </table>
+    `;
 
-    $("#tracking-stepper").html(stepperHtml);
+    // Insert the table into the modal
+    $("#tracking-table-container").html(tableHtml);
 }
+
 
 // Function to close article details modal
 function closeArticleDetailsModal() {

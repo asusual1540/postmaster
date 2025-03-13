@@ -240,6 +240,11 @@ td {
     text-align: center;
 }
 
+.article-details-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
 
 /* Article Details Modal */
 .article-details-container {
@@ -250,7 +255,8 @@ td {
     padding: 20px;
     border-radius: 8px;
     position: relative;
-    text-align: center;
+    overflow-y: auto;
+    /* text-align: center; */
 }
 
 .article-info p {
