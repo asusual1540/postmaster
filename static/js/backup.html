@@ -1,0 +1,282 @@
+<ons-page>
+    <ons-toolbar style="background-color: #006A4E;">
+        <div class="left">
+            <div class="logo-container">
+                <img src="/static/images/logo-post-dark.png" alt="Logo" width="40">
+            </div>
+        </div>
+
+        <div class="center site-title" style="color: white;">পোস্টমাষ্টার</div>
+
+        <div class="right">
+            <p id="login-username" style="margin-right: 5px;"></p>
+            <div class="avatar" id="avatar-container">
+                <img src="/static/images/avatar.png" alt="User">
+            </div>
+            <div class="pos-btn-container" style="width: 100px;" id="logout-btn-container">
+                <button class="pos-btn" id="logout-btn">Logout</button>
+            </div>
+        </div>
+        <!-- 
+                <div class="header">
+                    <div class="logo-container">
+                        <img src="/static/images/logo-post-dark.png" alt="Logo" width="40">
+                        <p class="site-title">পোস্টমাষ্টার</p>
+                    </div>
+                    <div style="display: flex; justify-content: center; align-items: center;">
+                        <p id="login-username" style="margin-right: 5px;"></p>
+                        <div class="avatar" id="avatar-container">
+                            <img src="/static/images/avatar.png" alt="User">
+                        </div>
+                        <div class="pos-btn-container" style="width: 100px;" id="logout-btn-container">
+                            <button class="pos-btn" id="logout-btn">Logout</button>
+                        </div>
+                    </div>
+                </div> -->
+    </ons-toolbar>
+
+    <ons-tabbar swipeable position="auto">
+        <ons-tab page="tab1.html" label="Bags" active>
+        </ons-tab>
+        <ons-tab page="tab2.html" label="Articles">
+        </ons-tab>
+        <ons-tab page="tab3.html" label="Receive">
+        </ons-tab>
+    </ons-tabbar>
+</ons-page>
+
+<template id="tab1.html">
+    <ons-page id="Tab1">
+        <ons-card>
+            <ons-row>
+                <ons-col style="margin-bottom: 16px;">
+                    <ons-input id="created_at_from" type="datetime-local" modifier="underbar"></ons-input>
+                </ons-col>
+                <ons-col style="margin-bottom: 16px;">
+                    <ons-input id="created_at_to" type="datetime-local" modifier="underbar"></ons-input>
+                </ons-col>
+            </ons-row>
+            <ons-row>
+                <ons-col style="margin-bottom: 16px;">
+                    <ons-input id="bag_id" placeholder="Bag ID" modifier="underbar"></ons-input>
+                </ons-col>
+                <ons-col style="margin-bottom: 16px; width: 100%;">
+                    <ons-select id="bag_status" modifier="underbar" style="width: 100%;">
+                        <option value="all">All Status</option>
+                        <option value="Created">Created</option>
+                        <option value="Forwarded">Forwarded</option>
+                        <option value="Landed">Landed</option>
+                        <option value="Open">Open</option>
+                    </ons-select>
+                </ons-col>
+
+            </ons-row>
+            <ons-row>
+
+                <ons-col>
+                    <ons-button id="filter_apply" modifier="large" ripple>Apply</ons-button>
+                </ons-col>
+            </ons-row>
+        </ons-card>
+        <!-- <ons-list id="bagList">
+                    <ons-list-header>Bag Details</ons-list-header>
+                </ons-list> -->
+        <div style="padding: 12px;display: flex;flex-direction: column;">
+            <!-- New Date Time Range Picker -->
+            <ons-row>
+                <ons-col style="margin-bottom: 16px;">
+                    <p id="bagTable_total">Total Bags : </p>
+                </ons-col>
+                <!-- <ons-col style="margin-bottom: 16px; width: 100%;">
+                            <ons-select id="bag_per_page" modifier="underbar" style="width: 100%;">
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </ons-select>
+                        </ons-col> -->
+
+            </ons-row>
+
+
+            <!-- Table -->
+            <div class="bag_table_container">
+                <table id="bagTable" class="pm_table_style">
+                    <thead>
+                        <tr>
+                            <th>Bag ID</th>
+                            <th>Articles</th>
+                            <!-- <th>Category</th> -->
+                            <!-- <th>Type</th> -->
+                            <!-- <th>Destination</th> -->
+                            <th>Create Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+
+            <div class="pos-pagination" id="bag-pagination">
+                <!-- Left Arrow -->
+                <button class="pos-pagination-arrow pos-pagination-arrow-prev" aria-label="Previous Page"
+                    id="prevBagPage">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                    </svg>
+                </button>
+
+                <!-- Page Numbers -->
+                <button class="pos-pagination-btn page-active">1</button>
+                <button class="pos-pagination-btn">2</button>
+                <button class="pos-pagination-btn">3</button>
+                <button class="pos-pagination-btn">4</button>
+                <button class="pos-pagination-btn">5</button>
+                <span class="pos-pagination-dots">...</span>
+                <button class="pos-pagination-btn">10</button>
+
+                <!-- Right Arrow -->
+                <button class="pos-pagination-arrow pos-pagination-arrow-next" aria-label="Next Page" id="nextBagPage">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5 15.75 12l-7.5 7.5" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </ons-page>
+</template>
+
+<template id="tab2.html">
+    <ons-page id="Tab2">
+        <div>
+            <table id="bag-items-table" class="pm_table_style">
+                <thead>
+                    <tr>
+                        <th>Article ID</th>
+                        <th>Status</th>
+                        <th>Booked Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="3">No data available</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </ons-page>
+</template>
+<template id="tab3.html">
+    <ons-page id="Tab3">
+        <div class="form-group pos-search-container">
+            <!-- <label for="search-input">Search:</label> -->
+            <div class="pos-search-box">
+                <input type="text" id="scan-bag-input" class="pos-search-input" placeholder="Scan Bag ...">
+                <button class="pos-search-btn" id="scan-bag-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="search-icon">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <!-- Search for Articles -->
+        <div class="form-group pos-search-container">
+            <div class="pos-search-box">
+                <input type="text" id="scan-article-input" class="pos-search-input" placeholder="Scan Article ...">
+                <button class="pos-search-btn" id="scan-article-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="search-icon">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="form-group">
+            <!-- <label for="custom-select">Mail Line:</label> -->
+            <div class="pos-select-wrapper" id="mail-line-select">
+                <select id="custom-select" class="pos-select">
+
+                </select>
+            </div>
+        </div>
+
+        <div class="pos-btn-container">
+            <button class="pos-btn" id="select-all-articles" style="margin-bottom: 5px;">Select All</button>
+            <button class="pos-btn" id="deselect-all-articles" disabled style="margin-bottom: 5px;">Deselect
+                All</button>
+
+        </div>
+        <div class="pos-btn-container">
+            <button class="pos-btn" id="receive-all" disabled style="margin-bottom: 5px;">Receive
+                Bag</button>
+            <button class="pos-btn" id="receive-selected" disabled style="margin-bottom: 5px;">Receive
+                Article</button>
+
+        </div>
+
+
+
+
+
+
+        <div style="display: flex; justify-content: space-between;">
+            <p id="scanned-bag-items-table_total">Total Records: 0</p>
+            <p id="scanned-bag-items-table_selected">Selected Articles: 0</p>
+        </div>
+        <!-- Scanned Articles Table -->
+        <div class="bag_item_table_container">
+            <table id="scanned-bag-items-table" class="pm_table_style">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Article ID</th>
+                        <th>Status</th>
+                        <th>Booked Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="5">No data available</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pos-pagination" id="scanned-bag-items-pagination">
+            <!-- Left Arrow -->
+            <button class="pos-pagination-arrow pos-pagination-arrow-prev" aria-label="Previous Page"
+                id="prevScannedBagItemPage">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                </svg>
+            </button>
+
+            <!-- Page Numbers -->
+            <button class="pos-pagination-btn page-active">1</button>
+            <button class="pos-pagination-btn">2</button>
+            <button class="pos-pagination-btn">3</button>
+            <button class="pos-pagination-btn">4</button>
+            <button class="pos-pagination-btn">5</button>
+            <span class="pos-pagination-dots">...</span>
+            <button class="pos-pagination-btn">10</button>
+
+            <!-- Right Arrow -->
+            <button class="pos-pagination-arrow pos-pagination-arrow-next" aria-label="Next Page"
+                id="nextScannedBagItemPage">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5 15.75 12l-7.5 7.5" />
+                </svg>
+            </button>
+        </div>
+    </ons-page>
+</template>

@@ -7,13 +7,15 @@ const API_POST_URL = "https://t.ekdak.com";
 
 // Define queryParams globally so it can be accessed across filters & pagination
 let current_date = new Date();
+// get previous date
+current_date = new Date(current_date.setDate(current_date.getDate() - 1));
 current_date.setHours(current_date.getHours() + 6); // Shift time forward by 6 hours
 let create_from = current_date.toISOString().split("T")[0] + "T00:00";
 let create_to = current_date.toISOString().slice(0, 16);
 
 let queryParams = {
     page: 1,
-    per_page: 10,
+    per_page: 20,
     bag_id: "",
     bag_category: "all",
     bag_type: "all",
@@ -38,7 +40,194 @@ let bagItemQueryParams = {
 let cache = {};
 let bag_items_cache = {};
 
-$(document).ready(function () {
+
+
+ons.ready(function () {
+    console.log("Onsen UI is ready!");
+    // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    window.fn = {};
+
+    window.fn.toggleMenu = function () {
+        document.getElementById('appSplitter').left.toggle();
+    };
+
+    window.fn.loadView = function (index) {
+        document.getElementById('appTabbar').setActiveTab(index);
+        document.getElementById('sidemenu').close();
+    };
+
+    window.fn.loadLink = function (url) {
+        window.open(url, '_blank');
+    };
+
+    window.fn.pushPage = function (page, anim) {
+        if (anim) {
+            document.getElementById('appNavigator').pushPage(page.id, { data: { title: page.title }, animation: anim });
+        } else {
+            document.getElementById('appNavigator').pushPage(page.id, { data: { title: page.title } });
+        }
+    };
+    document.addEventListener('init', function (event) {
+        var page = event.target;
+        let isBagLoading = false;
+        console.log(`Page initialized: ${page.id}`);
+
+        if (page.id === "bags-page") {
+            console.log("Initializing bags page...");
+            let listNode = document.getElementById('bag-list-node');
+
+
+
+
+            // Function to fetch bags and update ons-list
+            function fetchBagsInfinite(done = null) {
+                console.log("Fetching bags...");
+                let token = getCookie("access");
+
+                if (isBagLoading) return;
+                isBagLoading = true;
+                document.querySelector(".after-bag-list").style.display = "flex";
+
+                let url = constructQueryString();
+                console.log("Fetching from URL:", url);
+
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    headers: { "Authorization": `Bearer ${token}` },
+                    success: function (response) {
+                        console.log("Data fetched successfully", response);
+                        document.querySelector(".after-bag-list").style.display = "none";
+                        if (queryParams.page === 1) {
+                            // If it's the first page (either initial load or after applying filters), clear the list
+                            listNode.innerHTML = "";
+                        }
+                        if (response.results == null) {
+                            console.log("No more data to load.");
+                            window.fn.loadMore = function (done) { done(); }; // Disable infinite scroll if empty
+                            document.querySelector(".after-bag-list").style.display = "none";
+                            document.getElementById("bagTable_dnf").innerHTML = `
+                                <div style="display: flex; justify-content: center; align-items: center; height: 60px; text-align: center;">
+                                    No records found
+                                </div>
+                            `;
+                            return;
+                        }
+
+                        if (response.results.length > 0) {
+
+
+                            // If returned results are less than `per_page`, it means no more data is available
+                            if (response.results.length < queryParams.per_page) {
+                                console.log("No more pages to load, stopping infinite scroll.");
+                                window.fn.loadMore = function (done) { done(); }; // Disable infinite scroll
+                                document.querySelector(".after-bag-list").style.display = "none";
+                            } else {
+                                console.log("More data available, continue infinite scroll.");
+                                updateBagList(response.results);
+                                queryParams.page++; // Increment page number for next fetch
+                                document.querySelector(".after-bag-list").style.display = "none";
+                            }
+                        } else {
+                            console.log("No more data to load.");
+                            window.fn.loadMore = function (done) { done(); }; // Disable infinite scroll if empty
+                            document.querySelector(".after-bag-list").style.display = "none";
+                        }
+
+                        isBagLoading = false;
+                        if (done) done(); // Call done() when finished
+                    },
+                    error: function (e) {
+                        console.log("Error fetching data", e.responseJSON);
+                        isBagLoading = false;
+                        if (done) done(); // Ensure done() is called on error
+                        document.querySelector(".after-bag-list").style.display = "none";
+                    }
+                });
+            }
+
+            // Function to update ons-list with API data
+            function updateBagList(data) {
+                console.log("Updating bag list with data:", data);
+
+                data.forEach(bag => {
+                    let listItem = ons.createElement(`
+                    <ons-list-item modifier="longdivider">
+                        <div class="left">${bag.Bag_ID}</div>
+                        <div class="center">${bag.Create_Total_Item_Count} (${bag.Delivered_Item_Count}/<span style="color: #ff2800">${bag.Create_Total_Item_Count - bag.Delivered_Item_Count}</span>)</div>
+                        <div class="right">${bag.Create_Date} ${bag.Create_Time} | ${bag.Status}</div>
+                    </ons-list-item>
+                `);
+                    listNode.appendChild(listItem);
+                });
+            }
+
+            // Infinite Scroll Handler
+            window.fn.loadMore = function (done) {
+                console.log("Loading more data...");
+                fetchBagsInfinite(done);
+            };
+
+            // Initial Load
+            setTimeout(() => {
+                fetchBagsInfinite();
+            }, 500);
+
+            $(document).on("click", "#filter_apply", function () {
+                // Get values from input fields
+                let createdAtFrom = document.getElementById("created_at_from").value;
+                let createdAtTo = document.getElementById("created_at_to").value;
+                let bagId = document.getElementById("bag_id").value.trim();
+                let status = document.getElementById("bag_status").value;
+
+                // Reset queryParams to default
+                // queryParams = {
+                //     page: 1, // Reset to first page on filter apply
+                //     per_page: 20
+                // };
+
+                // Add bag_id only if it's not empty
+                if (bagId) {
+                    queryParams.bag_id = bagId;
+                }
+
+                // Add status only if it's not "all"
+                if (status !== "all") {
+                    queryParams.status = status;
+                }
+                queryParams.page = 1; // Reset to first page when filters change
+                listNode.innerHTML = "";
+                // Add date filters if selected
+                if (createdAtFrom) {
+                    queryParams.created_at_from = createdAtFrom;
+                }
+
+                if (createdAtTo) {
+                    queryParams.created_at_to = createdAtTo;
+                }
+                console.log("Query params:", queryParams);
+                fetchBagsInfinite();
+            });
+
+        }
+    });
+    // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    let token = getCookie("access");
+    console.log("Access token:", token);
+    if (!token) {
+        console.log("No token found. Showing login form.");
+        fn.pushPage({ 'id': 'login.html', 'title': 'Login' })
+        // $(".authenticating").hide();
+        // $("#login-container").show();
+        // $(".login-form").show();
+    } else {
+        // $(".backdrop").show();
+        // $(".authenticating").show();
+        verifyUser(token);
+    }
+
+
     let selectedArticles = new Set();
     let hasSelectedArticles = false;
     // Function to toggle row selection
@@ -71,69 +260,25 @@ $(document).ready(function () {
 
 
 
-    let token = getCookie("access");
-    console.log("Access token:", token);
-    if (!token) {
-        console.log("No token found. Showing login form.");
-        $(".authenticating").hide();
-        $("#login-container").show();
-        $(".login-form").show();
-    } else {
-        $(".backdrop").show();
-        $(".authenticating").show();
-        verifyUser(token);
-    }
-
     // Attach event to Receive button
     // $("#receive-selected").on("click", receiveSelectedArticles);
     // Attach event to Receive All button
     $("#receive-all").on("click", receiveAllBagItems);
 
-    document.getElementById("logout-btn").addEventListener("click", function () {
+    $(document).on("click", "#logout-btn", function () {
         deleteCookie("access");
         deleteCookie("refresh");
-        window.location.reload();
+        fn.pushPage({ 'id': 'login.html', 'title': 'Login' })
     }
     );
+    // document.getElementById("bags-page").addEventListener("click", function () {
+    //     console.log("Bags page clicked");
+    //     let token = getCookie("access");
+    //     fetchBags(token, queryParams);
+    // }
+    // );
 
     // document.getElementById("filter_apply").addEventListener("click", function () {
-    $(document).on("click", "#filter_apply", function () {
-        // Get values from input fields
-        let createdAtFrom = document.getElementById("created_at_from").value;
-        let createdAtTo = document.getElementById("created_at_to").value;
-        let bagId = document.getElementById("bag_id").value.trim();
-        let status = document.getElementById("bag_status").value;
-
-        // Reset queryParams to default
-        // queryParams = {
-        //     page: 1, // Reset to first page on filter apply
-        //     per_page: 20
-        // };
-
-        // Add bag_id only if it's not empty
-        if (bagId) {
-            queryParams.bag_id = bagId;
-        }
-
-        // Add status only if it's not "all"
-        if (status !== "all") {
-            queryParams.status = status;
-        }
-
-        // Add date filters if selected
-        if (createdAtFrom) {
-            queryParams.created_at_from = createdAtFrom;
-        }
-
-        if (createdAtTo) {
-            queryParams.created_at_to = createdAtTo;
-        }
-        console.log("Query params:", queryParams);
-        // Fetch bags with updated filters
-        let token = getCookie("access");
-        console.log("Access token:", token);
-        fetchBags(token, queryParams);
-    });
 
     // Add click event to bag rows
     $(document).on("click", ".bag-row", function () {
@@ -187,19 +332,20 @@ $(document).ready(function () {
         }
     });
 
-    $("#bag_per_page").on("change", function () {
-        queryParams.per_page = parseInt($(this).val());
-        queryParams.page = 1; // Reset to first page when per_page changes
-        fetchBags(getCookie("access"), queryParams);
-    });
+    // $("#bag_per_page").on("change", function () {
+    //     queryParams.per_page = parseInt($(this).val());
+    //     queryParams.page = 1; // Reset to first page when per_page changes
+    //     fetchBags(getCookie("access"), queryParams);
+    // });
 
 
-    $("#prevPage").click(() => { queryParams.page--; fetchBags(token, queryParams); });
-    $("#nextPage").click(() => { queryParams.page++; fetchBags(token, queryParams); });
-    $("#searchBagId").click(() => { queryParams.bag_id = $("#bagIdInput").val(); fetchBags(token, queryParams); });
-    $("#searchDestBranch").click(() => { queryParams.dest_branch_code = $("#destBranchInput").val(); fetchBags(token, queryParams); });
+    // $("#prevPage").click(() => { queryParams.page--; fetchBags(token, queryParams); });
+    // $("#nextPage").click(() => { queryParams.page++; fetchBags(token, queryParams); });
+    // $("#searchBagId").click(() => { queryParams.bag_id = $("#bagIdInput").val(); fetchBags(token, queryParams); });
+    // $("#searchDestBranch").click(() => { queryParams.dest_branch_code = $("#destBranchInput").val(); fetchBags(token, queryParams); });
 
-    $('#login-btn').click(function () {
+
+    $(document).on("click", "#login-btn", function () {
         // Get values from input fields
         console.log("Login button clicked");
         let phone = $('#phone').val().trim();
@@ -227,20 +373,22 @@ $(document).ready(function () {
             data: JSON.stringify(requestData),
             success: function (response) {
                 if (response.status === "success") {
-                    $(".backdrop").hide();
+                    // $(".backdrop").hide();
                     console.log("Login successful:", response);
                     if (response && response["username"]) {
                         $("#login-username").text(response["username"]);
                     }
-                    $("#logout-btn").show();
+                    // $("#logout-btn").show();
                     // Store access and refresh tokens in cookies
-                    document.cookie = `access=${response.access}; path=/`;
-                    document.cookie = `refresh=${response.refresh}; path=/`;
+                    setCookie("access", response.access, 1);
+                    setCookie("refresh", response.refresh, 1);
+
+                    // fn.pushPage({ 'id': 'tabbar.html', 'title': 'পোস্টমাষ্টার' })
                     // document.cookie = `access=${response.access}; path=/; Secure`;
                     // document.cookie = `refresh=${response.refresh}; path=/; Secure`;
-                    fetchBags(response.access, queryParams);
+                    // fetchBags(response.access, queryParams);
                     // Redirect or show success message
-                    // window.location.href = "/"; // Change this to the actual dashboard URL
+                    window.location.reload();
                 } else {
                     console.error("Login failed:", response);
                     errorMsg.text(response.message || 'Login failed. Please try again.');
@@ -365,6 +513,8 @@ $(document).ready(function () {
         $("#scanned-bag-items-table_selected").text(`Selected Articles: ${selectedArticles.size}`);
     }
 
+
+
 });
 
 
@@ -399,35 +549,16 @@ function verifyUser(token) {
             if (response["decoded_data"] && response["decoded_data"]["username"]) {
                 $("#login-username").text(response["decoded_data"]["username"]);
             }
-            $("#logout-btn").show();
-            $(".authenticating").text("Authenticated. Redirecting...");
-            $(".authenticating").hide();
-            $(".backdrop").hide();
-            showApp(token, queryParams);
+            // fn.pushPage({ 'id': 'tabbar.html', 'title': 'পোস্টমাষ্টার' })
         },
         error: function () {
             deleteCookie("access");
             deleteCookie("refresh");
-            $(".authenticating").hide();
-            $("#logout-btn").hide();
-            showLogin();
+            fn.pushPage({ 'id': 'login.html', 'title': 'Login' })
         }
     });
 }
 
-function showLogin() {
-    $("#login-container").show();
-    $("#app-container").hide();
-}
-
-function showApp(token) {
-    $("#login-container").hide();
-    $("#app-container").show();
-    // $("#bagTable").hide();
-
-
-    fetchBags(token, queryParams);
-}
 
 function constructQueryString() {
     let url = `${API_GET_URL}/v1/dms-legacy-core-logs/get-bags/?page=${queryParams.page}&per_page=${queryParams.per_page}`;
@@ -454,40 +585,40 @@ function constructQueryString() {
     return url;
 }
 
-function fetchBags(token, queryParams) {
-    let url = constructQueryString(queryParams);
-    console.log("Fetching from URL:", url);
+// function fetchBags(token, queryParams) {
+//     let url = constructQueryString(queryParams);
+//     console.log("Fetching from URL:", url);
 
-    // Check cache to avoid unnecessary API calls
-    if (cache[url]) {
-        console.log("Using cached data:", cache[url]);
-        updateBagTable(cache[url].results);
-        updatePagination("bagTable", "bag-pagination", cache[url].page, cache[url].total, cache[url].per_page, fetchBags);
-        return;
-    }
+//     // Check cache to avoid unnecessary API calls
+//     if (cache[url]) {
+//         console.log("Using cached data:", cache[url]);
+//         updateBagTable(cache[url].results);
+//         updatePagination("bagTable", "bag-pagination", cache[url].page, cache[url].total, cache[url].per_page, fetchBags);
+//         return;
+//     }
 
 
-    $.ajax({
-        url: url,
-        type: "GET",
-        headers: { "Authorization": `Bearer ${token}` },
-        success: function (response) {
-            $("#bagTable").show();
-            console.log("Data fetched successfully", response);
+//     $.ajax({
+//         url: url,
+//         type: "GET",
+//         headers: { "Authorization": `Bearer ${token}` },
+//         success: function (response) {
+//             $("#bagTable").show();
+//             console.log("Data fetched successfully", response);
 
-            // Store response in cache
-            cache[url] = response;
+//             // Store response in cache
+//             cache[url] = response;
 
-            updateBagTable(response.results);
-            // updateBagPagination(response.page, response.total, response.per_page);
-            updatePagination("bagTable", "bag-pagination", response.page, response.total, response.per_page, fetchBags);
+//             updateBagTable(response.results);
+//             // updateBagPagination(response.page, response.total, response.per_page);
+//             updatePagination("bagTable", "bag-pagination", response.page, response.total, response.per_page, fetchBags);
 
-        },
-        error: function (e) {
-            console.log("Error fetching data", e.responseJSON);
-        }
-    });
-}
+//         },
+//         error: function (e) {
+//             console.log("Error fetching data", e.responseJSON);
+//         }
+//     });
+// }
 
 // function updateBagTable(data) {
 //     console.log("Updating bag list with data:", data);

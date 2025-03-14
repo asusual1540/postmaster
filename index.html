@@ -15,7 +15,7 @@
 
     <!-- Main Content -->
     <div id="app-container">
-        <header class="header">
+        <!-- <header class="header">
             <div class="logo-container">
                 <img src="/static/images/logo-post-dark.png" alt="Logo" width="40">
                 <p class="site-title">পোস্টমাষ্টার</p>
@@ -29,127 +29,302 @@
                     <button class="pos-btn" id="logout-btn">Logout</button>
                 </div>
             </div>
-        </header>
-        <!-- Login Form -->
-        <div class="backdrop">
-            <div class="loader">
+        </header> -->
+        <ons-navigator id="appNavigator" swipeable swipe-target-width="80px">
 
-                <div id="login-container" class="login-container">
-                    <p class="authenticating">Authenticating user ...</p>
-                    <div class="login-form">
-                        <h2>Login</h2>
-                        <!-- <ons-button>Click me!</ons-button>
-                        <ons-page>
-                            <div style="text-align: center; margin-top: 200px">
-                                <p>
-                                    <ons-input id="username" placeholder="Username" modifier="underbar"></ons-input>
-                                </p>
+            <ons-page>
+                <ons-splitter id="appSplitter">
+                    <ons-splitter-side id="sidemenu" page="sidemenu.html" swipeable side="left" collapse=""
+                        width="260px"></ons-splitter-side>
+                    <ons-splitter-content page="tabbar.html"></ons-splitter-content>
+                </ons-splitter>
+            </ons-page>
+        </ons-navigator>
 
-                                <p>
-                                    <ons-input id="password" placeholder="Password" type="password" modifier="underbar">
-                                    </ons-input>
-                                </p>
-
-                                <p>
-                                    <ons-button>Sign in</ons-button>
-                                </p>
-                            </div>
-
-                        </ons-page> -->
-
-                        <div class="form-group">
-                            <!-- <label for="password-input">Password:</label> -->
-                            <div class="pos-input-wrapper">
-                                <input type="text" id="phone" class="pos-input" placeholder="Enter username...">
-                            </div>
-                        </div>
-                        <!-- <input type="text" id="phone" placeholder="Phone Number"> -->
-                        <!-- <input type="password" id="password" placeholder="Password"> -->
-                        <div class="form-group">
-                            <!-- <label for="password-input">Password:</label> -->
-                            <div class="pos-input-wrapper">
-                                <input type="password" id="password" class="pos-input" placeholder="Enter password...">
-                                <button type="button" class="pos-password-toggle" onclick="togglePasswordVisibility()">
-                                    <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="eye-icon">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M2.458 12c1.732-4.598 5.978-7.5 9.542-7.5s7.81 2.902 9.542 7.5c-1.732 4.598-5.978 7.5-9.542 7.5s-7.81-2.902-9.542-7.5z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="pos-btn-container">
-                            <button class="pos-btn" id="login-btn"
-                                style="background-color: rgb(24, 201, 100); color: rgb(255, 255, 255);">Login</button>
-                        </div>
-                        <p id="login-error" style="color: red;"></p>
+        <template id="login.html">
+            <ons-page id="login-page">
+                <ons-toolbar style="background-color: #006A4E;">
+                    <div class="center" style="color: aliceblue;">
+                        <p>পোস্টমাষ্টার লগইন</p>
                     </div>
-                </div>
-            </div>
-        </div>
-        <ons-page>
-            <ons-toolbar style="background-color: #006A4E;">
-                <div class="left">
-                    <div class="logo-container">
-                        <img src="/static/images/logo-post-dark.png" alt="Logo" width="40">
-                    </div>
-                </div>
+                </ons-toolbar>
 
-                <div class="center site-title" style="color: white;">পোস্টমাষ্টার</div>
-
-                <div class="right">
-                    <p id="login-username" style="margin-right: 5px;"></p>
-                    <div class="avatar" id="avatar-container">
-                        <img src="/static/images/avatar.png" alt="User">
-                    </div>
-                    <div class="pos-btn-container" style="width: 100px;" id="logout-btn-container">
-                        <button class="pos-btn" id="logout-btn">Logout</button>
-                    </div>
-                </div>
-                <!-- 
-                <div class="header">
-                    <div class="logo-container">
-                        <img src="/static/images/logo-post-dark.png" alt="Logo" width="40">
-                        <p class="site-title">পোস্টমাষ্টার</p>
-                    </div>
+                <div id="login-container" class="login-container" style="text-align: center; padding: 20px;">
                     <div style="display: flex; justify-content: center; align-items: center;">
-                        <p id="login-username" style="margin-right: 5px;"></p>
-                        <div class="avatar" id="avatar-container">
-                            <img src="/static/images/avatar.png" alt="User">
-                        </div>
-                        <div class="pos-btn-container" style="width: 100px;" id="logout-btn-container">
-                            <button class="pos-btn" id="logout-btn">Logout</button>
-                        </div>
+                        <img src="/static/images/logo-red.png" alt="Logo" width="100">
                     </div>
-                </div> -->
-            </ons-toolbar>
+                    <h2>Login</h2>
+                    <form>
+                        <div class="form-group">
+                            <ons-input id="phone" modifier="underbar" placeholder="Enter username..." float
+                                style="width: 90%;">
+                            </ons-input>
+                        </div>
 
-            <ons-tabbar swipeable position="auto">
-                <ons-tab page="tab1.html" label="Bags" active>
-                </ons-tab>
-                <ons-tab page="tab2.html" label="Articles">
-                </ons-tab>
-                <ons-tab page="tab3.html" label="Receive">
-                </ons-tab>
-            </ons-tabbar>
-        </ons-page>
+                        <div class="form-group">
+                            <ons-input id="password" modifier="underbar" type="password" placeholder="Enter password..."
+                                float style="width: 90%;">
+                            </ons-input>
+                        </div>
 
-        <template id="tab1.html">
-            <ons-page id="Tab1">
+                        <div class="pos-btn-container" style="margin-top: 20px;">
+                            <ons-button id="login-btn" modifier="large"
+                                style="background-color: rgb(24, 201, 100); color: white; width: 90%;">
+                                Login
+                            </ons-button>
+                        </div>
+
+                        <p id="login-error" style="color: red; margin-top: 10px;"></p>
+                    </form>
+
+                </div>
+            </ons-page>
+        </template>
+
+        <template id="tabbar.html">
+            <ons-page id="tabbar-page">
+                <ons-toolbar style="background-color: #006A4E;">
+                    <div class="center" style="color: aliceblue;">
+                        <p>পোস্টমাষ্টার</p>
+                    </div>
+
+                    <div class="left">
+
+                        <ons-toolbar-button onclick="fn.toggleMenu()">
+                            <ons-icon icon="ion-ios-menu, material:md-menu" style="color: aliceblue;"></ons-icon>
+                        </ons-toolbar-button>
+                    </div>
+                </ons-toolbar>
+                <ons-tabbar swipeable id="appTabbar" position="auto">
+                    <ons-tab label="পোস্টমাষ্টার" icon="ion-ios-home" page="postmaster.html" active></ons-tab>
+                    <ons-tab label="ব্যাগ" icon="ion-ios-create" page="bags.html" id="bags-page"></ons-tab>
+                    <ons-tab label="আর্টিকেল" icon="ion-ios-film" page="articles.html"></ons-tab>
+                </ons-tabbar>
+
+                <script>
+                    ons.getScriptPage().addEventListener('prechange', function (event) {
+                        if (event.target.matches('#appTabbar')) {
+                            event.currentTarget.querySelector('ons-toolbar .center').innerHTML = event.tabItem.getAttribute('label');
+                        }
+                    });
+                </script>
+            </ons-page>
+        </template>
+
+        <template id="sidemenu.html">
+            <ons-page>
+                <div class="profile-pic" style="padding: 10px;">
+                    <img src="/static/images/logo-red.png">
+                </div>
+
+                <ons-list-title>Access</ons-list-title>
+                <ons-list>
+                    <ons-list-item onclick="fn.loadView(0)">
+                        <div class="left">
+                            <ons-icon fixed-width class="list-item__icon"
+                                icon="ion-ios-home, material:md-home"></ons-icon>
+                        </div>
+                        <div class="center">
+                            পোস্টমাষ্টার
+                        </div>
+                        <div class="right">
+                            <ons-icon icon="fa-link"></ons-icon>
+                        </div>
+                    </ons-list-item>
+                    <ons-list-item onclick="fn.loadView(1)">
+                        <div class="left">
+                            <ons-icon fixed-width class="list-item__icon"
+                                icon="ion-ios-create, material:md-edit"></ons-icon>
+                        </div>
+                        <div class="center">
+                            ব্যাগ
+                        </div>
+                        <div class="right">
+                            <ons-icon icon="fa-link"></ons-icon>
+                        </div>
+                    </ons-list-item>
+                    <ons-list-item onclick="fn.loadView(2)">
+                        <div class="left">
+                            <ons-icon fixed-width class="list-item__icon"
+                                icon="ion-ios-film, material: md-movie-alt"></ons-icon>
+                        </div>
+                        <div class="center">
+                            আর্টিকেল
+                        </div>
+                        <div class="right">
+                            <ons-icon icon="fa-link"></ons-icon>
+                        </div>
+                    </ons-list-item>
+                </ons-list>
+
+                <ons-list-title style="margin-top: 10px">Links</ons-list-title>
+                <ons-list>
+                    <ons-list-item id="logout-btn">
+                        <div class="left">
+                            <ons-icon fixed-width class="list-item__icon" icon="ion-ios-document"></ons-icon>
+                        </div>
+                        <div class="center">
+                            লগআউট
+                        </div>
+                        <div class="right">
+                            <ons-icon icon="fa-external-link"></ons-icon>
+                        </div>
+                    </ons-list-item>
+                    <!-- <ons-list-item onclick="fn.loadLink('https://github.com/OnsenUI/OnsenUI')">
+                        <div class="left">
+                            <ons-icon fixed-width class="list-item__icon" icon="ion-logo-github"></ons-icon>
+                        </div>
+                        <div class="center">
+                            GitHub
+                        </div>
+                        <div class="right">
+                            <ons-icon icon="fa-external-link"></ons-icon>
+                        </div>
+                    </ons-list-item>
+                    <ons-list-item onclick="fn.loadLink('https://community.onsen.io/')">
+                        <div class="left">
+                            <ons-icon fixed-width class="list-item__icon" icon="ion-ios-chatboxes"></ons-icon>
+                        </div>
+                        <div class="center">
+                            Forum
+                        </div>
+                        <div class="right">
+                            <ons-icon icon="fa-external-link"></ons-icon>
+                        </div>
+                    </ons-list-item>
+                    <ons-list-item onclick="fn.loadLink('https://twitter.com/Onsen_UI')">
+                        <div class="left">
+                            <ons-icon fixed-width class="list-item__icon" icon="ion-logo-twitter"></ons-icon>
+                        </div>
+                        <div class="center">
+                            Twitter
+                        </div>
+                        <div class="right">
+                            <ons-icon icon="fa-external-link"></ons-icon>
+                        </div>
+                    </ons-list-item> -->
+                </ons-list>
+
+                <script>
+                    ons.getScriptPage().onInit = function () {
+                        // Set ons-splitter-side animation
+                        this.parentElement.setAttribute('animation', ons.platform.isAndroid() ? 'overlay' : 'reveal');
+                    };
+                </script>
+
+
+            </ons-page>
+        </template>
+
+        <template id="postmaster.html">
+            <ons-page>
+
+                <p style="margin-top: 8px; margin-left: 8px;">দৈনিক</p>
+                <ons-row>
+                    <ons-col>
+                        <ons-card onclick="fn.pushPage({'id': 'pullHook.html', 'title': 'PullHook'})">
+                            <div class="title">৩,৪৫৪</div>
+                            <div class="content">গ্রহন</div>
+                        </ons-card>
+                    </ons-col>
+                    <ons-col>
+                        <ons-card onclick="fn.pushPage({'id': 'dialogs.html', 'title': 'Dialogs'})">
+                            <div class="title">৩,০০০</div>
+                            <div class="content">বিলি</div>
+                        </ons-card>
+                    </ons-col>
+                    <ons-col>
+                        <ons-card onclick="fn.pushPage({'id': 'buttons.html', 'title': 'Buttons'})">
+                            <div class="title">৪৫৪</div>
+                            <div class="content">অবিলি
+                            </div>
+                        </ons-card>
+                    </ons-col>
+                </ons-row>
+
+                <p style="margin-top: 8px; margin-left: 8px;">মাসিক</p>
+                <ons-row>
+                    <ons-col>
+                        <ons-card onclick="fn.pushPage({'id': 'pullHook.html', 'title': 'PullHook'})">
+                            <div class="title">৫৩,৪৫৮</div>
+                            <div class="content">গ্রহন</div>
+                        </ons-card>
+                    </ons-col>
+                    <ons-col>
+                        <ons-card onclick="fn.pushPage({'id': 'dialogs.html', 'title': 'Dialogs'})">
+                            <div class="title">৫৩,০০০</div>
+                            <div class="content">বিলি</div>
+                        </ons-card>
+                    </ons-col>
+                    <ons-col>
+                        <ons-card onclick="fn.pushPage({'id': 'buttons.html', 'title': 'Buttons'})">
+                            <div class="title">৪৫৮</div>
+                            <div class="content">অবিলি
+                            </div>
+                        </ons-card>
+                    </ons-col>
+                </ons-row>
+
+                <p style="margin-top: 8px; margin-left: 8px;">বার্ষিক</p>
+                <ons-row>
+                    <ons-col>
+                        <ons-card onclick="fn.pushPage({'id': 'pullHook.html', 'title': 'PullHook'})">
+                            <div class="title">৬,৫৩,৪৫৮</div>
+                            <div class="content">গ্রহন</div>
+                        </ons-card>
+                    </ons-col>
+                    <ons-col>
+                        <ons-card onclick="fn.pushPage({'id': 'dialogs.html', 'title': 'Dialogs'})">
+                            <div class="title">৫,৫৩,০০০</div>
+                            <div class="content">বিলি</div>
+                        </ons-card>
+                    </ons-col>
+                    <ons-col>
+                        <ons-card onclick="fn.pushPage({'id': 'buttons.html', 'title': 'Buttons'})">
+                            <div class="title">৪৫৮</div>
+                            <div class="content">অবিলি
+                            </div>
+                        </ons-card>
+                    </ons-col>
+                </ons-row>
+
+
+
+
+
+
+                <!-- <ons-card onclick="fn.pushPage({'id': 'carousel.html', 'title': 'Carousel'})">
+                    <div class="title">Carousel</div>
+                    <div class="content">Customizable carousel that can be optionally fullscreen.</div>
+                </ons-card>
+                <ons-card onclick="fn.pushPage({'id': 'infiniteScroll.html', 'title': 'Infinite Scroll'})">
+                    <div class="title">Infinite Scroll</div>
+                    <div class="content">Two types of infinite lists: "Load More" and "Lazy Repeat".</div>
+                </ons-card>
+                <ons-card onclick="fn.pushPage({'id': 'progress.html', 'title': 'Progress'})">
+                    <div class="title">Progress</div>
+                    <div class="content">Linear progress, circular progress and spinners.</div>
+                </ons-card> -->
+            </ons-page>
+        </template>
+
+        <template id="bags.html">
+            <ons-page id="bags-page" on-infinite-scroll="fn.loadMore">
                 <ons-card>
-                    <ons-row>
-                        <ons-col style="margin-bottom: 16px;">
-                            <ons-input id="created_at_from" type="datetime-local" modifier="underbar"></ons-input>
+                    <ons-row class="filter-bag-row-date">
+                        <ons-col style="margin-bottom: 16px; margin-right: 16px;">
+                            <ons-input id="created_at_from" type="datetime-local" modifier="underbar"
+                                style="width: 100%;"></ons-input>
                         </ons-col>
                         <ons-col style="margin-bottom: 16px;">
-                            <ons-input id="created_at_to" type="datetime-local" modifier="underbar"></ons-input>
+                            <ons-input id="created_at_to" type="datetime-local" modifier="underbar"
+                                style="width: 100%;"></ons-input>
                         </ons-col>
                     </ons-row>
-                    <ons-row>
-                        <ons-col style="margin-bottom: 16px;">
-                            <ons-input id="bag_id" placeholder="Bag ID" modifier="underbar"></ons-input>
+                    <ons-row class="filter-bag-row">
+                        <ons-col style="margin-bottom: 16px; margin-right: 16px;">
+                            <ons-input id="bag_id" placeholder="Bag ID" modifier="underbar"
+                                style="width: 100%;padding-right: 8px;"></ons-input>
                         </ons-col>
                         <ons-col style="margin-bottom: 16px; width: 100%;">
                             <ons-select id="bag_status" modifier="underbar" style="width: 100%;">
@@ -169,210 +344,675 @@
                         </ons-col>
                     </ons-row>
                 </ons-card>
-                <!-- <ons-list id="bagList">
-                    <ons-list-header>Bag Details</ons-list-header>
-                </ons-list> -->
-                <div style="padding: 12px;display: flex;flex-direction: column;">
-                    <!-- New Date Time Range Picker -->
-                    <ons-row>
-                        <ons-col style="margin-bottom: 16px;">
-                            <p id="bagTable_total">Total Bags : </p>
-                        </ons-col>
-                        <!-- <ons-col style="margin-bottom: 16px; width: 100%;">
-                            <ons-select id="bag_per_page" modifier="underbar" style="width: 100%;">
-                                <option value="5">5</option>
-                                <option value="10">10</option>
-                                <option value="20">20</option>
-                                <option value="30">30</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </ons-select>
-                        </ons-col> -->
 
-                    </ons-row>
-
-
-                    <!-- Table -->
-                    <div class="bag_table_container">
-                        <table id="bagTable" class="pm_table_style">
-                            <thead>
-                                <tr>
-                                    <th>Bag ID</th>
-                                    <th>Articles</th>
-                                    <!-- <th>Category</th> -->
-                                    <!-- <th>Type</th> -->
-                                    <!-- <th>Destination</th> -->
-                                    <th>Create Date</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-
-
-                    <div class="pos-pagination" id="bag-pagination">
-                        <!-- Left Arrow -->
-                        <button class="pos-pagination-arrow pos-pagination-arrow-prev" aria-label="Previous Page"
-                            id="prevBagPage">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-                            </svg>
-                        </button>
-
-                        <!-- Page Numbers -->
-                        <button class="pos-pagination-btn page-active">1</button>
-                        <button class="pos-pagination-btn">2</button>
-                        <button class="pos-pagination-btn">3</button>
-                        <button class="pos-pagination-btn">4</button>
-                        <button class="pos-pagination-btn">5</button>
-                        <span class="pos-pagination-dots">...</span>
-                        <button class="pos-pagination-btn">10</button>
-
-                        <!-- Right Arrow -->
-                        <button class="pos-pagination-arrow pos-pagination-arrow-next" aria-label="Next Page"
-                            id="nextBagPage">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5 15.75 12l-7.5 7.5" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-            </ons-page>
-        </template>
-
-        <template id="tab2.html">
-            <ons-page id="Tab2">
-                <div>
-                    <table id="bag-items-table" class="pm_table_style">
-                        <thead>
-                            <tr>
-                                <th>Article ID</th>
-                                <th>Status</th>
-                                <th>Booked Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="3">No data available</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </ons-page>
-        </template>
-        <template id="tab3.html">
-            <ons-page id="Tab3">
-                <div class="form-group pos-search-container">
-                    <!-- <label for="search-input">Search:</label> -->
-                    <div class="pos-search-box">
-                        <input type="text" id="scan-bag-input" class="pos-search-input" placeholder="Scan Bag ...">
-                        <button class="pos-search-btn" id="scan-bag-btn">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="search-icon">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-                <!-- Search for Articles -->
-                <div class="form-group pos-search-container">
-                    <div class="pos-search-box">
-                        <input type="text" id="scan-article-input" class="pos-search-input"
-                            placeholder="Scan Article ...">
-                        <button class="pos-search-btn" id="scan-article-btn">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="search-icon">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <!-- <label for="custom-select">Mail Line:</label> -->
-                    <div class="pos-select-wrapper" id="mail-line-select">
-                        <select id="custom-select" class="pos-select">
-
-                        </select>
-                    </div>
-                </div>
-
-                <div class="pos-btn-container">
-                    <button class="pos-btn" id="select-all-articles" style="margin-bottom: 5px;">Select All</button>
-                    <button class="pos-btn" id="deselect-all-articles" disabled style="margin-bottom: 5px;">Deselect
-                        All</button>
-
-                </div>
-                <div class="pos-btn-container">
-                    <button class="pos-btn" id="receive-all" disabled style="margin-bottom: 5px;">Receive
-                        Bag</button>
-                    <button class="pos-btn" id="receive-selected" disabled style="margin-bottom: 5px;">Receive
-                        Article</button>
-
-                </div>
-
-
-
-
-
-
+                <!-- <p class="intro">
+                    Useful for loading more items when the scroll reaches the bottom of the page, typically after an
+                    asynchronous API call.<br><br>
+                </p> -->
                 <div style="display: flex; justify-content: space-between;">
-                    <p id="scanned-bag-items-table_total">Total Records: 0</p>
-                    <p id="scanned-bag-items-table_selected">Selected Articles: 0</p>
-                </div>
-                <!-- Scanned Articles Table -->
-                <div class="bag_item_table_container">
-                    <table id="scanned-bag-items-table" class="pm_table_style">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Article ID</th>
-                                <th>Status</th>
-                                <th>Booked Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="5">No data available</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <p id="bagTable_total" style="margin-bottom: 8px; margin-left: 8px;">Total Bags : </p>
+                    <p id="bagTable_page" style="margin-bottom: 8px; margin-right: 8px;">Showing page 1 of 72</p>
                 </div>
 
-                <div class="pos-pagination" id="scanned-bag-items-pagination">
-                    <!-- Left Arrow -->
-                    <button class="pos-pagination-arrow pos-pagination-arrow-prev" aria-label="Previous Page"
-                        id="prevScannedBagItemPage">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-                        </svg>
-                    </button>
-
-                    <!-- Page Numbers -->
-                    <button class="pos-pagination-btn page-active">1</button>
-                    <button class="pos-pagination-btn">2</button>
-                    <button class="pos-pagination-btn">3</button>
-                    <button class="pos-pagination-btn">4</button>
-                    <button class="pos-pagination-btn">5</button>
-                    <span class="pos-pagination-dots">...</span>
-                    <button class="pos-pagination-btn">10</button>
-
-                    <!-- Right Arrow -->
-                    <button class="pos-pagination-arrow pos-pagination-arrow-next" aria-label="Next Page"
-                        id="nextScannedBagItemPage">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5 15.75 12l-7.5 7.5" />
-                        </svg>
-                    </button>
+                <ons-list id="bag-list-node" class="bag-list"></ons-list>
+                <p id="bagTable_dnf"></p>
+                <div class="after-bag-list" id="after-bag-list" style="display: none;">
+                    <ons-icon icon="fa-spinner" size="26px" spin></ons-icon>
                 </div>
+
             </ons-page>
         </template>
+
+        <template id="articles.html">
+            <ons-page>
+                <ons-list>
+                    <ons-list-header>Transitions</ons-list-header>
+                    <ons-list-item modifier="chevron"
+                        onclick="fn.pushPage({'id': 'transition.html', 'title': 'none'}, 'none')">
+                        none
+                    </ons-list-item>
+                    <ons-list-item modifier="chevron"
+                        onclick="fn.pushPage({'id': 'transition.html', 'title': 'default'}, 'default')">
+                        default
+                    </ons-list-item>
+                    <ons-list-item modifier="chevron"
+                        onclick="fn.pushPage({'id': 'transition.html', 'title': 'slide-ios'}, 'slide-ios')">
+                        slide-ios
+                    </ons-list-item>
+                    <ons-list-item modifier="chevron"
+                        onclick="fn.pushPage({'id': 'transition.html', 'title': 'slide-md'}, 'slide-md')">
+                        slide-md
+                    </ons-list-item>
+                    <ons-list-item modifier="chevron"
+                        onclick="fn.pushPage({'id': 'transition.html', 'title': 'lift-ios'}, 'lift-ios')">
+                        lift-ios
+                    </ons-list-item>
+                    <ons-list-item modifier="chevron"
+                        onclick="fn.pushPage({'id': 'transition.html', 'title': 'lift-md'}, 'lift-md')">
+                        lift-md
+                    </ons-list-item>
+                    <ons-list-item modifier="chevron"
+                        onclick="fn.pushPage({'id': 'transition.html', 'title': 'fade-ios'}, 'fade-ios')">
+                        fade-ios
+                    </ons-list-item>
+                    <ons-list-item modifier="chevron"
+                        onclick="fn.pushPage({'id': 'transition.html', 'title': 'fade-md'}, 'fade-md')">
+                        fade-md
+                    </ons-list-item>
+                </ons-list>
+            </ons-page>
+        </template>
+
+        <template id="pullHook.html">
+            <ons-page>
+                <ons-toolbar>
+                    <div class="left">
+                        <ons-back-button>Home</ons-back-button>
+                    </div>
+                    <div class="center"></div>
+                </ons-toolbar>
+
+                <ons-pull-hook id="pull-hook" threshold-height="120px">
+                    <ons-icon id="pull-hook-icon" size="22px" class="pull-hook-content" icon="fa-arrow-down"></ons-icon>
+                </ons-pull-hook>
+
+                <ons-list id="kitten-list">
+                    <ons-list-header>Pull to refresh</ons-list-header>
+                </ons-list>
+
+                <script>
+                    ons.getScriptPage().onInit = function () {
+                        this.querySelector('ons-toolbar div.center').textContent = this.data.title;
+                        var pullHook = document.getElementById('pull-hook');
+                        var icon = document.getElementById('pull-hook-icon');
+                        pullHook.addEventListener('changestate', function (event) {
+                            switch (event.state) {
+                                case 'initial':
+                                    icon.setAttribute('icon', 'fa-arrow-down');
+                                    icon.removeAttribute('rotate');
+                                    icon.removeAttribute('spin');
+                                    break;
+                                case 'preaction':
+                                    icon.setAttribute('icon', 'fa-arrow-down');
+                                    icon.setAttribute('rotate', '180');
+                                    icon.removeAttribute('spin');
+                                    break;
+                                case 'action':
+                                    icon.setAttribute('icon', 'fa-spinner');
+                                    icon.removeAttribute('rotate');
+                                    icon.setAttribute('spin', true);
+                                    break;
+                            }
+                        });
+                        var getRandomName = function () {
+                            const names = ['Oscar', 'Max', 'Tiger', 'Sam', 'Misty', 'Simba', 'Coco', 'Chloe', 'Lucy', 'Missy'];
+                            return names[Math.floor(Math.random() * names.length)];
+                        };
+                        var getRandomUrl = function () {
+                            const width = 40 + Math.floor(20 * Math.random());
+                            const height = 40 + Math.floor(20 * Math.random());
+                            return `https://placekitten.com/g/${width}/${height}`;
+                        };
+                        var getRandomKitten = function () {
+                            return {
+                                name: getRandomName(),
+                                url: getRandomUrl()
+                            };
+                        };
+                        var getRandomData = function () {
+                            const data = [];
+                            for (var i = 0; i < 8; i++) {
+                                data.push(getRandomKitten());
+                            }
+                            return data;
+                        };
+                        var createKitten = function (kitten) {
+                            return ons.createElement(`
+                        <ons-list-item>
+                          <div class="left">
+                            <img class="list-item__thumbnail" src="${kitten.url}">
+                          </div>
+                          <div class="center">${kitten.name}</div>
+                        </ons-list-item>
+                      `
+                            );
+                        };
+                        var kittens = getRandomData();
+                        for (kitty of kittens) {
+                            var kitten = createKitten(kitty);
+                            document.getElementById('kitten-list').appendChild(kitten);
+                        };
+                        pullHook.onAction = function (done) {
+                            setTimeout(function () {
+                                document.getElementById('kitten-list').appendChild(createKitten(getRandomKitten()));
+                                done();
+                            }, 400);
+                        }
+                    };
+                </script>
+
+            </ons-page>
+        </template>
+
+        <template id="dialogs.html">
+            <ons-page id="dialogs-page">
+                <ons-toolbar>
+                    <div class="left">
+                        <ons-back-button>Home</ons-back-button>
+                    </div>
+                    <div class="center"></div>
+                    <div class="right">
+                        <ons-toolbar-button id="info-button"
+                            onclick="fn.showDialog('popover-dialog')"></ons-toolbar-button>
+                    </div>
+                </ons-toolbar>
+
+                <ons-list-title>Notifications</ons-list-title>
+                <ons-list modifier="inset">
+                    <ons-list-item tappable modifier="longdivider" onclick="ons.notification.alert('Hello, world!')">
+                        <div class="center">
+                            Alert
+                        </div>
+                    </ons-list-item>
+                    <ons-list-item tappable modifier="longdivider" onclick="ons.notification.confirm('Are you ready?')">
+                        <div class="center">
+                            Simple Confirmation
+                        </div>
+                    </ons-list-item>
+                    <ons-list-item tappable modifier="longdivider"
+                        onclick="ons.notification.prompt('What is your name?')">
+                        <div class="center">
+                            Prompt
+                        </div>
+                    </ons-list-item>
+                    <ons-list-item tappable modifier="longdivider"
+                        onclick="ons.notification.toast('Hi there!', { buttonLabel: 'Dismiss', timeout: 1500 })">
+                        <div class="center">
+                            Toast
+                        </div>
+                    </ons-list-item>
+                    <ons-list-item tappable modifier="longdivider"
+                        onclick="ons.openActionSheet({ buttons: ['Label 1', 'Label 2', 'Label 3', 'Cancel'], destructive: 2, cancelable: true })">
+                        <div class="center">
+                            Action/Bottom Sheet
+                        </div>
+                    </ons-list-item>
+                </ons-list>
+
+                <ons-list-title>Components</ons-list-title>
+                <ons-list modifier="inset">
+                    <ons-list-item tappable modifier="longdivider" onclick="fn.showDialog('lorem-dialog')">
+                        <div class="center">
+                            Simple Dialog
+                        </div>
+                    </ons-list-item>
+                    <ons-list-item tappable modifier="longdivider" onclick="fn.showDialog('watHmmSure-dialog')">
+                        <div class="center">
+                            Alert Dialog
+                        </div>
+                    </ons-list-item>
+                    <ons-list-item tappable modifier="longdivider" onclick="fn.showDialog('toast-dialog')">
+                        <div class="center">
+                            Toast (top)
+                        </div>
+                    </ons-list-item>
+                    <ons-list-item tappable modifier="longdivider" onclick="fn.showDialog('modal-dialog')">
+                        <div class="center">
+                            Modal
+                        </div>
+                    </ons-list-item>
+                    <ons-list-item tappable modifier="longdivider" onclick="fn.showDialog('popover-dialog')">
+                        <div class="center">
+                            Popover - MD Menu
+                        </div>
+                    </ons-list-item>
+                    <ons-list-item tappable modifier="longdivider" onclick="fn.showDialog('action-sheet-dialog')">
+                        <div class="center">
+                            Action/Bottom Sheet
+                        </div>
+                    </ons-list-item>
+                </ons-list>
+
+                <!-- Components -->
+                <ons-dialog id="lorem-dialog" cancelable>
+                    <!-- Optional page. This could contain a Navigator as well. -->
+                    <ons-page>
+                        <ons-toolbar>
+                            <div class="center">Simple Dialog</div>
+                        </ons-toolbar>
+                        <p style="text-align: center">Lorem ipsum dolor</p>
+                        <p style="text-align: center">
+                            <ons-button modifier="light" onclick="fn.hideDialog('lorem-dialog')">Close</ons-button>
+                        </p>
+                    </ons-page>
+                </ons-dialog>
+
+                <ons-alert-dialog id="watHmmSure-dialog" cancelable>
+                    <div class="alert-dialog-title">Hey!!</div>
+                    <div class="alert-dialog-content">
+                        Lorem ipsum
+                        <ons-icon icon="fa-commenting-o"></ons-icon>
+                    </div>
+                    <div class="alert-dialog-footer">
+                        <button class="alert-dialog-button" onclick="fn.hideDialog('watHmmSure-dialog')">Wat</button>
+                        <button class="alert-dialog-button" onclick="fn.hideDialog('watHmmSure-dialog')">Hmm</button>
+                        <button class="alert-dialog-button" onclick="fn.hideDialog('watHmmSure-dialog')">Sure</button>
+                    </div>
+                </ons-alert-dialog>
+
+                <ons-toast id="toast-dialog" animation="fall">Supercalifragilisticexpialidocious<button
+                        onclick="fn.hideDialog('toast-dialog')">No way</button></ons-toast>
+
+                <ons-modal id="modal-dialog" onclick="fn.hideDialog('modal-dialog')">
+                    <p style="text-align: center">
+                        Loading
+                        <ons-icon icon="fa-spinner" spin></ons-icon>
+                        <br><br> Click or wait
+                    </p>
+                </ons-modal>
+
+                <ons-popover id="popover-dialog" cancelable direction="down" cover-target target="#info-button">
+                    <ons-list id="popover-list">
+                        <ons-list-item class="more-options" tappable onclick="fn.hideDialog('popover-dialog')">
+                            <div class="center">Call history</div>
+                        </ons-list-item>
+                        <ons-list-item class="more-options" tappable onclick="fn.hideDialog('popover-dialog')">
+                            <div class="center">Import/export</div>
+                        </ons-list-item>
+                        <ons-list-item class="more-options" tappable onclick="fn.hideDialog('popover-dialog')">
+                            <div class="center">New contact</div>
+                        </ons-list-item>
+                        <ons-list-item class="more-options" tappable onclick="fn.hideDialog('popover-dialog')">
+                            <div class="center">Settings</div>
+                        </ons-list-item>
+                    </ons-list>
+                </ons-popover>
+
+                <ons-action-sheet id="action-sheet-dialog" cancelable>
+                    <ons-action-sheet-button onclick="fn.hideDialog('action-sheet-dialog')" icon="md-square-o">Action
+                        1</ons-action-sheet-button>
+                    <ons-action-sheet-button onclick="fn.hideDialog('action-sheet-dialog')" icon="md-square-o">Action
+                        2</ons-action-sheet-button>
+                    <ons-action-sheet-button onclick="fn.hideDialog('action-sheet-dialog')" modifier="destructive"
+                        icon="md-square-o">Action 3</ons-action-sheet-button>
+                    <ons-action-sheet-button onclick="fn.hideDialog('action-sheet-dialog')"
+                        icon="md-square-o">Cancel</ons-action-sheet-button>
+                </ons-action-sheet>
+
+                <script>
+                    ons.getScriptPage().onInit = function () {
+                        this.querySelector('ons-toolbar div.center').textContent = this.data.title;
+                        var toolbarButton = ons.platform.isAndroid() ? ons.createElement(`<ons-icon icon="md-more-vert"></ons-icon>`) : ons.createElement(`<span>More</span>`);
+                        var infoButton = document.getElementById('info-button');
+                        infoButton.appendChild(toolbarButton);
+                        var toastDialog = document.getElementById('toast-dialog');
+                        toastDialog.parentNode.removeChild(toastDialog);
+                        document.getElementById('dialogs-page').appendChild(toastDialog);
+                        var timeoutID = 0;
+                        window.fn.showDialog = function (id) {
+                            var elem = document.getElementById(id);
+                            if (id === 'popover-dialog') {
+                                elem.show(infoButton);
+                            } else {
+                                elem.show();
+                                if (id === 'modal-dialog') {
+                                    clearTimeout(timeoutID);
+                                    timeoutID = setTimeout(function () { fn.hideDialog(id) }, 2000);
+                                }
+                            }
+                        };
+                        window.fn.hideDialog = function (id) {
+                            document.getElementById(id).hide();
+                        };
+                        const moreOptions = document.querySelectorAll('.more-options');
+                        if (!ons.platform.isAndroid()) {
+                            document.getElementById('watHmmSure-dialog').setAttribute('modifier', 'rowfooter');
+                            for (option of moreOptions) {
+                                option.hasAttribute('modifier') ?
+                                    option.setAttribute('modifier', option.getAttribute('modifier') + ' longdivider') :
+                                    option.setAttribute('modifier', 'longdivider');
+                            }
+                        } else {
+                            for (option of moreOptions) {
+                                option.hasAttribute('modifier') ?
+                                    option.setAttribute('modifier', option.getAttribute('modifier') + ' nodivider') :
+                                    option.setAttribute('modifier', 'nodivider');
+                            }
+                        }
+                    };
+                    document.getElementById('appNavigator').topPage.onDestroy = function () {
+                        var toastDialog = document.getElementById('toast-dialog');
+                        toastDialog.parentNode.removeChild(toastDialog);
+                        document.querySelector('#dialogs-page .page__content').appendChild(toastDialog);
+                    }
+                </script>
+            </ons-page>
+        </template>
+
+        <template id="buttons.html">
+            <ons-page>
+                <ons-toolbar>
+                    <div class="left">
+                        <ons-back-button>Home</ons-back-button>
+                    </div>
+                    <div class="center"></div>
+                </ons-toolbar>
+
+                <section style="margin: 16px">
+                    <ons-button class="button-margin">Normal</ons-button>
+                    <ons-button modifier="quiet" class="button-margin">Quiet</ons-button>
+                    <ons-button modifier="outline" class="button-margin">Outline</ons-button>
+                    <ons-button modifier="cta" class="button-margin">Call to action</ons-button>
+                    <ons-button modifier="light" class="button-margin">Light</ons-button>
+                    <ons-button modifier="large" class="button-margin">Large</ons-button>
+                </section>
+
+                <section style="margin: 16px">
+                    <ons-button class="button-margin" disabled>Normal</ons-button>
+                    <ons-button modifier="quiet" class="button-margin" disabled>Quiet</ons-button>
+                    <ons-button modifier="outline" class="button-margin" disabled>Outline</ons-button>
+                    <ons-button modifier="cta" class="button-margin" disabled>Call to action</ons-button>
+                    <ons-button modifier="light" class="button-margin" disabled>Light</ons-button>
+                    <ons-button modifier="large" class="button-margin" disabled>Large</ons-button>
+                </section>
+
+                <ons-fab position="top right">
+                    <ons-icon icon="md-face"></ons-icon>
+                </ons-fab>
+
+                <ons-fab position="bottom left" disabled>
+                    <ons-icon icon="md-car"></ons-icon>
+                </ons-fab>
+
+                <ons-speed-dial position="bottom right" direction="up" :open.sync="spdOpen">
+                    <ons-fab>
+                        <ons-icon icon="md-share"></ons-icon>
+                    </ons-fab>
+                    <ons-speed-dial-item onclick="ons.notification.confirm(`Share on Twitter?`)">
+                        <ons-icon icon="md-twitter"></ons-icon>
+                    </ons-speed-dial-item>
+                    <ons-speed-dial-item onclick="ons.notification.confirm(`Share on Facebook?`)">
+                        <ons-icon icon="md-facebook"></ons-icon>
+                    </ons-speed-dial-item>
+                    <ons-speed-dial-item onclick="ons.notification.confirm(`Share on Google+`)">
+                        <ons-icon icon="md-google-plus"></ons-icon>
+                    </ons-speed-dial-item>
+                </ons-speed-dial>
+
+                <script>
+                    ons.getScriptPage().onInit = function () {
+                        this.querySelector('ons-toolbar div.center').textContent = this.data.title;
+                    }
+                </script>
+
+            </ons-page>
+        </template>
+
+        <template id="carousel.html">
+            <ons-page>
+                <ons-toolbar>
+                    <div class="left">
+                        <ons-back-button>Home</ons-back-button>
+                    </div>
+                    <div class="center"></div>
+                </ons-toolbar>
+
+                <ons-carousel id="carousel" fullscreen swipeable auto-scroll overscrollable initial-index="0">
+                    <ons-carousel-item class="carousel-item" style="background-color: gray">
+                        <div class="color-tag">Gray</div>
+                    </ons-carousel-item>
+                    <ons-carousel-item class="carousel-item" style="background-color: #085078">
+                        <div class="color-tag">Blue</div>
+                    </ons-carousel-item>
+                    <ons-carousel-item class="carousel-item" style="background-color: #373B44">
+                        <div class="color-tag">Dark</div>
+                    </ons-carousel-item>
+                    <ons-carousel-item class="carousel-item" style="background-color: #D38312">
+                        <div class="color-tag">Orange</div>
+                    </ons-carousel-item>
+                </ons-carousel>
+
+                <div class="dots">
+                    <span id="dot0" class="dot" onclick="fn.swipe(this)">
+                        &#9679;
+                    </span>
+                    <span id="dot1" class="dot" onclick="fn.swipe(this)">
+                        &#9675;
+                    </span>
+                    <span id="dot2" class="dot" onclick="fn.swipe(this)">
+                        &#9675;
+                    </span>
+                    <span id="dot3" class="dot" onclick="fn.swipe(this)">
+                        &#9675;
+                    </span>
+                </div>
+
+                <script>
+                    ons.getScriptPage().onInit = function () {
+                        this.querySelector('ons-toolbar div.center').textContent = this.data.title;
+                        const carousel = document.getElementById('carousel');
+                        carousel.addEventListener('postchange', function () {
+                            var index = carousel.getActiveIndex();
+                            const dots = document.querySelectorAll('.dot');
+                            for (dot of dots) {
+                                dot.innerHTML = dot.id === 'dot' + index ? '&#9679;' : '&#9675;';
+                            }
+                        });
+                        window.fn.swipe = function (target) {
+                            carousel.setActiveIndex(Number(target.id.slice(-1)));
+                        }
+                    }
+                </script>
+
+
+            </ons-page>
+        </template>
+
+        <template id="loadMore.html">
+            <!-- Load more items on scroll bottom -->
+            <ons-page id="load-more-page" on-infinite-scroll="fn.loadMore">
+                <p class="intro">
+                    Useful for loading more items when the scroll reaches the bottom of the page, typically after an
+                    asynchronous API call.<br><br>
+                </p>
+
+                <ons-list id="list-node"></ons-list>
+
+                <div class="after-list">
+                    <ons-icon icon="fa-spinner" size="26px" spin></ons-icon>
+                </div>
+
+                <script>
+                    ons.getScriptPage().onInit = function () {
+                        var listNode = document.getElementById('list-node');
+                        var createListItem = function (i) {
+                            return ons.createElement(`<ons-list-item>Item #${i}</ons-list-item>`);
+                        }
+                        for (var i = 0; i < 30; i++) {
+                            listNode.appendChild(createListItem(i));
+                        }
+                        window.fn.loadMore = function (done) {
+                            setTimeout(function () {
+                                const listLength = listNode.children.length;
+                                for (var i = 0; i < 10; i++) {
+                                    listNode.appendChild(createListItem(listLength + i));
+                                }
+                                done();
+                            }, 600)
+                        }
+                    }
+                </script>
+
+            </ons-page>
+        </template>
+
+        <template id="lazyRepeat.html">
+            <!-- Lazy load thousands of items -->
+            <ons-page id="lazy-repeat-page">
+                <p class="intro">
+                    Automatically unloads items that are not visible and loads new ones. Useful when the list contains
+                    thousands of items.<br><br>
+                </p>
+
+                <ons-list>
+                    <ons-lazy-repeat id="infinite-list"></ons-lazy-repeat>
+                </ons-list>
+
+                <script>
+                    ons.getScriptPage().onInit = function () {
+                        var infiniteList = document.getElementById('infinite-list');
+
+                        infiniteList.delegate = {
+                            createItemContent: function (i) {
+                                return ons.createElement(`<ons-list-item>Item #${i}</ons-list-item>`);
+                            },
+                            countItems: function () {
+                                return 3000;
+                            }
+                        };
+
+                        infiniteList.refresh();
+                    }
+                </script>
+
+
+            </ons-page>
+        </template>
+
+        <template id="infiniteScroll.html">
+            <ons-page>
+                <ons-toolbar>
+                    <div class="left">
+                        <ons-back-button>Home</ons-back-button>
+                    </div>
+                    <div class="center"></div>
+                </ons-toolbar>
+
+                <ons-tabbar position="auto">
+                    <ons-tab label="Load More" page="loadMore.html"></ons-tab>
+                    <ons-tab label="Lazy Repeat" page="lazyRepeat.html" active></ons-tab>
+                </ons-tabbar>
+
+                <script>
+                    ons.getScriptPage().onInit = function () {
+                        this.querySelector('ons-toolbar div.center').textContent = this.data.title;
+                    }
+                </script>
+            </ons-page>
+        </template>
+
+        <template id="progress.html">
+            <ons-page>
+                <ons-toolbar>
+                    <div class="left">
+                        <ons-back-button>Home</ons-back-button>
+                    </div>
+                    <div class="center"></div>
+                </ons-toolbar>
+
+                <ons-progress-bar id="progress-value" class="progressStyle" value="0"></ons-progress-bar>
+
+                <section style="margin: 40px 16px">
+                    <p id="progress-status">
+                        Progress: 0%
+                    </p>
+
+                    <p>
+                        <ons-progress-bar class="progressStyle" value="20"></ons-progress-bar>
+                    </p>
+
+                    <p>
+                        <ons-progress-bar class="progressStyle" value="40" secondary-value="80"></ons-progress-bar>
+                    </p>
+
+                    <p>
+                        <ons-progress-bar class="progressStyle" indeterminate></ons-progress-bar>
+                    </p>
+
+                    <div style="text-align: center; margin: 40px; color: #666">
+                        <p>
+                            <ons-progress-circular class="progressStyle" value="20"></ons-progress-circular>
+                            <ons-progress-circular class="progressStyle" value="40"
+                                secondary-value="80"></ons-progress-circular>
+                            <ons-progress-circular class="progressStyle" indeterminate></ons-progress-circular>
+                        </p>
+
+                        <p>
+                            <ons-icon icon="ion-ios-cog" spin size="30px"></ons-icon>
+                            <ons-icon icon="ion-ios-cog" spin size="30px"></ons-icon>
+                            <ons-icon icon="ion-ios-cog" spin size="30px"></ons-icon>
+                            <ons-icon icon="ion-ios-cog" spin size="30px"></ons-icon>
+                        </p>
+
+                        <p>
+                            <ons-icon icon="fa-spinner" spin size="26px"></ons-icon>
+                            <ons-icon icon="circle-o-notch" spin size="26px"></ons-icon>
+                        </p>
+
+                        <p>
+                            <ons-icon icon="md-spinner" spin size="30px"></ons-icon>
+                        </p>
+                    </div>
+
+                    <p>
+                        <ons-button modifier="large">
+                            <ons-icon icon="ion-ios-cog" spin size="26px"></ons-icon>
+                        </ons-button>
+                        <br><br>
+                        <ons-button modifier="large" disabled>
+                            <ons-icon icon="ion-ios-cog" spin size="26px"></ons-icon>
+                        </ons-button>
+                    </p>
+                </section>
+
+                <script>
+                    ons.getScriptPage().onInit = function () {
+                        this.querySelector('ons-toolbar div.center').textContent = this.data.title;
+                        if (!ons.platform.isAndroid()) {
+                            const progressStyle = document.querySelectorAll('.progressStyle');
+                            for (progress of progressStyle) {
+                                progress.hasAttribute('modifier') ?
+                                    progress.setAttribute('modifier', progress.getAttribute('modifier') + ' ios') :
+                                    progress.setAttribute('modifier', 'ios');
+                            }
+                        }
+                        var progressStatus = document.getElementById('progress-status');
+                        var progressValue = document.getElementById('progress-value');
+                        var intervalID = 0;
+                        intervalID = setInterval(function () {
+                            if (progressValue.value === 100) {
+                                clearInterval(intervalID);
+                                return;
+                            }
+                            progressValue.value++;
+                            progressStatus.innerHTML = `Progress: ${progressValue.value}%`;
+                        }, 40);
+                    }
+                </script>
+
+            </ons-page>
+        </template>
+
+        <template id="transition.html">
+            <ons-page>
+                <ons-toolbar>
+                    <div class="left">
+                        <ons-back-button>Animations</ons-back-button>
+                    </div>
+                    <div class="center"></div>
+                </ons-toolbar>
+                <p style="text-align: center">
+                    Use the VOnsBackButton
+                </p>
+                <script>
+                    ons.getScriptPage().onInit = function () {
+                        this.querySelector('ons-toolbar div.center').textContent = this.data.title;
+                    }
+                </script>
+            </ons-page>
+        </template>
+
+
 
 
     </div>
