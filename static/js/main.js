@@ -76,10 +76,11 @@ $(document).ready(function () {
     if (!token) {
         console.log("No token found. Showing login form.");
         $(".authenticating").hide();
+        $("#login-backdrop").show();
         $("#login-container").show();
-        $(".login-form").show();
+        $("#login-form").show();
     } else {
-        $(".backdrop").show();
+        $("#login-backdrop").show();
         $(".authenticating").show();
         verifyUser(token);
     }
@@ -89,18 +90,17 @@ $(document).ready(function () {
     // Attach event to Receive All button
     $("#receive-all").on("click", receiveAllBagItems);
 
-    document.getElementById("logout-btn").addEventListener("click", function () {
+    $(document).on("click", "#logout-btn", function () {
+        console.log("Logging out...");
+        showLogin();
         deleteCookie("access");
         deleteCookie("refresh");
         console.log("No token found. Showing login form.");
-        $(".authenticating").hide();
-        $("#login-container").show();
-        $(".login-form").show();
-        // window.location.reload();
+
     }
     );
 
-    document.getElementById("filter_apply").addEventListener("click", function () {
+    $(document).on("click", "#filter_apply", function () {
         // Get values from input fields
         let createdAtFrom = document.getElementById("created_at_from").value;
         let createdAtTo = document.getElementById("created_at_to").value;
@@ -144,7 +144,8 @@ $(document).ready(function () {
         console.log("Fetching bag details for:", bagId);
         let token = getCookie("access");
         console.log("Access token:", token);
-        openBagItemsModal(bagId, token);
+        queryParams.bag_id = bagId;
+        openBagItemsModal(token, queryParams);
     });
 
     // Attach event to article row click
@@ -230,7 +231,7 @@ $(document).ready(function () {
             data: JSON.stringify(requestData),
             success: function (response) {
                 if (response.status === "success") {
-                    $(".backdrop").hide();
+                    hideLogin();
                     console.log("Login successful:", response);
                     if (response && response["username"]) {
                         $("#login-username").text(response["username"]);
@@ -409,18 +410,31 @@ function verifyUser(token) {
             showApp(token, queryParams);
         },
         error: function () {
-            deleteCookie("access");
-            deleteCookie("refresh");
             $(".authenticating").hide();
             $("#logout-btn").hide();
             showLogin();
+            deleteCookie("access");
+            deleteCookie("refresh");
+
         }
     });
 }
 
 function showLogin() {
+    // $("#app-container").hide();
+    $(".authenticating").hide();
+    $("#login-backdrop").show();
     $("#login-container").show();
-    $("#app-container").hide();
+    $("#login-form").show();
+
+}
+
+function hideLogin() {
+    $(".authenticating").hide();
+    $("#login-backdrop").hide();
+    $("#login-container").hide();
+    $("#login-form").hide();
+
 }
 
 function showApp(token) {
@@ -520,10 +534,11 @@ function updateBagTable(data) {
 
 
 // Function to open modal and fetch bag items
-function openBagItemsModal(bagId, token) {
+function openBagItemsModal(token, queryParams) {
+    console.log("queryParams openBagItemsModal", queryParams);
     $("#bag-items-backdrop").show();
     $("#bag-items-table tbody").html('<tr><td colspan="3">Loading...</td></tr>'); // Show loading
-    fetchBagItems(bagId, token);
+    fetchBagItems(token, queryParams);
 }
 
 
@@ -552,33 +567,35 @@ function constructBagItemQueryString(bagItemQueryParams) {
 
     return url;
 }
+function getBagIdFromUrl(url) {
+    const urlObj = new URL(url);
+    return urlObj.searchParams.get("bag_id");
+}
 // Function to fetch bag items
-function fetchBagItems(bagId, token) {
-    bagItemQueryParams.bag_id = bagId;
-    let queryParams = bagItemQueryParams; // bagId: bagId 
-    queryParams.bag_id = bagId;
-    console.log("Query params:", queryParams);
-    let url = constructBagItemQueryString(queryParams);
+function fetchBagItems(token, bagItemQueryParams) {
+
+    let url = constructBagItemQueryString(bagItemQueryParams);
     console.log("Fetching from URL:", url);
 
     // Check cache to avoid unnecessary API calls
     if (bag_items_cache[url]) {
         console.log("Using cached data:", bag_items_cache[url]);
-        updateBagItemsTable(bag_items_cache[url].results, bagId);
-        updatePagination("scanned-bag-items-table", "scanned-bag-items-pagination", bag_items_cache[url].page, bag_items_cache[url].total, bag_items_cache[url].per_page, fetchBagItems);
+        let _bagid = getBagIdFromUrl(bag_items_cache[url])
+        updateBagItemsTable(bag_items_cache[url].results, _bagid);
+        updatePagination("bag-items-table", "bag-items-pagination", bag_items_cache[url].page, bag_items_cache[url].total, bag_items_cache[url].per_page, fetchBagItems);
         return;
     }
 
     // let url = `http://localhost:8002/v1/dms-legacy-core-logs/get-bag-items/?bag_id=${bagId}&page=1&per_page=15`;
-
+    let _bagid = getBagIdFromUrl(url)
     $.ajax({
         url: url,
         type: "GET",
         headers: { "Authorization": `Bearer ${token}` },
         success: function (response) {
             console.log("Bag items fetched:", response);
-            updateBagItemsTable(response.results, bagId);
-            updatePagination("scanned-bag-items-table", "scanned-bag-items-pagination", response.page, response.total, response.per_page, fetchBagItems);
+            updateBagItemsTable(response.results, _bagid);
+            updatePagination("bag-items-table", "bag-items-pagination", response.page, response.total, response.per_page, fetchBagItems);
         },
         error: function (e) {
             console.error("Error fetching bag items", e);
@@ -621,7 +638,7 @@ function fetchScannedBagItems(token, bagItemQueryParams) {
 
 // Function to update modal table
 function updateBagItemsTable(data, bagId) {
-    $(".bag-item-title").text(`Articles in ${bagId}`);
+    $(".bag-item-title-value").text(`${bagId}`);
     let tbody = $("#bag-items-table tbody");
     tbody.empty();
 
@@ -645,6 +662,7 @@ function updateBagItemsTable(data, bagId) {
                 <td>${item.Item_Bag_ID}</td>
                 <td>${_status}</td>
                 <td>${item.Booked_Create_Date}</td>
+                <td>${item.Exe_Date}</td>
             </tr>
         `);
     });
@@ -688,6 +706,7 @@ function updateScanBagItemsTable(data) {
                 <td>${item.Item_Bag_ID}</td>
                 <td>${_status}</td>
                 <td>${item.Booked_Create_Date}</td>
+                <td>${item.Exe_Date}</td>
             </tr>
         `);
     });
@@ -1015,11 +1034,11 @@ function updatePagination(tableId, paginationContainerId, currentPage, totalReco
             paginationHtml += `<button class="pos-pagination-btn ${i == currentPage ? 'page-active' : ''}" data-page="${i}">${i}</button>`;
         }
     } else {
-        for (let i = 1; i <= 4; i++) {
+        for (let i = 1; i <= 3; i++) {
             paginationHtml += `<button class="pos-pagination-btn ${i == currentPage ? 'page-active' : ''}" data-page="${i}">${i}</button>`;
         }
 
-        if (currentPage > 4 && currentPage < totalPages - 2) {
+        if (currentPage > 3 && currentPage < totalPages - 2) {
             paginationHtml += `<span class="pos-pagination-dots">...</span>`;
             paginationHtml += `<button class="pos-pagination-btn page-active" data-page="${currentPage}">${currentPage}</button>`;
         } else {
@@ -1040,10 +1059,12 @@ function updatePagination(tableId, paginationContainerId, currentPage, totalReco
     $(document).on("click", `#${paginationContainerId} .pos-pagination-btn`, function () {
         let token = getCookie("access");
         console.log("Access token:", token);
-
+        console.log("queryParams:", queryParams);
         let newPage = parseInt($(this).attr("data-page"));
         if (tableId == "scanned-bag-items-table") {
             bagItemQueryParams.page = newPage;
+            let _bag_id = $("#bag-detail-id").text();
+            bagItemQueryParams.bag_id = _bag_id;
             fetchFunction(token, bagItemQueryParams);
         } else {
             queryParams.page = newPage

@@ -11,7 +11,7 @@
 <body>
 
     <!-- Main Content -->
-    <div id="app-container">
+    <div id="app-container" class="app-container">
         <header class="header">
             <div class="logo-container">
                 <img src="/static/images/logo-post-dark.png" alt="Logo" width="40">
@@ -22,19 +22,23 @@
                 <div class="avatar" id="avatar-container">
                     <img src="/static/images/avatar.png" alt="User">
                 </div>
-                <div class="pos-btn-container" style="width: 100px;" id="logout-btn-container">
+                <div class="pos-btn-container" id="logout-btn-container">
                     <button class="pos-btn" id="logout-btn">Logout</button>
                 </div>
             </div>
         </header>
         <!-- Login Form -->
-        <div class="backdrop">
+        <div class="backdrop" id="login-backdrop" style="display: none;">
             <div class="loader">
 
                 <div id="login-container" class="login-container">
                     <p class="authenticating">Authenticating user ...</p>
-                    <div class="login-form">
-                        <h2>Login</h2>
+                    <div class="login-form" id="login-form">
+                        <div class="login-form-image">
+                            <img src="/static/images/logo-red.png" alt="Logo" width="100">
+                        </div>
+                        <p class="login-form-title">পোস্টমাষ্টার</p>
+                        <p class="login-form-title">লগইন</p>
 
                         <div class="form-group">
                             <!-- <label for="password-input">Password:</label> -->
@@ -69,21 +73,20 @@
             </div>
         </div>
 
-        <div style="padding: 12px;display: flex;flex-direction: column;">
+        <div class="main-content">
             <!-- New Date Time Range Picker -->
             <div class="form-group">
                 <!-- <label for="date-time-range">Date & Time Range Picker:</label> -->
                 <div class="pos-date-time-range">
                     <input type="datetime-local" id="created_at_from" class="pos-datetime-input" name="created_at_from">
-                    <span>to</span>
+                    <!-- <span>to</span> -->
                     <input type="datetime-local" id="created_at_to" class="pos-datetime-input" name="created_at_to">
                 </div>
             </div>
 
-            <div class="form-group pos-search-container"
-                style="display: flex;flex-direction: row;justify-content: space-between;align-items: center;">
+            <div class="form-group pos-search-container">
                 <!-- <label for="search-input">Search:</label> -->
-                <div class="pos-search-box" style="width: 43%; margin-right: 3px;">
+                <div class="pos-search-box">
                     <input type="text" id="bag_id" class="pos-search-input" placeholder="Bag ID..." name="bag_id">
                     <!-- <button class="pos-search-btn">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -93,7 +96,7 @@
                         </svg>
                     </button> -->
                 </div>
-                <div class="pos-select-wrapper" style="width: 43%; margin-right: 6px;">
+                <div class="pos-select-wrapper">
                     <select id="bag_status" class="pos-select" name="bag_status">
                         <option value="all">All Status</option>
                         <option value="Created">Created</option>
@@ -102,19 +105,19 @@
                         <option value="Open">Open</option>
                     </select>
                 </div>
-                <div>
-                    <div class="pos-btn-container" style="width: 100px;">
+                <div class="pos-apply-filter">
+                    <div class="pos-btn-container">
                         <button class="pos-btn" id="filter_apply"
                             style="background-color: #0070f3; color: aliceblue;">Apply</button>
                     </div>
                 </div>
 
             </div>
-            <div style="display: flex;flex-direction: row;justify-content: space-between;align-items: center;">
+            <div class="controls-container">
                 <div>
                     <p id="bagTable_total">Total Bags : </p>
                 </div>
-                <div class="pos-btn-container" style="width: 100px;">
+                <div class="pos-btn-container">
                     <button class="pos-btn" id="receive_bag"
                         style="background-color: #0070f3; color: aliceblue;">Receive</button>
                 </div>
@@ -165,8 +168,6 @@
                 <button class="pos-pagination-btn page-active">1</button>
                 <button class="pos-pagination-btn">2</button>
                 <button class="pos-pagination-btn">3</button>
-                <button class="pos-pagination-btn">4</button>
-                <button class="pos-pagination-btn">5</button>
                 <span class="pos-pagination-dots">...</span>
                 <button class="pos-pagination-btn">10</button>
 
@@ -270,6 +271,7 @@
                                 <th>Article ID</th>
                                 <th>Status</th>
                                 <th>Booked Date</th>
+                                <th>Exe Date</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -310,8 +312,12 @@
                 </div>
 
 
+                <div class="pos-btn-container">
+                    <button onclick="closeAddBagModal()" class="pos-btn"
+                        style="background-color: #0070f3; color: aliceblue;margin: 10px 8px;">Close</button>
+                </div>
         </div>
-        <button onclick="closeAddBagModal()">Close</button>
+
     </div>
     </div>
 
@@ -319,7 +325,11 @@
     <div id="bag-items-backdrop" class="backdrop" style="display: none;">
 
         <div class="bag-items-container">
-            <h2 class="bag-item-title">Articles</h2>
+            <p class="bag-item-title">Bag Details</p>
+            <div class="bag-item-title-container">
+                <p class="bag-item-title-text">Bag ID :</p>
+                <p class="bag-item-title-value" id="bag-detail-id"></p>
+            </div>
             <div>
                 <table id="bag-items-table" class="pm_table_style">
                     <thead>
@@ -327,6 +337,7 @@
                             <th>Article ID</th>
                             <th>Status</th>
                             <th>Booked Date</th>
+                            <th>Exe Date</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -337,45 +348,108 @@
                 </table>
             </div>
 
-            <button onclick="closeBagItemsModal()">Close</button>
+            <div class="pos-pagination" id="bag-items-pagination">
+                <!-- Left Arrow -->
+                <button class="pos-pagination-arrow pos-pagination-arrow-prev" aria-label="Previous Page"
+                    id="prevBagItemPage">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                    </svg>
+                </button>
+
+                <!-- Page Numbers -->
+                <button class="pos-pagination-btn page-active">1</button>
+                <button class="pos-pagination-btn">2</button>
+                <button class="pos-pagination-btn">3</button>
+                <span class="pos-pagination-dots">...</span>
+                <button class="pos-pagination-btn">10</button>
+
+                <!-- Right Arrow -->
+                <button class="pos-pagination-arrow pos-pagination-arrow-next" aria-label="Next Page"
+                    id="nextBagItemPage">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5 15.75 12l-7.5 7.5" />
+                    </svg>
+                </button>
+            </div>
+
+
+            <div class="pos-btn-container">
+
+                <button class="pos-btn" onclick="closeBagItemsModal()"
+                    style="background-color: #0070f3; color: aliceblue; margin: 8px;">Close</button>
+            </div>
+
         </div>
     </div>
 
     <!-- Article Details Modal -->
     <div id="article-details-backdrop" class="backdrop" style="display: none;">
         <div class="article-details-container">
-            <div style="display: flex; justify-content: space-between;">
-                <p class="article-details-title">Article Details</p>
-                <div class="pos-btn-container" style="width: 200px;">
+            <div class="article-details-container-header">
+                <p class="article-details-title-header">Article Details</p>
+                <div class="pos-btn-container">
                     <button class="pos-btn" onclick="closeArticleDetailsModal()"
                         style="background-color: #0070f3;color: white;">Window Delivery</button>
                 </div>
             </div>
 
             <div class="article-info">
-                <p><strong>Item ID:</strong> <span id="article-item-id"></span></p>
-                <p><strong>Item Type:</strong> <span id="article-item-type"></span></p>
-                <p><strong>VAS Type:</strong> <span id="article-vas-type"></span></p>
+                <div class="article-info-detail">
+                    <p>Item ID:</p> <span id="article-item-id"></span>
+                </div>
+                <div class="article-info-detail">
+                    <p>Item Type:</p> <span id="article-item-type"></span>
+                </div>
+                <div class="article-info-detail">
+                    <p>VAS Type:</p> <span id="article-vas-type"></span>
+                </div>
 
                 <div id="optional-fields" style="display: none;">
-                    <p><strong>Sender Name:</strong> <span id="article-sen-name"></span></p>
-                    <p><strong>Sender Address:</strong> <span id="article-sen-address"></span></p>
-                    <p><strong>Recipient Name:</strong> <span id="article-ben-name"></span></p>
-                    <p><strong>Recipient Address:</strong> <span id="article-ben-address"></span></p>
-                    <p><strong>Sender Contact:</strong> <span id="article-sen-contact"></span></p>
-                    <p><strong>Status:</strong> <span id="article-status"></span></p>
-                    <p><strong>Total Weight:</strong> <span id="article-total-weight"></span></p>
-                    <p><strong>Total Charge:</strong> <span id="article-total-charge"></span></p>
+                    <div class="optional-article-details">
+                        <p class="article-details-title">Sender Name:</p>
+                        <p class="article-details-value" id="article-sen-name" style="font-size: 14px;"></p>
+                    </div>
+                    <div class="optional-article-details">
+                        <p class="article-details-title">Sender Address:</p>
+                        <p class="article-details-value" id="article-sen-address" style="font-size: 14px;"></p>
+                    </div>
+                    <div class="optional-article-details">
+                        <p class="article-details-title">Recipient Name:</p>
+                        <p class="article-details-value" id="article-ben-name" style="font-size: 14px;"></p>
+                    </div>
+                    <div class="optional-article-details">
+                        <p class="article-details-title">Recipient Address:</p>
+                        <p class="article-details-value" id="article-ben-address" style="font-size: 14px;"></p>
+                    </div>
+                    <div class="optional-article-details">
+                        <p class="article-details-title">Sender Contact:</p>
+                        <p class="article-details-value" id="article-sen-contact"></p>
+                    </div>
+                    <div class="optional-article-details">
+                        <p class="article-details-title">Status:</p>
+                        <p class="article-details-value" id="article-status"></p>
+                    </div>
+                    <div class="optional-article-details">
+                        <p class="article-details-title">Total Weight:</p>
+                        <p class="article-details-value" id="article-total-weight"></p>
+                    </div>
+                    <div class="optional-article-details">
+                        <p class="article-details-title">Total Charge:</p>
+                        <p class="article-details-value" id="article-total-charge"></p>
+                    </div>
                 </div>
             </div>
-
-            <h3>Tracking History</h3>
+            <!-- 
+            <h3>Tracking History</h3> -->
             <div id="tracking-table-container">
                 <!-- Stepper items will be inserted here dynamically -->
             </div>
-            <div class="pos-btn-container" style="display: flex; justify-content: center;margin-top: 10px;">
+            <div class="pos-btn-container" style="display: flex; justify-content: center;">
                 <button class="pos-btn" onclick="closeArticleDetailsModal()"
-                    style="background-color: #009879;width: 200px;color: white;">Close</button>
+                    style="background-color: #009879;width: 200px;color: white;margin: 10px 8px;">Close</button>
             </div>
 
         </div>
