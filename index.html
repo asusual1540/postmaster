@@ -325,7 +325,14 @@
     <div id="bag-items-backdrop" class="backdrop" style="display: none;">
 
         <div class="bag-items-container">
-            <p class="bag-item-title">Bag Details</p>
+            <div class="bag-items-container-header">
+                <p class="bag-item-title">Bag Details</p>
+                <div class="pos-btn-container">
+
+                    <button class="pos-btn" onclick="closeBagItemsModal()"
+                        style="background-color: #0070f3; color: aliceblue; margin: 8px;">Close</button>
+                </div>
+            </div>
             <div class="bag-item-title-container">
                 <p class="bag-item-title-text">Bag ID :</p>
                 <p class="bag-item-title-value" id="bag-detail-id"></p>
