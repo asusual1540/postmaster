@@ -121,7 +121,7 @@ p {
 
 @media (min-width: 300px) {
     #phone:focus {
-        scroll-margin-top: 20px;
+        scroll-margin-top: 60px;
         position: relative;
         z-index: 10;
     }
@@ -159,7 +159,7 @@ p {
 
 @media (min-width: 400px) {
     #phone:focus {
-        scroll-margin-top: 20px;
+        scroll-margin-top: 60px;
         position: relative;
         z-index: 10;
     }

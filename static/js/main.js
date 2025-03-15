@@ -110,7 +110,7 @@ $(document).ready(function () {
     $(document).on("focus", "#phone", function () {
         var $input = $(this);
         setTimeout(function () {
-            window.scrollTo(0, $input.offset().top - 100);
+            window.scrollTo(0, $input.offset().top - 300);
         }, 300);
     });
 
@@ -453,7 +453,7 @@ function hideLogin() {
 
 function showApp(token) {
     $("#login-container").hide();
-    $("#app-container").show();
+    // $("#app-container").show();
     // $("#bagTable").hide();
 
 
