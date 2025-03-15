@@ -430,6 +430,15 @@ function verifyUser(token) {
         }
     });
 }
+function restoreHeaderStyles() {
+    $("#header").css({
+        "display": "flex",
+        "justify-content": "space-between",
+        "align-items": "center",
+        "background": "#006A4E", // Ensure color remains
+        "color": "white"
+    });
+}
 
 function showLogin() {
     $(".authenticating").hide();
@@ -485,6 +494,7 @@ function fetchBags(token, queryParams) {
         // console.log("Using cached data:", cache[url]);
         updateBagTable(cache[url].results);
         updatePagination("bagTable", "bag-pagination", cache[url].page, cache[url].total, cache[url].per_page, fetchBags);
+        restoreHeaderStyles();
         return;
     }
 
@@ -503,7 +513,7 @@ function fetchBags(token, queryParams) {
             updateBagTable(response.results);
             // updateBagPagination(response.page, response.total, response.per_page);
             updatePagination("bagTable", "bag-pagination", response.page, response.total, response.per_page, fetchBags);
-
+            restoreHeaderStyles();
         },
         error: function (e) {
             console.log("Error fetching data", e.responseJSON);
