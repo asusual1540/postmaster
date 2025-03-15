@@ -383,12 +383,12 @@ ons.ready(function () {
                     setCookie("access", response.access, 1);
                     setCookie("refresh", response.refresh, 1);
 
-                    // fn.pushPage({ 'id': 'tabbar.html', 'title': 'পোস্টমাষ্টার' })
+                    fn.pushPage({ 'id': 'tabbar.html', 'title': 'পোস্টমাষ্টার' })
                     // document.cookie = `access=${response.access}; path=/; Secure`;
                     // document.cookie = `refresh=${response.refresh}; path=/; Secure`;
                     // fetchBags(response.access, queryParams);
                     // Redirect or show success message
-                    window.location.reload();
+                    // window.location.reload();
                 } else {
                     console.error("Login failed:", response);
                     errorMsg.text(response.message || 'Login failed. Please try again.');
