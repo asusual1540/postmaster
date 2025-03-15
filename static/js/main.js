@@ -97,8 +97,15 @@ $(document).ready(function () {
         deleteCookie("refresh");
         console.log("No token found. Showing login form.");
 
-    }
-    );
+    });
+
+    $(window).on('resize', function () {
+        if ($(window).height() < originalHeight) {
+            $(".login-container").css("margin-top", "-20vh");
+        } else {
+            $(".login-container").css("margin-top", "0");
+        }
+    });
 
     $(document).on("focus", "#phone", function () {
         var $input = $(this);

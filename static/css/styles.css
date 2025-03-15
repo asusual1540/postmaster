@@ -27,8 +27,6 @@ p {
     align-items: center;
     background: #006A4E;
     color: white;
-    padding: 5px 10px;
-    height: 45px;
 }
 
 .logo {
@@ -36,8 +34,12 @@ p {
     font-weight: bold;
 }
 
+#login-username {
+    margin-right: 10px;
+}
+
 .site-title {
-    padding: 0;
+    padding: 10px 0px 10px 10px;
     padding-left: 5px;
     font-size: 18px;
     font-weight: bold;
@@ -118,6 +120,11 @@ p {
 }
 
 @media (min-width: 300px) {
+    #phone:focus {
+        scroll-margin-top: 20px;
+        position: relative;
+        z-index: 10;
+    }
 
     .avatar {
         display: none;
@@ -151,6 +158,11 @@ p {
 }
 
 @media (min-width: 400px) {
+    #phone:focus {
+        scroll-margin-top: 20px;
+        position: relative;
+        z-index: 10;
+    }
 
     .pos-date-time-range {
         display: flex;
@@ -322,6 +334,12 @@ td {
     justify-content: center;
     align-items: center;
     padding: 10px 0px;
+}
+
+.user-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .scan-bag-container {
