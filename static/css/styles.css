@@ -322,6 +322,9 @@ td {
     align-items: center;
     background-color: #fff;
     padding-bottom: 10px;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .login-form {
