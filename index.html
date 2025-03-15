@@ -27,52 +27,6 @@
                 </div>
             </div>
         </header>
-        <!-- Login Form -->
-        <div class="backdrop" id="login-backdrop" style="display: none;">
-            <div class="loader">
-
-                <div id="login-container" class="login-container">
-                    <p class="authenticating">Authenticating user ...</p>
-                    <div class="login-form" id="login-form">
-                        <div class="login-form-image">
-                            <img src="/static/images/logo-red.png" alt="Logo" width="100">
-                        </div>
-                        <p class="login-form-title">পোস্টমাষ্টার</p>
-                        <p class="login-form-title">লগইন</p>
-
-                        <div class="form-group">
-                            <!-- <label for="password-input">Password:</label> -->
-                            <div class="pos-input-wrapper">
-                                <input type="text" id="phone" class="pos-input" placeholder="Enter username...">
-                            </div>
-                        </div>
-                        <!-- <input type="text" id="phone" placeholder="Phone Number"> -->
-                        <!-- <input type="password" id="password" placeholder="Password"> -->
-                        <div class="form-group">
-                            <!-- <label for="password-input">Password:</label> -->
-                            <div class="pos-input-wrapper">
-                                <input type="password" id="password" class="pos-input" placeholder="Enter password...">
-                                <button type="button" class="pos-password-toggle" onclick="togglePasswordVisibility()">
-                                    <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="eye-icon">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M2.458 12c1.732-4.598 5.978-7.5 9.542-7.5s7.81 2.902 9.542 7.5c-1.732 4.598-5.978 7.5-9.542 7.5s-7.81-2.902-9.542-7.5z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="pos-btn-container">
-                            <button class="pos-btn" id="login-btn"
-                                style="background-color: rgb(24, 201, 100); color: rgb(255, 255, 255);">Login</button>
-                        </div>
-                        <p id="login-error" style="color: red;"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="main-content">
             <!-- New Date Time Range Picker -->
             <div class="form-group">
@@ -180,7 +134,50 @@
                 </button>
             </div>
         </div>
+    </div>
 
+    <div class="backdrop" id="login-backdrop" style="display: none;">
+        <div class="loader">
+
+            <div id="login-container" class="login-container">
+                <p class="authenticating">Authenticating user ...</p>
+                <div class="login-form" id="login-form">
+                    <div class="login-form-image">
+                        <img src="/static/images/logo-red.png" alt="Logo" width="68px">
+                    </div>
+                    <p class="login-form-title">পোস্টমাষ্টার লগইন</p>
+
+                    <div class="form-group">
+                        <!-- <label for="password-input">Password:</label> -->
+                        <div class="pos-input-wrapper">
+                            <input type="text" id="phone" class="pos-input" placeholder="Enter username...">
+                        </div>
+                    </div>
+                    <!-- <input type="text" id="phone" placeholder="Phone Number"> -->
+                    <!-- <input type="password" id="password" placeholder="Password"> -->
+                    <div class="form-group">
+                        <!-- <label for="password-input">Password:</label> -->
+                        <div class="pos-input-wrapper">
+                            <input type="password" id="password" class="pos-input" placeholder="Enter password...">
+                            <button type="button" class="pos-password-toggle" onclick="togglePasswordVisibility()">
+                                <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="eye-icon">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M2.458 12c1.732-4.598 5.978-7.5 9.542-7.5s7.81 2.902 9.542 7.5c-1.732 4.598-5.978 7.5-9.542 7.5s-7.81-2.902-9.542-7.5z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="pos-btn-container">
+                        <button class="pos-btn" id="login-btn"
+                            style="background-color: rgb(24, 201, 100); color: rgb(255, 255, 255);">Login</button>
+                    </div>
+                    <p id="login-error" style="color: red;"></p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Add bag Modal -->

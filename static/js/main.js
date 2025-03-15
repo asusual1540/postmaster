@@ -82,6 +82,8 @@ $(document).ready(function () {
     } else {
         $("#login-backdrop").show();
         $(".authenticating").show();
+        // $("#login-container").hide();
+        $("#login-form").hide();
         verifyUser(token);
     }
 
@@ -413,19 +415,14 @@ function verifyUser(token) {
         contentType: "application/json",
         data: JSON.stringify({ access: token }),
         success: function (response) {
-            console.log("User verified:", response);
+            // console.log("User verified:", response);
             if (response["decoded_data"] && response["decoded_data"]["username"]) {
                 $("#login-username").text(response["decoded_data"]["username"]);
             }
-            $("#logout-btn").show();
-            $(".authenticating").text("Authenticated. Redirecting...");
-            $(".authenticating").hide();
-            $(".backdrop").hide();
+            hideLogin();
             showApp(token, queryParams);
         },
         error: function () {
-            $(".authenticating").hide();
-            $("#logout-btn").hide();
             showLogin();
             deleteCookie("access");
             deleteCookie("refresh");
@@ -435,7 +432,6 @@ function verifyUser(token) {
 }
 
 function showLogin() {
-    // $("#app-container").hide();
     $(".authenticating").hide();
     $("#login-backdrop").show();
     $("#login-container").show();
@@ -451,12 +447,7 @@ function hideLogin() {
 
 }
 
-function showApp(token) {
-    $("#login-container").hide();
-    // $("#app-container").show();
-    // $("#bagTable").hide();
-
-
+function showApp(token, queryParams) {
     fetchBags(token, queryParams);
 }
 
@@ -487,11 +478,11 @@ function constructQueryString() {
 
 function fetchBags(token, queryParams) {
     let url = constructQueryString(queryParams);
-    console.log("Fetching from URL:", url);
+    // console.log("Fetching from URL:", url);
 
     // Check cache to avoid unnecessary API calls
     if (cache[url]) {
-        console.log("Using cached data:", cache[url]);
+        // console.log("Using cached data:", cache[url]);
         updateBagTable(cache[url].results);
         updatePagination("bagTable", "bag-pagination", cache[url].page, cache[url].total, cache[url].per_page, fetchBags);
         return;
@@ -504,7 +495,7 @@ function fetchBags(token, queryParams) {
         headers: { "Authorization": `Bearer ${token}` },
         success: function (response) {
             $("#bagTable").show();
-            console.log("Data fetched successfully", response);
+            // console.log("Data fetched successfully", response);
 
             // Store response in cache
             cache[url] = response;
@@ -521,7 +512,7 @@ function fetchBags(token, queryParams) {
 }
 
 function updateBagTable(data) {
-    console.log("Updating bag table with data:", data);
+    // console.log("Updating bag table with data:", data);
     $("#bagTable tbody").empty();
     if (data.length === 0) {
         $("#bagTable tbody").append("<tr><td colspan='6'>No records found</td></tr>");
@@ -529,7 +520,7 @@ function updateBagTable(data) {
     }
 
     data.forEach(bag => {
-        console.log("Bag:", bag);
+        // console.log("Bag:", bag);
         $("#bagTable tbody").append(`
             <tr class="bag-row" bag_id="${bag.Bag_ID}">
                 <td>${bag.Bag_ID}</td>
@@ -549,7 +540,7 @@ function updateBagTable(data) {
 
 // Function to open modal and fetch bag items
 function openBagItemsModal(token, queryParams) {
-    console.log("queryParams openBagItemsModal", queryParams);
+    // console.log("queryParams openBagItemsModal", queryParams);
     $("#bag-items-backdrop").show();
     $("#bag-items-table tbody").html('<tr><td colspan="3">Loading...</td></tr>'); // Show loading
     fetchBagItems(token, queryParams);
@@ -589,11 +580,11 @@ function getBagIdFromUrl(url) {
 function fetchBagItems(token, bagItemQueryParams) {
 
     let url = constructBagItemQueryString(bagItemQueryParams);
-    console.log("Fetching from URL:", url);
+    // console.log("Fetching from URL:", url);
 
     // Check cache to avoid unnecessary API calls
     if (bag_items_cache[url]) {
-        console.log("Using cached data:", bag_items_cache[url]);
+        // console.log("Using cached data:", bag_items_cache[url]);
         let _bagid = getBagIdFromUrl(bag_items_cache[url])
         updateBagItemsTable(bag_items_cache[url].results, _bagid);
         updatePagination("bag-items-table", "bag-items-pagination", bag_items_cache[url].page, bag_items_cache[url].total, bag_items_cache[url].per_page, fetchBagItems);
@@ -607,7 +598,7 @@ function fetchBagItems(token, bagItemQueryParams) {
         type: "GET",
         headers: { "Authorization": `Bearer ${token}` },
         success: function (response) {
-            console.log("Bag items fetched:", response);
+            // console.log("Bag items fetched:", response);
             updateBagItemsTable(response.results, _bagid);
             updatePagination("bag-items-table", "bag-items-pagination", response.page, response.total, response.per_page, fetchBagItems);
         },
@@ -621,11 +612,11 @@ function fetchBagItems(token, bagItemQueryParams) {
 // Function to fetch bag items
 function fetchScannedBagItems(token, bagItemQueryParams) {
     let url = constructBagItemQueryString(bagItemQueryParams);
-    console.log("Fetching from scan URL:", url);
+    // console.log("Fetching from scan URL:", url);
 
     // Check cache to avoid unnecessary API calls
     if (bag_items_cache[url]) {
-        console.log("Using cached data:", bag_items_cache[url]);
+        // console.log("Using cached data:", bag_items_cache[url]);
         updateScanBagItemsTable(bag_items_cache[url].results);
         updatePagination("scanned-bag-items-table", "scanned-bag-items-pagination", bag_items_cache[url].page, bag_items_cache[url].total, bag_items_cache[url].per_page, fetchScannedBagItems);
         return;
@@ -638,7 +629,7 @@ function fetchScannedBagItems(token, bagItemQueryParams) {
         type: "GET",
         headers: { "Authorization": `Bearer ${token}` },
         success: function (response) {
-            console.log("Bag items fetched:", response);
+            // console.log("Bag items fetched:", response);
             updateScanBagItemsTable(response.results);
             updatePagination("scanned-bag-items-table", "scanned-bag-items-pagination", response.page, response.total, response.per_page, fetchScannedBagItems);
             $("#receive-all").prop("disabled", response.results.length === 0);
@@ -755,7 +746,7 @@ function openReceiveBagModal() {
 // Function to fetch article details
 function fetchArticleDetails(articleId) {
     let token = getCookie("access");
-    console.log("Access token:", token);
+    // console.log("Access token:", token);
     let url = `${API_GET_URL}/v1/dms-legacy-core-logs/get-bag-item-detail/?item_id=${articleId}`;
 
     $.ajax({
@@ -763,7 +754,7 @@ function fetchArticleDetails(articleId) {
         type: "GET",
         headers: { "Authorization": `Bearer ${token}` },
         success: function (response) {
-            console.log("Article details fetched:", response);
+            // console.log("Article details fetched:", response);
             updateArticleDetailsModal(response);
         },
         error: function (e) {
@@ -1019,9 +1010,9 @@ function updatePagination(tableId, paginationContainerId, currentPage, totalReco
         totalElement.innerText = `Total Records: ${totalRecords}`;
     }
 
-    console.log("Total pages:", totalPages);
-    console.log("Current page:", currentPage);
-    console.log("Total records:", totalRecords);
+    // console.log("Total pages:", totalPages);
+    // console.log("Current page:", currentPage);
+    // console.log("Total records:", totalRecords);
 
     // ✅ Safely get arrows or create them if missing
     let prevArrow = paginationContainer.find(".pos-pagination-arrow-prev").prop("outerHTML") ||
@@ -1072,8 +1063,8 @@ function updatePagination(tableId, paginationContainerId, currentPage, totalReco
     // Add click event listener for pagination
     $(document).on("click", `#${paginationContainerId} .pos-pagination-btn`, function () {
         let token = getCookie("access");
-        console.log("Access token:", token);
-        console.log("queryParams:", queryParams);
+        // console.log("Access token:", token);
+        // console.log("queryParams:", queryParams);
         let newPage = parseInt($(this).attr("data-page"));
         if (tableId == "scanned-bag-items-table") {
             bagItemQueryParams.page = newPage;
@@ -1095,7 +1086,7 @@ function updatePagination(tableId, paginationContainerId, currentPage, totalReco
     $(document).on("click", `#${paginationContainerId} .pos-pagination-arrow-prev`, function () {
         if (currentPage === 1) return;
         let token = getCookie("access");
-        console.log("Access token:", token);
+        // console.log("Access token:", token);
 
         if (tableId == "scanned-bag-items-table") {
             bagItemQueryParams.page = bagItemQueryParams.page - 1;
@@ -1113,7 +1104,7 @@ function updatePagination(tableId, paginationContainerId, currentPage, totalReco
     $(document).on("click", `#${paginationContainerId} .pos-pagination-arrow-next`, function () {
         if (currentPage === totalPages) return
         let token = getCookie("access");
-        console.log("Access token:", token);
+        // console.log("Access token:", token);
         if (tableId == "scanned-bag-items-table") {
             bagItemQueryParams.page = bagItemQueryParams.page + 1;
             fetchFunction(token, bagItemQueryParams);
@@ -1137,7 +1128,7 @@ function updatePagination(tableId, paginationContainerId, currentPage, totalReco
 // Function to fetch mail line options from API and populate the select dropdown
 function fetchMailLineOptions() {
     let token = getCookie("access");
-    console.log("Access token:", token);
+    // console.log("Access token:", token);
     $.ajax({
         url: `${API_GET_URL}/v1/dms-legacy-core-logs/get-line-list/`,
         method: "GET",

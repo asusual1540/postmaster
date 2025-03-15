@@ -16,7 +16,7 @@ p {
 .app-container {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    min-height: 100vh;
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -876,14 +876,6 @@ td {
     padding: 8px 12px;
     color: #777;
 } */
-
-
-
-
-
-
-
-
 
 
 
