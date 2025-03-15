@@ -160,8 +160,8 @@ $(document).ready(function () {
         console.log("Fetching bag details for:", bagId);
         let token = getCookie("access");
         console.log("Access token:", token);
-        queryParams.bag_id = bagId;
-        openBagItemsModal(token, queryParams);
+        bagItemQueryParams.bag_id = bagId;
+        openBagItemsModal(token, bagItemQueryParams);
     });
 
     // Attach event to article row click
@@ -596,7 +596,7 @@ function fetchBagItems(token, bagItemQueryParams) {
     if (bag_items_cache[url]) {
         // console.log("Using cached data:", bag_items_cache[url]);
         let _bagid = getBagIdFromUrl(bag_items_cache[url])
-        updateBagItemsTable(bag_items_cache[url].results, _bagid);
+        updateBagItemsTable(bag_items_cache[url], _bagid);
         updatePagination("bag-items-table", "bag-items-pagination", bag_items_cache[url].page, bag_items_cache[url].total, bag_items_cache[url].per_page, fetchBagItems);
         return;
     }
@@ -609,7 +609,7 @@ function fetchBagItems(token, bagItemQueryParams) {
         headers: { "Authorization": `Bearer ${token}` },
         success: function (response) {
             // console.log("Bag items fetched:", response);
-            updateBagItemsTable(response.results, _bagid);
+            updateBagItemsTable(response, _bagid);
             updatePagination("bag-items-table", "bag-items-pagination", response.page, response.total, response.per_page, fetchBagItems);
         },
         error: function (e) {
@@ -654,15 +654,16 @@ function fetchScannedBagItems(token, bagItemQueryParams) {
 // Function to update modal table
 function updateBagItemsTable(data, bagId) {
     $(".bag-item-title-value").text(`${bagId}`);
+    $(".bag-item-article-value").text(`${data.total}`);
     let tbody = $("#bag-items-table tbody");
     tbody.empty();
 
-    if (data.length === 0) {
+    if (data.results.length === 0) {
         tbody.append("<tr><td colspan='3'>No records found</td></tr>");
         return;
     }
 
-    data.forEach(item => {
+    data.results.forEach(item => {
         let _status = item.Delivery_Status;
         if (_status == "Del_To_Rec") {
             _status = "Delivered";
@@ -1081,7 +1082,13 @@ function updatePagination(tableId, paginationContainerId, currentPage, totalReco
             let _bag_id = $("#bag-detail-id").text();
             bagItemQueryParams.bag_id = _bag_id;
             fetchFunction(token, bagItemQueryParams);
-        } else {
+        } else if (tableId == "bag-items-table") {
+            bagItemQueryParams.page = newPage;
+            let _bag_id = $("#bag-detail-id").text();
+            bagItemQueryParams.bag_id = _bag_id;
+            fetchFunction(token, bagItemQueryParams);
+        }
+        else {
             queryParams.page = newPage
             fetchFunction(token, queryParams);
         }
