@@ -100,6 +100,13 @@ $(document).ready(function () {
     }
     );
 
+    $(document).on("focus", "#phone", function () {
+        var $input = $(this);
+        setTimeout(function () {
+            window.scrollTo(0, $input.offset().top - 100);
+        }, 300);
+    });
+
     $(document).on("click", "#filter_apply", function () {
         // Get values from input fields
         let createdAtFrom = document.getElementById("created_at_from").value;

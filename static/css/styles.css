@@ -28,6 +28,7 @@ p {
     background: #006A4E;
     color: white;
     padding: 5px 10px;
+    height: 45px;
 }
 
 .logo {
@@ -127,7 +128,7 @@ p {
     }
 
     .pm_table_style {
-        font-size: 10px !important;
+        font-size: 12px !important;
     }
 
     .pos-search-input {
@@ -140,7 +141,6 @@ p {
         display: flex;
         flex-direction: column !important;
         align-items: center;
-        gap: 10px;
     }
 
 
@@ -156,9 +156,11 @@ p {
         display: flex;
         flex-direction: column !important;
         align-items: center;
-        gap: 10px;
     }
 
+    .pm_table_style {
+        font-size: 14px !important;
+    }
 
     #filters input,
     #filters select {
@@ -172,6 +174,10 @@ p {
     #filters select {
         width: 48%;
     }
+
+    .pm_table_style {
+        font-size: 14px !important;
+    }
 }
 
 @media (min-width: 600px) {
@@ -179,6 +185,10 @@ p {
     #filters input,
     #filters select {
         width: 48%;
+    }
+
+    .pm_table_style {
+        font-size: 16px !important;
     }
 }
 
@@ -188,6 +198,10 @@ p {
     #filters select {
         width: 48%;
     }
+
+    .pm_table_style {
+        font-size: 16px !important;
+    }
 }
 
 @media (min-width: 900px) {
@@ -195,6 +209,10 @@ p {
     #filters input,
     #filters select {
         width: 32%;
+    }
+
+    .pm_table_style {
+        font-size: 16px !important;
     }
 }
 
@@ -218,7 +236,7 @@ p {
 
 .pm_table_style th,
 .pm_table_style td {
-    padding: 8px 12px;
+    padding: 8px 4px;
 }
 
 .pm_table_style tbody tr {
@@ -341,6 +359,7 @@ td {
     overflow-y: auto;
     overflow-x: hidden;
     /* text-align: center; */
+    max-height: 100vh;
 }
 
 /* Article Details Modal */
@@ -482,6 +501,7 @@ td {
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
     background: white;
+    margin-bottom: 10px;
 }
 
 .pos-date-input:focus,
@@ -493,7 +513,6 @@ td {
 .pos-date-time-range {
     display: flex;
     align-items: center;
-    gap: 10px;
 }
 
 .avatar {
@@ -569,15 +588,13 @@ td {
 .pos-search-container {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-
 }
 
 .pos-search-box {
     position: relative;
     display: flex;
     align-items: center;
-    gap: 5px;
+    margin-bottom: 10px;
 }
 
 .pos-search-input {
@@ -626,6 +643,7 @@ td {
     position: relative;
     display: inline-block;
     /* width: 100%; */
+    margin-bottom: 10px;
 }
 
 /* Hide Default Select Arrow */
