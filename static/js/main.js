@@ -301,7 +301,7 @@ $(document).ready(function () {
     }
 
     // Attach click event for row selection
-    $(document).on("click", ".bag-article-row", function () {
+    $(document).on("click", ".scan-bag-article-row", function () {
         let articleId = $(this).attr("article_id");
         toggleArticleSelection(articleId, $(this));
     });
@@ -315,7 +315,7 @@ $(document).ready(function () {
 
     // Select All Button
     $("#select-all-articles").on("click", function () {
-        $(".bag-article-row").each(function () {
+        $(".scan-bag-article-row").each(function () {
             let articleId = $(this).attr("article_id");
             if (!selectedArticles.has(articleId)) {
                 selectedArticles.add(articleId);
@@ -329,7 +329,7 @@ $(document).ready(function () {
     // Deselect All Button
     $("#deselect-all-articles").on("click", function () {
         selectedArticles.clear();
-        $(".bag-article-row").removeClass("selected-row");
+        $(".scan-bag-article-row").removeClass("selected-row");
         $(".article-checkbox").prop("checked", false);
         updateButtonsState();
     });
@@ -359,7 +359,7 @@ $(document).ready(function () {
         }
         console.log("Deleting articles:", Array.from(selectedArticles));
         selectedArticles.forEach(articleId => {
-            $(`.bag-article-row[article_id="${articleId}"]`).remove();
+            $(`.scan-bag-article-row[article_id="${articleId}"]`).remove();
         });
         selectedArticles.clear();
         updateButtonsState();
@@ -370,7 +370,7 @@ $(document).ready(function () {
         let searchQuery = $("#scan-article-input").val().trim();
         if (!searchQuery) return;
 
-        let matchingRow = $(`.bag-article-row[article_id="${searchQuery}"]`);
+        let matchingRow = $(`.scan-bag-article-row[article_id="${searchQuery}"]`);
         if (matchingRow.length) {
             toggleArticleSelection(searchQuery, matchingRow);
         } else {
@@ -706,7 +706,7 @@ function updateScanBagItemsTable(data) {
             _status = "Received";
         }
         tbody.append(`
-            <tr class="bag-article-row" article_id="${item.Item_Bag_ID}">
+            <tr class="scan-bag-article-row" article_id="${item.Item_Bag_ID}">
                 <td>${index + 1}</td>
                 <td>${item.Item_Bag_ID}</td>
                 <td>${_status}</td>

@@ -185,17 +185,22 @@
 
         <div class="scan-bag-container">
             <!-- <h2 class="add-bag-title">Scan Bag</h2> -->
+            <div class="bag-items-container-header">
+                <p class="bag-item-title">Scan Bag</p>
+                <div class="pos-btn-container">
 
+                    <div class="pos-btn-container">
+                        <button onclick="closeAddBagModal()" class="pos-btn"
+                            style="background-color: #0070f3; color: aliceblue;margin: 10px 8px;">Close</button>
+                    </div>
+                </div>
+            </div>
             <div class="form-group pos-search-container">
                 <!-- <label for="search-input">Search:</label> -->
                 <div class="pos-search-box">
                     <input type="text" id="scan-bag-input" class="pos-search-input" placeholder="Scan Bag ...">
                     <button class="pos-search-btn" id="scan-bag-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="search-icon">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                        </svg>
+                        <p>Search</p>&#128269;
                     </button>
                 </div>
             </div>
@@ -204,11 +209,7 @@
                 <div class="pos-search-box">
                     <input type="text" id="scan-article-input" class="pos-search-input" placeholder="Scan Article ...">
                     <button class="pos-search-btn" id="scan-article-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="search-icon">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                        </svg>
+                        <p>Search</p>&#128269;
                     </button>
                 </div>
             </div>
@@ -255,7 +256,7 @@
 
 
             <div">
-                <div style="display: flex; justify-content: space-between;">
+                <div class="bag_item_table_container">
                     <p id="scanned-bag-items-table_total">Total Records: 0</p>
                     <p id="scanned-bag-items-table_selected">Selected Articles: 0</p>
                 </div>
