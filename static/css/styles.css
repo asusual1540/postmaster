@@ -14,7 +14,7 @@ p {
     padding: 0;
 }
 
-.app-container {
+#app-container {
     display: flex;
     flex-direction: column;
     height: 100vh;
@@ -25,7 +25,7 @@ p {
     /* Smooth scrolling on iOS */
 }
 
-.header {
+#header {
     display: flex;
     justify-content: space-between;
     align-items: center;

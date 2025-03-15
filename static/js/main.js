@@ -252,13 +252,14 @@ $(document).ready(function () {
                     if (response && response["username"]) {
                         $("#login-username").text(response["username"]);
                     }
-                    $("#logout-btn").show();
+                    fetchBags(response.access, queryParams);
+
                     // Store access and refresh tokens in cookies
                     document.cookie = `access=${response.access}; path=/`;
                     document.cookie = `refresh=${response.refresh}; path=/`;
                     // document.cookie = `access=${response.access}; path=/; Secure`;
                     // document.cookie = `refresh=${response.refresh}; path=/; Secure`;
-                    fetchBags(response.access, queryParams);
+
                     // Redirect or show success message
                     // window.location.href = "/"; // Change this to the actual dashboard URL
                 } else {
@@ -268,7 +269,6 @@ $(document).ready(function () {
             },
             error: function (xhr) {
                 console.error("Login request failed:", xhr);
-                $("#logout-btn").hide();
                 let errorText = xhr.responseJSON ? xhr.responseJSON.message : 'Login request failed.';
                 errorMsg.text(errorText);
             }
@@ -420,7 +420,7 @@ function verifyUser(token) {
                 $("#login-username").text(response["decoded_data"]["username"]);
             }
             hideLogin();
-            showApp(token, queryParams);
+            fetchBags(token, queryParams);
         },
         error: function () {
             showLogin();
