@@ -13,7 +13,7 @@ let create_to = current_date.toISOString().slice(0, 16);
 
 let queryParams = {
     page: 1,
-    per_page: 15,
+    per_page: 10,
     bag_id: "",
     bag_category: "all",
     bag_type: "all",
