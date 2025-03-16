@@ -13,7 +13,7 @@ let create_to = current_date.toISOString().slice(0, 16);
 
 let queryParams = {
     page: 1,
-    per_page: 10,
+    per_page: 15,
     bag_id: "",
     bag_category: "all",
     bag_type: "all",
@@ -100,10 +100,12 @@ $(document).ready(function () {
         console.log("No token found. Showing login form.");
 
     });
+    var originalHeight = $(window).height();
 
     $(window).on('resize', function () {
+
         if ($(window).height() < originalHeight) {
-            $(".login-container").css("margin-top", "-20vh");
+            $(".login-container").css("margin-top", "-40vh");
         } else {
             $(".login-container").css("margin-top", "0");
         }
@@ -252,7 +254,7 @@ $(document).ready(function () {
                     if (response && response["username"]) {
                         $("#login-username").text(response["username"]);
                     }
-                    fetchBags(response.access, queryParams);
+                    // fetchBags(response.access, queryParams);
 
                     // Store access and refresh tokens in cookies
                     document.cookie = `access=${response.access}; path=/`;
@@ -261,7 +263,7 @@ $(document).ready(function () {
                     // document.cookie = `refresh=${response.refresh}; path=/; Secure`;
 
                     // Redirect or show success message
-                    // window.location.href = "/"; // Change this to the actual dashboard URL
+                    window.location.href = "/"; // Change this to the actual dashboard URL
                 } else {
                     console.error("Login failed:", response);
                     errorMsg.text(response.message || 'Login failed. Please try again.');
@@ -421,6 +423,7 @@ function verifyUser(token) {
             }
             hideLogin();
             fetchBags(token, queryParams);
+            $("html, body").animate({ scrollTop: 0 }, "slow");
         },
         error: function () {
             showLogin();

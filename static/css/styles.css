@@ -125,7 +125,13 @@ p {
 
 @media (min-width: 300px) {
     #phone:focus {
-        scroll-margin-top: 60px;
+        scroll-margin-top: 100px;
+        position: relative;
+        z-index: 10;
+    }
+
+    #password:focus {
+        scroll-margin-top: 100px;
         position: relative;
         z-index: 10;
     }
@@ -163,7 +169,13 @@ p {
 
 @media (min-width: 400px) {
     #phone:focus {
-        scroll-margin-top: 60px;
+        scroll-margin-top: 100px;
+        position: relative;
+        z-index: 10;
+    }
+
+    #password:focus {
+        scroll-margin-top: 100px;
         position: relative;
         z-index: 10;
     }
@@ -185,6 +197,17 @@ p {
 }
 
 @media (min-width: 500px) {
+    #phone:focus {
+        scroll-margin-top: 100px;
+        position: relative;
+        z-index: 10;
+    }
+
+    #password:focus {
+        scroll-margin-top: 100px;
+        position: relative;
+        z-index: 10;
+    }
 
     #filters input,
     #filters select {
@@ -197,6 +220,17 @@ p {
 }
 
 @media (min-width: 600px) {
+    #phone:focus {
+        scroll-margin-top: 100px;
+        position: relative;
+        z-index: 10;
+    }
+
+    #password:focus {
+        scroll-margin-top: 100px;
+        position: relative;
+        z-index: 10;
+    }
 
     #filters input,
     #filters select {
@@ -763,15 +797,16 @@ td {
 } */
 
 /* Pagination Buttons Hover & Active */
-.pos-pagination-btn.active:hover {
+.pos-pagination-btn.active {
     background: rgb(3, 74, 155);
     color: white;
     border-color: #0070f3;
 }
 
 .pos-pagination-btn:hover {
-    background: #f0f0f0;
-    border-color: #bbb;
+    background: rgb(3, 74, 155);
+    color: white;
+    border-color: #0070f3;
 }
 
 /* 
