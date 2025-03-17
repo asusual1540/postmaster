@@ -92,6 +92,44 @@ $(document).ready(function () {
     // Attach event to Receive All button
     $("#receive-all").on("click", receiveAllBagItems);
 
+    // window-delivery-btn
+    $("#window-delivery-btn").click(function () {
+        console.log("Window Delivery Button Clicked");
+        let item_id = $("#article-item-id").text().trim();
+        let articleSenderPhone = $("#article-sen-contact").text().trim();
+        let bookedBranchCode = $("#article-booked-branch-code").text().trim();
+        console.log("Item ID:", item_id);
+        console.log("Article Sender Phone:", articleSenderPhone);
+        $.ajax({
+            url: `${API_POST_URL}/deliver_article`,
+            type: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            data: JSON.stringify({
+                "flag": "Del_To_Rec",
+                "get_item_id": item_id,
+                "get_rec_contact": "0",
+                "get_sen_contact": articleSenderPhone,
+                "booked_branch_code": bookedBranchCode,
+                "image_src": "0",
+                "image_pod": "0"
+            }),
+            success: function (response) {
+                if (response.status === "success") {
+                    alert("Success: " + response.message);
+                } else {
+                    alert("Error: " + response.message);
+                }
+            },
+            error: function (xhr) {
+                let response = JSON.parse(xhr.responseText);
+                alert("Error: " + response.message);
+            }
+        });
+    });
+
     $(document).on("click", "#logout-btn", function () {
         console.log("Logging out...");
         showLogin();
@@ -100,6 +138,7 @@ $(document).ready(function () {
         console.log("No token found. Showing login form.");
 
     });
+    let originalHeight = $(window).height();
 
     $(window).on('resize', function () {
         if ($(window).height() < originalHeight) {
@@ -817,6 +856,7 @@ function fetchArticleDetails(articleId) {
 
 // Function to update modal content with table instead of stepper
 function updateArticleDetailsModal(data) {
+    console.log("Data:", data);
     let details = data.article_details;
     let trackingLogs = data.tracking_logs;
 
@@ -835,6 +875,8 @@ function updateArticleDetailsModal(data) {
         $("#article-status").text(details.Status_Item);
         $("#article-total-weight").text(`${details.Total_Weight} ${details.Unit_Weight}`);
         $("#article-total-charge").text(`৳ ${details.Total_Charge}`);
+        $("#article-booked-branch-code").text(details.Booked_Branch_Code);
+
     } else {
         $("#optional-fields").hide();
     }
