@@ -95,39 +95,52 @@ $(document).ready(function () {
     // window-delivery-btn
     $("#window-delivery-btn").click(function () {
         console.log("Window Delivery Button Clicked");
+        $("#article-details-loading-div").show();
+        $("#window-delivery-btn").hide();
         let item_id = $("#article-item-id").text().trim();
         let articleSenderPhone = $("#article-sen-contact").text().trim();
         let bookedBranchCode = $("#article-booked-branch-code").text().trim();
         console.log("Item ID:", item_id);
         console.log("Article Sender Phone:", articleSenderPhone);
-        $.ajax({
-            url: `${API_POST_URL}/deliver_article`,
-            type: "POST",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json"
-            },
-            data: JSON.stringify({
-                "flag": "Del_To_Rec",
-                "get_item_id": item_id,
-                "get_rec_contact": "0",
-                "get_sen_contact": articleSenderPhone,
-                "booked_branch_code": bookedBranchCode,
-                "image_src": "0",
-                "image_pod": "0"
-            }),
-            success: function (response) {
-                if (response.status === "success") {
-                    alert("Success: " + response.message);
-                } else {
+        try {
+            $.ajax({
+                url: `${API_POST_URL}/deliver_article`,
+                type: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                data: JSON.stringify({
+                    "flag": "Del_To_Rec",
+                    "get_item_id": item_id,
+                    "get_rec_contact": "0",
+                    "get_sen_contact": (articleSenderPhone.length > 0) ? articleSenderPhone : "0",
+                    "booked_branch_code": bookedBranchCode,
+                    "image_src": "0",
+                    "image_pod": "0"
+                }),
+                success: function (response) {
+                    $("#article-details-loading-div").hide();
+                    if (response.status === "success") {
+                        alert("Success: " + response.message);
+                    } else {
+                        alert("Error: " + response.message);
+                    }
+                },
+                error: function (xhr) {
+                    $("#article-details-loading-div").hide();
+                    let response = JSON.parse(xhr.responseText);
                     alert("Error: " + response.message);
+                    $("#window-delivery-btn").show();
                 }
-            },
-            error: function (xhr) {
-                let response = JSON.parse(xhr.responseText);
-                alert("Error: " + response.message);
-            }
-        });
+            });
+        }
+        catch (error) {
+            console.error("Error fetching data", error);
+            $("#article-details-loading-div").hide();
+            $("#window-delivery-btn").show();
+        }
+
     });
 
     $(document).on("click", "#logout-btn", function () {
@@ -213,7 +226,12 @@ $(document).ready(function () {
     });
     // Attach event to add bag click
     $(document).on("click", "#receive_bag", function () {
-        openReceiveBagModal();
+        let bag_id = $("#bag_id").val().trim();
+        if (!bag_id) {
+            alert("Bag ID is required. Please scan or search a bag.");
+            return;
+        }
+        openReceiveBagModal(bag_id);
     });
 
     // Close modal on clicking the backdrop
@@ -261,6 +279,7 @@ $(document).ready(function () {
     $("#searchDestBranch").click(() => { queryParams.dest_branch_code = $("#destBranchInput").val(); fetchBags(token, queryParams); });
 
     $('#login-btn').click(function () {
+        $("#login-loading-div").show();
         // Get values from input fields
         console.log("Login button clicked");
         let phone = $('#phone').val().trim();
@@ -306,12 +325,14 @@ $(document).ready(function () {
                 } else {
                     console.error("Login failed:", response);
                     errorMsg.text(response.message || 'Login failed. Please try again.');
+                    $("#login-loading-div").hide();
                 }
             },
             error: function (xhr) {
                 console.error("Login request failed:", xhr);
                 let errorText = xhr.responseJSON ? xhr.responseJSON.message : 'Login request failed.';
                 errorMsg.text(errorText);
+                $("#login-loading-div").hide();
             }
         });
     });
@@ -389,7 +410,7 @@ $(document).ready(function () {
         $(".selected-row").removeClass("selected-row");
         $(".article-checkbox").prop("checked", false);
         updateButtonsState();
-        alert(`Receiving ${total_selected} articles`);
+        alert(`Receiving ${total_selected} articles from bag ${bagItemQueryParams.bag_id}`);
     });
 
     // Delete Selected Articles
@@ -425,6 +446,14 @@ $(document).ready(function () {
         $("#receive-selected, #delete-selected, #deselect-all-articles").prop("disabled", !hasSelection);
         $("#scanned-bag-items-table_selected").text(`Selected Articles: ${selectedArticles.size}`);
     }
+
+    $(document).on("click", "#receive-bag-details-btn", function () {
+        let bag_id = $("#bag-detail-id").text().trim();
+        console.log("Receiving bag details for:", bag_id);
+        closeBagItemsModal();
+        openReceiveBagModal(bag_id);
+
+    });
 
 });
 
@@ -528,6 +557,7 @@ function constructQueryString() {
 }
 
 function fetchBags(token, queryParams) {
+    $("#bags-loading-div").show();
     let url = constructQueryString(queryParams);
     // console.log("Fetching from URL:", url);
 
@@ -536,7 +566,7 @@ function fetchBags(token, queryParams) {
         // console.log("Using cached data:", cache[url]);
         updateBagTable(cache[url].results);
         updatePagination("bagTable", "bag-pagination", cache[url].page, cache[url].total, cache[url].per_page, fetchBags);
-        restoreHeaderStyles();
+        $("#bags-loading-div").hide();
         return;
     }
 
@@ -555,10 +585,11 @@ function fetchBags(token, queryParams) {
             updateBagTable(response.results);
             // updateBagPagination(response.page, response.total, response.per_page);
             updatePagination("bagTable", "bag-pagination", response.page, response.total, response.per_page, fetchBags);
-            restoreHeaderStyles();
+            $("#bags-loading-div").hide();
         },
         error: function (e) {
             console.log("Error fetching data", e.responseJSON);
+            $("#bags-loading-div").hide();
         }
     });
 }
@@ -789,15 +820,24 @@ function openArticleDetailsModal(articleId) {
 }
 
 // Function to open article details modal
-function openReceiveBagModal() {
+function openReceiveBagModal(bag_id) {
     $("#receive-bag-backdrop").show();
-    $("#scan-bag-input").focus();
+    $("#scan-article-input").focus();
+    $("#scan-bag-item-id").text(bag_id);
     // Fetch and populate the mail line options when modal opens
     fetchMailLineOptions();
+    console.log("Scanned bag ID:", bag_id);
+    if (bag_id) {
+        let accessToken = getCookie("access");
+        // console.log("Access token:", accessToken);
+        bagItemQueryParams.bag_id = bag_id;
+        fetchScannedBagItems(accessToken, bagItemQueryParams);
+    }
 }
 
 // Function to fetch article details
 function fetchArticleDetails(articleId) {
+    $("#article-details-loading-div").show();
     let token = getCookie("access");
     // console.log("Access token:", token);
     let url = `${API_GET_URL}/v1/dms-legacy-core-logs/get-bag-item-detail/?item_id=${articleId}`;
@@ -807,12 +847,21 @@ function fetchArticleDetails(articleId) {
         type: "GET",
         headers: { "Authorization": `Bearer ${token}` },
         success: function (response) {
-            // console.log("Article details fetched:", response);
+            console.log("Article details fetched:", response);
             updateArticleDetailsModal(response);
+            $("#article-details-loading-div").hide();
+            let tracking_logs = response.tracking_logs;
+            let log_statuses = tracking_logs.map(log => log.Status);
+            if (log_statuses.includes("Del_To_Rec") || log_statuses.includes("Ret_To_Sen") || log_statuses.includes("Lost") || log_statuses.includes("Garbage") || log_statuses.includes("Expired")) {
+                $("#window-delivery-btn").hide();
+            } else {
+                $("#window-delivery-btn").show();
+            }
         },
         error: function (e) {
             console.error("Error fetching article details", e);
             $("#tracking-stepper").html('<p>Failed to load data</p>');
+            $("#article-details-loading-div").hide();
         }
     });
 }
@@ -867,22 +916,17 @@ function updateArticleDetailsModal(data) {
     $("#article-item-type").text(details.Item_Type);
     $("#article-vas-type").text(details.VAS_Type);
 
-    // Check if optional fields should be displayed
-    if (details.ben_name !== "0" || details.sen_name !== "0") {
-        $("#optional-fields").show();
-        $("#article-sen-name").text(details.sen_name);
-        $("#article-sen-address").text(details.sen_address);
-        $("#article-ben-name").text(details.ben_name);
-        $("#article-ben-address").text(details.ben_address);
-        $("#article-sen-contact").text(details.Sen_Contact);
-        $("#article-status").text(details.Status_Item);
-        $("#article-total-weight").text(`${details.Total_Weight} ${details.Unit_Weight}`);
-        $("#article-total-charge").text(`৳ ${details.Total_Charge}`);
-        $("#article-booked-branch-code").text(details.Booked_Branch_Code);
+    $("#optional-fields").show();
+    $("#article-sen-name").text(details.sen_name);
+    $("#article-sen-address").text(details.sen_address);
+    $("#article-ben-name").text(details.ben_name);
+    $("#article-ben-address").text(details.ben_address);
+    $("#article-sen-contact").text(details.Sen_Contact);
+    $("#article-status").text(details.Status_Item);
+    $("#article-total-weight").text(`${details.Total_Weight} ${details.Unit_Weight}`);
+    $("#article-total-charge").text(`৳ ${details.Total_Charge}`);
+    $("#article-booked-branch-code").text(details.Booked_Branch_Code);
 
-    } else {
-        $("#optional-fields").hide();
-    }
 
     // Construct table rows for tracking history
     let tableHtml = `
@@ -1267,7 +1311,7 @@ function receiveSelectedArticles() {
 
 // Function to receive all bags
 function receiveAllBagItems() {
-    let bag_id = $("#scan-bag-input").val(); // Assuming scanned bag input contains bag ID
+    let bag_id = $("#scan-bag-item-id").text();
     if (!bag_id) {
         alert("Please scan a bag first.");
         return;

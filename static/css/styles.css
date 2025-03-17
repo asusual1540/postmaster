@@ -4,9 +4,6 @@ body {
     padding: 0;
     background-color: #f8f8f8;
     box-sizing: border-box;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
 }
 
 p {
@@ -17,7 +14,6 @@ p {
 #app-container {
     display: flex;
     flex-direction: column;
-    height: 100vh;
     /* Full viewport height */
     overflow-y: auto;
     /* Enable scrolling when content overflows */
@@ -105,14 +101,28 @@ p {
     font-size: 20px;
     font-weight: bold;
     margin: 0px;
-    padding: 10px 0px 10px 10px;
+    padding: 0px 10px 0px 10px;
 }
 
 .bag-item-title-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.bag-item-title-text {
     padding: 10px;
+    font-weight: bold;
+}
+
+.bag-item-title-value {
+    padding: 10px;
+    font-weight: bold;
+}
+
+.bag-item-article-value {
+    padding: 10px;
+    font-weight: bold;
 }
 
 .controls-container {
@@ -146,10 +156,6 @@ p {
 
     .pm_table_style {
         font-size: 12px !important;
-    }
-
-    .pos-search-input {
-        width: 100%;
     }
 
 
@@ -386,7 +392,6 @@ td {
 .scan-bag-container {
     background: white;
     /* text-align: center; */
-    height: 100vh;
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -587,7 +592,7 @@ td {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 5px;
+
     /* margin-bottom: .5rem; */
     /* width: 100%; */
 }
@@ -650,12 +655,11 @@ td {
     position: relative;
     display: flex;
     align-items: center;
-    margin-bottom: 8px;
 }
 
 .pos-search-input {
     flex: 1;
-    padding: 8px 12px;
+    padding: 10px 12px;
     margin: 0px 8px;
     font-size: 14px;
     border: 1px solid #d1d1d1;
@@ -670,7 +674,6 @@ td {
 }
 
 .pos-search-btn {
-    position: absolute;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -681,11 +684,8 @@ td {
     border-radius: 8px;
     cursor: pointer;
     transition: background 0.2s;
-    /* width: 34px; */
-    height: 34px;
-    top: 0px;
-    right: 0px;
     border: 1px solid #d1d1d1;
+    margin-right: 8px;
 }
 
 .pos-search-btn:hover {
@@ -703,13 +703,13 @@ td {
 /* Custom Select Container */
 .pos-select-wrapper {
     position: relative;
-    display: inline-block;
+    display: flex;
     margin-bottom: 8px;
 }
 
 /* Hide Default Select Arrow */
 .pos-select {
-    min-width: 95%;
+    flex: 1;
     margin: 0px 8px;
     padding: 8px 12px;
     font-size: 14px;
@@ -910,7 +910,13 @@ td {
     padding: 8px 12px;
     color: #777;
 } */
-
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
 
 
 /* Table Container */
