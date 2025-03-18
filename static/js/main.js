@@ -57,86 +57,12 @@ let bagItemQueryParams = {
 let cache = {};
 let bag_items_cache = {};
 
-let store = {
-    state: {
-        count: 0
-    },
-    actions: {
-        increment: function () {
-            store.state.count++;
-        },
-        decrement: function () {
-            store.state.count--;
-        }
-    }
-}
-
-let increment = function () {
-    return {
-        type: 'INCREMENT'
-    }
-}
-
-let decrement = function () {
-    return {
-        type: 'DECREMENT'
-    }
-}
-
-let reducer = function (state = store.state, action) {
-    switch (action.type) {
-        case 'INCREMENT':
-            return { count: state.count + 1 };
-        case 'DECREMENT':
-            return { count: state.count - 1 };
-        default:
-            return state;
-    }
-}
-
 $(document).ready(function () {
 
-    const INCREMENT = "INCREMENT";
-    const DECREMENT = "DECREMENT";
-    const RESET = "RESET";
-
-    // 2. Action creators
-    const increment = () => ({ type: INCREMENT });
-    const decrement = () => ({ type: DECREMENT });
-    const reset = () => ({ type: RESET });
-
-    // 3. Reducer
-    const counterReducer = (state = { count: 0 }, action) => {
-        switch (action.type) {
-            case INCREMENT:
-                return { count: state.count + 1 };
-            case DECREMENT:
-                return { count: state.count - 1 };
-            case RESET:
-                return { count: 0 };
-            default:
-                return state;
-        }
-    };
-
-    // 4. Create Redux store
-    const store = Redux.createStore(counterReducer);
-
-    // 5. Function to update DOM
-    const updateUI = () => {
-        $("#counter").text(store.getState().count);
-    };
-
-    // 6. Subscribe to store updates
-    store.subscribe(updateUI);
-
-    // 7. Handle button clicks with jQuery
-    $("#increment").click(() => store.dispatch(increment()));
-    $("#decrement").click(() => store.dispatch(decrement()));
-    $("#reset").click(() => store.dispatch(reset()));
-
-    // 8. Initialize UI
-    updateUI();
+    store.subscribe(() => {
+        const state = store.getState();
+        updateBagTable(state.bags);
+    });
     let selectedArticles = new Set();
     let hasSelectedArticles = false;
     // Function to toggle row selection
@@ -309,8 +235,8 @@ $(document).ready(function () {
     });
 
     // Add click event to bag rows
-    $(document).on("click", ".bag-row", function () {
-        let bagId = $(this).attr("bag_id");
+    $(document).on("click", ".bag-id-cell", function () {
+        let bagId = $(this).text().trim();
         console.log("Fetching bag details for:", bagId);
         let token = getCookie("access");
         console.log("Access token:", token);
@@ -806,7 +732,7 @@ function formatDateTime(dateTimeStr) {
 
     const day = dateObj.getDate();
     const month = months[dateObj.getMonth()];
-    const year = String(dateObj.getFullYear()).slice(-2);
+    // const year = String(dateObj.getFullYear()).slice(-2);
 
     let hours = dateObj.getHours();
     const minutes = String(dateObj.getMinutes()).padStart(2, '0');
@@ -814,33 +740,85 @@ function formatDateTime(dateTimeStr) {
 
     hours = hours % 12 || 12; // Convert to 12-hour format
 
-    return `${day} ${month}, ${year} ${String(hours).padStart(2, '0')}:${minutes}${ampm}`;
+    return `${day} ${month}, ${String(hours).padStart(2, '0')}:${minutes}${ampm}`;
 }
 
 
 function updateBagTable(data) {
     // console.log("Updating bag table with data:", data);
+    var tableBody = document.getElementById("bagTable").getElementsByTagName("tbody")[0];
     let value_current = $("#bag_id").val();
-    $("#bagTable tbody").empty();
+    tableBody.innerHTML = ""; // Clear table body
     if (data.length === 0) {
         $("#bag_id").val("");
         queryParams.bag_id = "";
         queryParams.status = "all";
-        $("#bagTable tbody").append(`<tr><td colspan="6"><p style="text-align: center;">No records found for ${value_current}</p></td></tr>`);
+
+        var noDataRow = document.createElement("tr");
+        var noDataCell = document.createElement("td");
+        noDataCell.colSpan = 5;
+        noDataCell.style.textAlign = "center";
+        noDataCell.innerHTML = `No records found for ${value_current}`;
+        noDataRow.appendChild(noDataCell);
+        tableBody.appendChild(noDataRow);
+
+        // $("#bagTable tbody").append(`<tr><td colspan="6"><p style="text-align: center;">No records found for ${value_current}</p></td></tr>`);
         return;
     }
-
+    var selectedBags = store.getState().selectedBags;
     data.forEach(bag => {
         // console.log("Bag:", bag);
         let formatted_date = formatDateTime(`${bag.Create_Date} ${bag.Create_Time}`);
-        $("#bagTable tbody").append(`
-            <tr class="bag-row" bag_id="${bag.Bag_ID}">
-                <td>${bag.Bag_ID}</td>
-                <td>${bag.Create_Total_Item_Count}(${bag.Delivered_Item_Count}/<span style="color: #ff2800">${bag.Create_Total_Item_Count - bag.Delivered_Item_Count}</span>)</td>
-                <td>${formatted_date}</td>
-                <td>${bag.Status}</td>
-            </tr>
-        `);
+
+        var isChecked = false;
+        for (var j = 0; j < selectedBags.length; j++) {
+            if (selectedBags[j].Bag_ID === bag.Bag_ID) {
+                isChecked = true;
+                break;
+            }
+        }
+        // Create table row
+        var row = document.createElement("tr");
+        row.className = "bag-row";
+        row.setAttribute("bag_id", bag.Bag_ID);
+
+        // Create checkbox column
+        var checkboxCell = document.createElement("td");
+        var checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.className = "bag-checkbox";
+        checkbox.setAttribute("data-bag-id", bag.Bag_ID);
+        if (isChecked) {
+            checkbox.checked = true;
+        }
+        checkboxCell.appendChild(checkbox);
+        row.appendChild(checkboxCell);
+
+        // Create Bag ID column
+        var bagIdCell = document.createElement("td");
+        var bagIdText = document.createElement("span");
+        bagIdText.innerHTML = bag.Bag_ID;
+        bagIdText.className = "bag-id-cell";
+        bagIdCell.appendChild(bagIdText);
+        row.appendChild(bagIdCell);
+
+        // Create Articles column
+        var articlesCell = document.createElement("td");
+        articlesCell.innerHTML = bag.Create_Total_Item_Count + " (" + bag.Delivered_Item_Count + "/<span style='color: #ff2800'>" + (bag.Create_Total_Item_Count - bag.Delivered_Item_Count) + "</span>)";
+        row.appendChild(articlesCell);
+
+        // Create Create Date column
+        var dateCell = document.createElement("td");
+        dateCell.innerHTML = formatted_date;
+        row.appendChild(dateCell);
+
+        // Create Status column
+        var statusCell = document.createElement("td");
+        statusCell.innerHTML = bag.Status;
+        row.appendChild(statusCell);
+
+        // Append row to table
+        tableBody.appendChild(row);
     });
 }
 
@@ -964,7 +942,7 @@ function updateBagItemsTable(data, bagId) {
     let tbody = $("#bag-items-table tbody");
     tbody.empty();
 
-    if (data.results.length === 0) {
+    if (!data || !data.results || data.results == null || data.results.length === 0) {
         tbody.append("<tr><td colspan='3'>No records found</td></tr>");
         return;
     }

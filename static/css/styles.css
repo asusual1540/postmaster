@@ -166,8 +166,14 @@ p {
     }
 
     .pm_table_style {
-        font-size: 12px !important;
+        font-size: 14px !important;
     }
+
+    .pm_table_style th,
+    .pm_table_style td {
+        padding: 6px 0px;
+    }
+
 
 
 
@@ -204,7 +210,7 @@ p {
     }
 
     .pm_table_style {
-        font-size: 14px !important;
+        font-size: 16px !important;
     }
 
     #filters input,
@@ -232,7 +238,7 @@ p {
     }
 
     .pm_table_style {
-        font-size: 14px !important;
+        font-size: 18px !important;
     }
 }
 
@@ -255,7 +261,7 @@ p {
     }
 
     .pm_table_style {
-        font-size: 16px !important;
+        font-size: 18px !important;
     }
 }
 
@@ -267,7 +273,7 @@ p {
     }
 
     .pm_table_style {
-        font-size: 16px !important;
+        font-size: 18px !important;
     }
 }
 
@@ -279,7 +285,7 @@ p {
     }
 
     .pm_table_style {
-        font-size: 16px !important;
+        font-size: 18px !important;
     }
 }
 
@@ -301,9 +307,22 @@ p {
     font-weight: bold;
 }
 
+.bag-checkbox {
+    width: 18px;
+    /* Adjust width */
+    height: 18px;
+    margin-left: 10px;
+    /* Adjust height */
+    cursor: pointer;
+    accent-color: #007bff;
+    /* Change checkbox color (for modern browsers) */
+    vertical-align: middle;
+    /* Align properly within the table */
+}
+
 .pm_table_style th,
 .pm_table_style td {
-    padding: 8px 4px;
+    padding: 8px 0px;
 }
 
 .pm_table_style tbody tr {
@@ -324,10 +343,17 @@ p {
     background-color: rgba(0, 112, 243, 0.4) !important;
 }
 
-.pm_table_style .bag-row:hover {
+.bag-id-cell {
+    width: 100%;
+    border-bottom: 1px solid #007bff;
+    color: #007bff;
+    cursor: pointer;
+}
+
+/* .pm_table_style .bag-row:hover {
     cursor: pointer;
     background-color: rgba(0, 112, 243, 0.4) !important;
-}
+} */
 
 .pm_table_style .bag-article-row:hover {
     cursor: pointer;
