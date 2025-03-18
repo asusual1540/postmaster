@@ -23,7 +23,26 @@ let queryParams = {
     created_at_from: create_from,
     created_at_to: create_to
 };
+function resetQueryParams() {
+    let current_date = new Date();
+    current_date.setHours(current_date.getHours() + 6); // Shift time forward by 6 hours
+    let create_from = current_date.toISOString().split("T")[0] + "T00:00";
+    let create_to = current_date.toISOString().slice(0, 16);
 
+    queryParams = {
+        page: 1,
+        per_page: 10,
+        bag_id: "",
+        bag_category: "all",
+        bag_type: "all",
+        handling: "all",
+        status: "all",
+        dest_branch_code: "",
+        created_at_from: create_from,
+        created_at_to: create_to
+    };
+    return queryParams;
+}
 let bagItemQueryParams = {
     page: 1,
     per_page: 10,
@@ -38,7 +57,86 @@ let bagItemQueryParams = {
 let cache = {};
 let bag_items_cache = {};
 
+let store = {
+    state: {
+        count: 0
+    },
+    actions: {
+        increment: function () {
+            store.state.count++;
+        },
+        decrement: function () {
+            store.state.count--;
+        }
+    }
+}
+
+let increment = function () {
+    return {
+        type: 'INCREMENT'
+    }
+}
+
+let decrement = function () {
+    return {
+        type: 'DECREMENT'
+    }
+}
+
+let reducer = function (state = store.state, action) {
+    switch (action.type) {
+        case 'INCREMENT':
+            return { count: state.count + 1 };
+        case 'DECREMENT':
+            return { count: state.count - 1 };
+        default:
+            return state;
+    }
+}
+
 $(document).ready(function () {
+
+    const INCREMENT = "INCREMENT";
+    const DECREMENT = "DECREMENT";
+    const RESET = "RESET";
+
+    // 2. Action creators
+    const increment = () => ({ type: INCREMENT });
+    const decrement = () => ({ type: DECREMENT });
+    const reset = () => ({ type: RESET });
+
+    // 3. Reducer
+    const counterReducer = (state = { count: 0 }, action) => {
+        switch (action.type) {
+            case INCREMENT:
+                return { count: state.count + 1 };
+            case DECREMENT:
+                return { count: state.count - 1 };
+            case RESET:
+                return { count: 0 };
+            default:
+                return state;
+        }
+    };
+
+    // 4. Create Redux store
+    const store = Redux.createStore(counterReducer);
+
+    // 5. Function to update DOM
+    const updateUI = () => {
+        $("#counter").text(store.getState().count);
+    };
+
+    // 6. Subscribe to store updates
+    store.subscribe(updateUI);
+
+    // 7. Handle button clicks with jQuery
+    $("#increment").click(() => store.dispatch(increment()));
+    $("#decrement").click(() => store.dispatch(decrement()));
+    $("#reset").click(() => store.dispatch(reset()));
+
+    // 8. Initialize UI
+    updateUI();
     let selectedArticles = new Set();
     let hasSelectedArticles = false;
     // Function to toggle row selection
@@ -191,6 +289,8 @@ $(document).ready(function () {
         // Add status only if it's not "all"
         if (status !== "all") {
             queryParams.status = status;
+        } else {
+            queryParams.status = "";
         }
 
         // Add date filters if selected
@@ -204,7 +304,7 @@ $(document).ready(function () {
         console.log("Query params:", queryParams);
         // Fetch bags with updated filters
         let token = getCookie("access");
-        console.log("Access token:", token);
+        // console.log("Access token:", token);
         fetchBags(token, queryParams);
     });
 
@@ -397,6 +497,16 @@ $(document).ready(function () {
     });
 
 
+    $(document).on("click", "#clear_filter", function () {
+        console.log("Clearing filters");
+        let query_params = resetQueryParams();
+        $("#bag_status").val(query_params.status);
+        $("#bag_id").val(query_params.bag_id);
+        $("#created_at_from").val(query_params.created_at_from);
+        $("#created_at_to").val(query_params.created_at_to);
+        fetchBags(getCookie("access"), query_params);
+    });
+
 
     // Receive Selected Articles
     $("#receive-selected").on("click", function () {
@@ -468,6 +578,8 @@ $(document).ready(function () {
         let text = allBagIds.join("\n");
         POSPrinting(text);
     });
+
+
 
 
 });
@@ -635,39 +747,79 @@ function fetchBags(token, queryParams) {
         type: "GET",
         headers: { "Authorization": `Bearer ${token}` },
         success: function (response) {
-            $("#bagTable").show();
-            // console.log("Data fetched successfully", response);
-
-            // Store response in cache
-            cache[url] = response;
-
-            updateBagTable(response.results);
-            // updateBagPagination(response.page, response.total, response.per_page);
-            updatePagination("bagTable", "bag-pagination", response.page, response.total, response.per_page, fetchBags);
             $("#bags-loading-div").hide();
+            console.log("Data fetched successfully", response);
+            if (response.results && response.results.length > 0) {
+
+                let queryText = formatQueryParams(queryParams);
+                $("#bag-query").text(`${queryText}`);
+
+                // Store response in cache
+                cache[url] = response;
+
+                updateBagTable(response.results);
+                // updateBagPagination(response.page, response.total, response.per_page);
+                updatePagination("bagTable", "bag-pagination", response.page, response.total, response.per_page, fetchBags);
+
+            } else {
+                console.log("No records found");
+                let queryText = formatQueryParams(queryParams);
+                $("#bag-query").text(`${queryText}`);
+                updateBagTable([]);
+            }
         },
         error: function (e) {
-            console.log("Error fetching data", e.responseJSON);
+            let queryText = formatQueryParams(queryParams);
+            $("#bag-query").text(`${queryText}`);
             $("#bags-loading-div").hide();
+            console.log("Error fetching data", e.responseJSON);
+            updateBagTable([]);
+            // $("#bagTable").hide();
+            // $("#bag-pagination").hide();
         }
     });
 }
 
+function formatDateTime(dateTimeStr) {
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    const dateObj = new Date(dateTimeStr);
+
+    const day = dateObj.getDate();
+    const month = months[dateObj.getMonth()];
+    const year = String(dateObj.getFullYear()).slice(-2);
+
+    let hours = dateObj.getHours();
+    const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? "pm" : "am";
+
+    hours = hours % 12 || 12; // Convert to 12-hour format
+
+    return `${day} ${month}, ${year} ${String(hours).padStart(2, '0')}:${minutes}${ampm}`;
+}
+
+
 function updateBagTable(data) {
     // console.log("Updating bag table with data:", data);
+    let value_current = $("#bag_id").val();
     $("#bagTable tbody").empty();
     if (data.length === 0) {
-        $("#bagTable tbody").append("<tr><td colspan='6'>No records found</td></tr>");
+        $("#bag_id").val("");
+        queryParams.bag_id = "";
+        queryParams.status = "all";
+        $("#bagTable tbody").append(`<tr><td colspan="6"><p style="text-align: center;">No records found for ${value_current}</p></td></tr>`);
         return;
     }
 
     data.forEach(bag => {
         // console.log("Bag:", bag);
+        let formatted_date = formatDateTime(`${bag.Create_Date} ${bag.Create_Time}`);
         $("#bagTable tbody").append(`
             <tr class="bag-row" bag_id="${bag.Bag_ID}">
                 <td>${bag.Bag_ID}</td>
                 <td>${bag.Create_Total_Item_Count}(${bag.Delivered_Item_Count}/<span style="color: #ff2800">${bag.Create_Total_Item_Count - bag.Delivered_Item_Count}</span>)</td>
-                <td>${bag.Create_Date} ${bag.Create_Time}</td>
+                <td>${formatted_date}</td>
                 <td>${bag.Status}</td>
             </tr>
         `);
@@ -1427,6 +1579,61 @@ function receiveAllBagItems() {
     // });
 }
 
+function formatQueryParams(queryParams) {
+    let readableParts = [];
+
+    // Format bag_id
+    if (queryParams.bag_id) {
+        readableParts.push(`Bag ID: ${queryParams.bag_id}`);
+    }
+
+    // Format status
+    if (queryParams.status && queryParams.status !== "all") {
+        readableParts.push(`Status: ${queryParams.status}`);
+    }
+
+    // Format page and per_page
+    if (queryParams.page) {
+        readableParts.push(`Page: ${queryParams.page}`);
+    }
+    if (queryParams.per_page) {
+        readableParts.push(`Per Page: ${queryParams.per_page}`);
+    }
+
+    // Format bag_category, bag_type, handling if they are not "all"
+    if (queryParams.bag_category && queryParams.bag_category !== "all") {
+        readableParts.push(`Bag Category: ${queryParams.bag_category}`);
+    }
+    if (queryParams.bag_type && queryParams.bag_type !== "all") {
+        readableParts.push(`Bag Type: ${queryParams.bag_type}`);
+    }
+    if (queryParams.handling && queryParams.handling !== "all") {
+        readableParts.push(`Handling: ${queryParams.handling}`);
+    }
+
+    // Format destination branch code
+    if (queryParams.dest_branch_code) {
+        readableParts.push(`Destination Branch Code: ${queryParams.dest_branch_code}`);
+    }
+
+    // Format date and time
+    if (queryParams.created_at_from && queryParams.created_at_to) {
+        let fromDateTime = new Date(queryParams.created_at_from);
+        let toDateTime = new Date(queryParams.created_at_to);
+
+        let optionsDate = { day: '2-digit', month: 'short', year: '2-digit' };
+        let optionsTime = { hour: '2-digit', minute: '2-digit', hour12: true };
+
+        let formattedFromDate = fromDateTime.toLocaleDateString('en-US', optionsDate);
+        let formattedFromTime = fromDateTime.toLocaleTimeString('en-US', optionsTime).toLowerCase();
+        let formattedToDate = toDateTime.toLocaleDateString('en-US', optionsDate);
+        let formattedToTime = toDateTime.toLocaleTimeString('en-US', optionsTime).toLowerCase();
+
+        readableParts.push(`From ${formattedFromDate} ${formattedFromTime} to ${formattedToDate} ${formattedToTime}`);
+    }
+
+    return `${readableParts.join(", ")}`;
+}
 
 
 

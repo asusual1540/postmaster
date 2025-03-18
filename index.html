@@ -55,7 +55,6 @@
                 <div class="pos-search-box">
                     <button class="pos-search-btn" id="scan_btn">Scan</button>
                     <input type="text" id="bag_id" class="pos-search-input" placeholder="Bag ID..." autocomplete="off">
-                    <p id="scaned-value"></p>
                 </div>
 
             </div>
@@ -66,6 +65,8 @@
                 <div class="pos-btn-container">
                     <button class="pos-btn" id="print_pos"
                         style="background-color: #0070f3; color: white;margin-right: 4px;">Print</button>
+                    <button class="pos-btn" id="clear_filter"
+                        style="background-color: #0070f3; color: white;margin-right: 4px;">Clear</button>
                     <button class="pos-btn" id="filter_apply"
                         style="background-color: #0070f3; color: white;margin-right: 4px;">Search</button>
                     <button class="pos-btn" id="receive_bag"
@@ -92,6 +93,8 @@
                 </div>
 
             </div>
+            <p class="bag-error-message" id="bag-error-message"></p>
+            <p class="bag-query" id="bag-query"></p>
 
             <!-- Table -->
             <div class="bag_table_container">
