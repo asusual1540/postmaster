@@ -459,8 +459,14 @@ $(document).ready(function () {
         getScan();
     });
 
-    $(document).on("click", "#print_btn", function () {
-        POSPrinting();
+    $(document).on("click", "#print_pos", function () {
+        // let text = "dummy text for print";
+        let allBagIds = $(".bag-row").map(function () {
+            return $(this).attr("bag_id");
+        }).get();
+        console.log("All Bag IDs:", allBagIds);
+        let text = allBagIds.join("\n");
+        POSPrinting(text);
     });
 
 
@@ -485,8 +491,8 @@ function processBarcode(bc) {
     }
 }
 
-function POSPrinting() {
-    var print_pos_text = "dummy text for print";
+function POSPrinting(text) {
+    var print_pos_text = text;
 
     alert(print_pos_text)
     if (print_pos_text != "") {
