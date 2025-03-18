@@ -408,11 +408,13 @@ $(document).ready(function () {
             success: function (response) {
                 if (response.status === "success") {
                     hideLogin();
+                    showHeaderStyles();
+
                     console.log("Login successful:", response);
                     if (response && response["username"]) {
                         $("#login-username").text(response["username"]);
                     }
-                    // fetchBags(response.access, queryParams);
+                    fetchBags(response.access, queryParams);
 
                     // Store access and refresh tokens in cookies
                     document.cookie = `access=${response.access}; path=/`;
@@ -421,7 +423,7 @@ $(document).ready(function () {
                     // document.cookie = `refresh=${response.refresh}; path=/; Secure`;
 
                     // Redirect or show success message
-                    window.location.href = "/"; // Change this to the actual dashboard URL
+                    // window.location.href = "/"; // Change this to the actual dashboard URL
                 } else {
                     console.error("Login failed:", response);
                     errorMsg.text(response.message || 'Login failed. Please try again.');
@@ -661,8 +663,9 @@ function verifyUser(token) {
                 $("#login-username").text(response["decoded_data"]["username"]);
             }
             hideLogin();
+            showHeaderStyles();
             fetchBags(token, queryParams);
-            $("html, body").animate({ scrollTop: 0 }, "slow");
+            // $("html, body").animate({ scrollTop: 0 }, "slow");
         },
         error: function () {
             showLogin();
@@ -696,6 +699,21 @@ function hideLogin() {
     $("#login-container").hide();
     $("#login-form").hide();
 
+}
+
+function showHeaderStyles() {
+    $("#header").css({
+        "display": "flex",
+        "justify-content": "space-between",
+        "align-items": "center",
+        "background": "#006A4E",
+        "color": "white"
+    });
+}
+function hideHeaderStyles() {
+    $("#header").css({
+        "display": "none",
+    });
 }
 
 function showApp(token, queryParams) {
@@ -1322,7 +1340,7 @@ function updatePagination(tableId, paginationContainerId, currentPage, totalReco
 
     let totalElement = document.getElementById(`${tableId}_total`);
     if (totalElement) {
-        totalElement.innerText = `Total Records: ${totalRecords}`;
+        totalElement.innerText = `Total: ${totalRecords}`;
     }
 
     // console.log("Total pages:", totalPages);

@@ -21,12 +21,12 @@ p {
     /* Smooth scrolling on iOS */
 }
 
-#header {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    background: #006A4E !important;
-    color: white !important;
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #006A4E;
+    color: white;
 }
 
 .logo {
