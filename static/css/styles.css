@@ -97,6 +97,17 @@ p {
     width: 100%;
 }
 
+#scan_btn {
+    margin: 0px;
+    margin-left: 8px;
+}
+
+#bag_id {
+    margin: 0px;
+    margin-right: 8px;
+    margin-left: 8px;
+}
+
 .bag-item-title {
     font-size: 20px;
     font-weight: bold;
@@ -680,7 +691,7 @@ td {
     background-color: #f0f0f0;
     color: #888888;
     border: none;
-    padding: 8px;
+    padding: 10px;
     border-radius: 8px;
     cursor: pointer;
     transition: background 0.2s;

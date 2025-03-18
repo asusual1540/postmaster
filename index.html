@@ -6,6 +6,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Postmaster</title>
     <link rel="stylesheet" href="/static/css/styles.css">
+    <script>
+        function getScan() {
+            if (window.pos) {
+                var barcode_value = window.pos.scan_barcode();
+                processBarcode(barcode_value);
+            }
+            else {
+                alert("No function found for Barcode Reader");
+            }
+        }
+        function processBarcode(bc) {
+            if (typeof bc !== 'undefined') {
+                document.getElementById("bag_id").value = bc;
+                // searchItem('100000');
+            }
+        }
+
+
+        function POSPrinting() {
+            var print_pos_text = "dummy text for print";
+
+            alert(print_pos_text)
+            if (print_pos_text != "") {
+                try {
+                    var x = window.confirm("Do you want to print receipt?")
+                    if (x) {
+                        if (window.pos) {
+
+                            window.pos.print_text("'" + print_pos_text + "'");
+                        }
+                        else {
+                            alert("Only for POS Printer")
+                        }
+                    }
+                }
+                catch (x) {
+                    alert("Error:print_text():" + x)
+                }
+            }
+            else {
+                alert("No text found for print.Check from 'Report->Deliver'")
+            }
+
+        }   
+    </script>
 </head>
 
 <body>
@@ -53,16 +98,10 @@
                     </select>
                 </div>
                 <div class="pos-search-box">
+                    <button class="pos-search-btn" id="scan_btn" onclick="getScan()">Scan</button>
                     <input type="text" id="bag_id" class="pos-search-input" placeholder="Bag ID..." autocomplete="off">
-                    <!-- <button class="pos-search-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="search-icon">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                        </svg>
-                    </button> -->
+                    <p id="scaned-value"></p>
                 </div>
-
 
             </div>
             <div class="controls-container">
@@ -70,10 +109,12 @@
                     <p id="bagTable_total">Total Bags : </p>
                 </div>
                 <div class="pos-btn-container">
+                    <button class="pos-btn" id="print_pos" onclick="POSPrinting()"
+                        style="background-color: #0070f3; color: white;margin-right: 4px;">Print</button>
                     <button class="pos-btn" id="filter_apply"
-                        style="background-color: #0070f3; color: white;">Search</button>
+                        style="background-color: #0070f3; color: white;margin-right: 4px;">Search</button>
                     <button class="pos-btn" id="receive_bag"
-                        style="background-color: #0070f3; color: white;">Receive</button>
+                        style="background-color: #0070f3; color: white;margin-right: 4px;">Receive</button>
                 </div>
                 <!-- <div class="pos-select-wrapper"
                     style="width: 30%; display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
