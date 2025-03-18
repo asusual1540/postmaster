@@ -6,51 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Postmaster</title>
     <link rel="stylesheet" href="/static/css/styles.css">
-    <script>
-        function getScan() {
-            if (window.pos) {
-                var barcode_value = window.pos.scan_barcode();
-                processBarcode(barcode_value);
-            }
-            else {
-                alert("No function found for Barcode Reader");
-            }
-        }
-        function processBarcode(bc) {
-            if (typeof bc !== 'undefined') {
-                document.getElementById("bag_id").value = bc;
-                // searchItem('100000');
-            }
-        }
-
-
-        function POSPrinting() {
-            var print_pos_text = "dummy text for print";
-
-            alert(print_pos_text)
-            if (print_pos_text != "") {
-                try {
-                    var x = window.confirm("Do you want to print receipt?")
-                    if (x) {
-                        if (window.pos) {
-
-                            window.pos.print_text("'" + print_pos_text + "'");
-                        }
-                        else {
-                            alert("Only for POS Printer")
-                        }
-                    }
-                }
-                catch (x) {
-                    alert("Error:print_text():" + x)
-                }
-            }
-            else {
-                alert("No text found for print.Check from 'Report->Deliver'")
-            }
-
-        }   
-    </script>
 </head>
 
 <body>
@@ -98,7 +53,7 @@
                     </select>
                 </div>
                 <div class="pos-search-box">
-                    <button class="pos-search-btn" id="scan_btn" onclick="getScan()">Scan</button>
+                    <button class="pos-search-btn" id="scan_btn">Scan</button>
                     <input type="text" id="bag_id" class="pos-search-input" placeholder="Bag ID..." autocomplete="off">
                     <p id="scaned-value"></p>
                 </div>
@@ -109,7 +64,7 @@
                     <p id="bagTable_total">Total Bags : </p>
                 </div>
                 <div class="pos-btn-container">
-                    <button class="pos-btn" id="print_pos" onclick="POSPrinting()"
+                    <button class="pos-btn" id="print_pos"
                         style="background-color: #0070f3; color: white;margin-right: 4px;">Print</button>
                     <button class="pos-btn" id="filter_apply"
                         style="background-color: #0070f3; color: white;margin-right: 4px;">Search</button>
@@ -380,6 +335,13 @@
                         style="background-color: #0070f3; color: white; margin: 8px 2px;">Close</button>
                 </div>
             </div>
+            <div class="loading-div" id="bag-items-loading-div" style="display: none;">
+                <div class="loading-container">
+                    <img src="/static/images/loader.gif" alt="Logo" width="50">
+                    <p>Loading</p>
+                </div>
+
+            </div>
             <div class="bag-item-title-container">
                 <p class="bag-item-title-text">Bag ID :</p>
                 <p class="bag-item-title-value" id="bag-detail-id"></p>
@@ -524,7 +486,7 @@
     </div>
 
 
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/4.2.1/redux.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/static/js/main.js"></script>
     <script>

@@ -455,9 +455,62 @@ $(document).ready(function () {
 
     });
 
+    $(document).on("click", "#scan_btn", function () {
+        getScan();
+    });
+
+    $(document).on("click", "#print_btn", function () {
+        POSPrinting();
+    });
+
+
 });
 
 
+function getScan() {
+    if (window.pos) {
+        var barcode_value = window.pos.scan_barcode();
+        processBarcode(barcode_value);
+    }
+    else {
+        alert("No function found for Barcode Reader");
+    }
+}
+
+
+function processBarcode(bc) {
+    if (typeof bc !== 'undefined') {
+        document.getElementById("bag_id").value = bc;
+        // searchItem('100000');
+    }
+}
+
+function POSPrinting() {
+    var print_pos_text = "dummy text for print";
+
+    alert(print_pos_text)
+    if (print_pos_text != "") {
+        try {
+            var x = window.confirm("Do you want to print receipt?")
+            if (x) {
+                if (window.pos) {
+
+                    window.pos.print_text("'" + print_pos_text + "'");
+                }
+                else {
+                    alert("Only for POS Printer")
+                }
+            }
+        }
+        catch (x) {
+            alert("Error:print_text():" + x)
+        }
+    }
+    else {
+        alert("No text found for print.Check from 'Report->Deliver'")
+    }
+
+}
 
 function getCookie(name) {
     var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
@@ -661,12 +714,13 @@ function getBagIdFromUrl(url) {
 }
 // Function to fetch bag items
 function fetchBagItems(token, bagItemQueryParams) {
-
+    $("#bag-items-loading-div").show();
     let url = constructBagItemQueryString(bagItemQueryParams);
     // console.log("Fetching from URL:", url);
 
     // Check cache to avoid unnecessary API calls
     if (bag_items_cache[url]) {
+        $("#bag-items-loading-div").hide();
         // console.log("Using cached data:", bag_items_cache[url]);
         let _bagid = getBagIdFromUrl(bag_items_cache[url])
         updateBagItemsTable(bag_items_cache[url], _bagid);
@@ -681,11 +735,14 @@ function fetchBagItems(token, bagItemQueryParams) {
         type: "GET",
         headers: { "Authorization": `Bearer ${token}` },
         success: function (response) {
+            $("#bag-items-loading-div").hide();
             // console.log("Bag items fetched:", response);
             updateBagItemsTable(response, _bagid);
             updatePagination("bag-items-table", "bag-items-pagination", response.page, response.total, response.per_page, fetchBagItems);
+
         },
         error: function (e) {
+            $("#bag-items-loading-div").hide();
             console.error("Error fetching bag items", e);
             $("#bag-items-table tbody").html('<tr><td colspan="3">Failed to load data</td></tr>');
         }
