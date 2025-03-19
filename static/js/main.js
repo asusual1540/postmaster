@@ -230,14 +230,15 @@ $(document).ready(function () {
     });
 
     // Add click event to bag rows
-    $(document).on("click", ".bag-id-cell", function () {
-        let bagId = $(this).text().trim();
+    $(document).on("click", ".bag-row", function () {
+        let bagId = $(this).attr("bag_id");
         console.log("Fetching bag details for:", bagId);
         let token = getCookie("access");
         console.log("Access token:", token);
         bagItemQueryParams.bag_id = bagId;
         openBagItemsModal(token, bagItemQueryParams);
     });
+
 
     // Attach event to article row click
     $(document).on("click", ".bag-article-row", function () {
@@ -757,13 +758,16 @@ function updateBagTable(data) {
         return;
     }
 
+
+
     data.forEach(bag => {
         // console.log("Bag:", bag);
+        let formatted_date = formatDateTime(`${bag.Create_Date} ${bag.Create_Time}`);
         $("#bagTable tbody").append(`
             <tr class="bag-row" bag_id="${bag.Bag_ID}">
                 <td>${bag.Bag_ID}</td>
                 <td>${bag.Create_Total_Item_Count}(${bag.Delivered_Item_Count}/<span style="color: #ff2800">${bag.Create_Total_Item_Count - bag.Delivered_Item_Count}</span>)</td>
-                <td>${bag.Create_Date} ${bag.Create_Time}</td>
+                <td>${formatted_date}</td>
                 <td>${bag.Status}</td>
             </tr>
         `);
