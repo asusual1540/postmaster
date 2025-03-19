@@ -56,6 +56,7 @@ let bagItemQueryParams = {
 
 let cache = {};
 let bag_items_cache = {};
+var selectedBags = [];
 
 $(document).ready(function () {
     let selectedArticles = new Set();
@@ -692,7 +693,7 @@ function fetchBags(token, queryParams) {
             if (response.results && response.results.length > 0) {
 
                 let queryText = formatQueryParams(queryParams);
-                $("#bag-query").text(`${queryText}`);
+                $("#bag-query").text(`Total ${response.total}, ${queryText}`);
 
                 // Store response in cache
                 cache[url] = response;
@@ -748,27 +749,104 @@ function formatDateTime(dateTimeStr) {
     return `${day} ${month}, ${String(hours).padStart(2, '0')}:${minutes}${ampm}`;
 }
 
-
 function updateBagTable(data) {
     // console.log("Updating bag table with data:", data);
-    $("#bagTable tbody").empty();
+    var tableBody = document.getElementById("bagTable").getElementsByTagName("tbody")[0];
+    let value_current = $("#bag_id").val();
+    tableBody.innerHTML = ""; // Clear table body
     if (data.length === 0) {
-        $("#bagTable tbody").append("<tr><td colspan='6'>No records found</td></tr>");
+        $("#bag_id").val("");
+        queryParams.bag_id = "";
+        queryParams.status = "all";
+
+        var noDataRow = document.createElement("tr");
+        var noDataCell = document.createElement("td");
+        noDataCell.colSpan = 5;
+        noDataCell.style.textAlign = "center";
+        noDataCell.innerHTML = `No records found for ${value_current}`;
+        noDataRow.appendChild(noDataCell);
+        tableBody.appendChild(noDataRow);
+
+        // $("#bagTable tbody").append(`<tr><td colspan="6"><p style="text-align: center;">No records found for ${value_current}</p></td></tr>`);
         return;
     }
-
+    // ;
     data.forEach(bag => {
         // console.log("Bag:", bag);
-        $("#bagTable tbody").append(`
-            <tr class="bag-row" bag_id="${bag.Bag_ID}">
-                <td>${bag.Bag_ID}</td>
-                <td>${bag.Create_Total_Item_Count}(${bag.Delivered_Item_Count}/<span style="color: #ff2800">${bag.Create_Total_Item_Count - bag.Delivered_Item_Count}</span>)</td>
-                <td>${bag.Create_Date} ${bag.Create_Time}</td>
-                <td>${bag.Status}</td>
-            </tr>
-        `);
+        let formatted_date = formatDateTime(`${bag.Create_Date} ${bag.Create_Time}`);
+
+        var isChecked = false;
+        for (var j = 0; j < selectedBags.length; j++) {
+            if (selectedBags[j].Bag_ID === bag.Bag_ID) {
+                isChecked = true;
+                break;
+            }
+        }
+        // Create table row
+        var row = document.createElement("tr");
+        row.className = "bag-row";
+        row.setAttribute("bag_id", bag.Bag_ID);
+
+        // Create checkbox column
+        var checkboxCell = document.createElement("td");
+        var checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.className = "bag-checkbox";
+        checkbox.setAttribute("data-bag-id", bag.Bag_ID);
+        if (isChecked) {
+            checkbox.checked = true;
+        }
+        checkboxCell.appendChild(checkbox);
+        row.appendChild(checkboxCell);
+
+        // Create Bag ID column
+        var bagIdCell = document.createElement("td");
+        var bagIdText = document.createElement("span");
+        bagIdText.innerHTML = bag.Bag_ID;
+        bagIdText.className = "bag-id-cell";
+        bagIdCell.appendChild(bagIdText);
+        row.appendChild(bagIdCell);
+
+        // Create Articles column
+        var articlesCell = document.createElement("td");
+        articlesCell.innerHTML = bag.Create_Total_Item_Count + " (" + bag.Delivered_Item_Count + "/<span style='color: #ff2800'>" + (bag.Create_Total_Item_Count - bag.Delivered_Item_Count) + "</span>)";
+        row.appendChild(articlesCell);
+
+        // Create Create Date column
+        var dateCell = document.createElement("td");
+        dateCell.innerHTML = formatted_date;
+        row.appendChild(dateCell);
+
+        // Create Status column
+        var statusCell = document.createElement("td");
+        statusCell.innerHTML = bag.Status;
+        row.appendChild(statusCell);
+
+        // Append row to table
+        tableBody.appendChild(row);
     });
 }
+
+// function updateBagTable(data) {
+//     // console.log("Updating bag table with data:", data);
+//     $("#bagTable tbody").empty();
+//     if (data.length === 0) {
+//         $("#bagTable tbody").append("<tr><td colspan='6'>No records found</td></tr>");
+//         return;
+//     }
+//     data.forEach(bag => {
+//         // console.log("Bag:", bag);
+//         let formatted_date = formatDateTime(`${bag.Create_Date} ${bag.Create_Time}`);
+//         $("#bagTable tbody").append(`
+//             <tr class="bag-row" bag_id="${bag.Bag_ID}">
+//                 <td>${bag.Bag_ID}</td>
+//                 <td>${bag.Create_Total_Item_Count}(${bag.Delivered_Item_Count}/<span style="color: #ff2800">${bag.Create_Total_Item_Count - bag.Delivered_Item_Count}</span>)</td>
+//                 <td>${formatted_date}</td>
+//                 <td>${bag.Status}</td>
+//             </tr>
+//         `);
+//     });
+// }
 
 // <td>${bag.Bag_Category}</td>
 // <td>${bag.Bag_Type}</td>
@@ -1574,6 +1652,10 @@ function formatQueryParams(queryParams) {
         let formattedToTime = toDateTime.toLocaleTimeString('en-US', optionsTime).toLowerCase();
 
         readableParts.push(`From ${formattedFromDate} ${formattedFromTime} to ${formattedToDate} ${formattedToTime}`);
+    }
+
+    if (queryParams.total) {
+        readableParts.push(`Total: ${queryParams.total}`);
     }
 
     return `${readableParts.join(", ")}`;

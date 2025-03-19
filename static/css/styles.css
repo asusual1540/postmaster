@@ -136,10 +136,14 @@ p {
     font-weight: bold;
 }
 
+#logout-btn {
+    margin-right: 8px;
+}
+
 .controls-container {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     margin: 8px 8px;
 }
@@ -162,7 +166,7 @@ p {
     }
 
     .logo-container img {
-        display: none;
+        display: flex;
     }
 
     .pm_table_style {
@@ -174,12 +178,16 @@ p {
         padding: 6px 0px;
     }
 
-
+    .pos-date-input,
+    .pos-datetime-input {
+        padding: 8px 5px;
+        font-size: 11px;
+    }
 
 
     .pos-date-time-range {
         display: flex;
-        flex-direction: column !important;
+        /* flex-direction: column !important; */
         align-items: center;
     }
 
@@ -191,6 +199,13 @@ p {
 }
 
 @media (min-width: 400px) {
+
+    .pos-date-input,
+    .pos-datetime-input {
+        padding: 8px 5px;
+        font-size: 12px;
+    }
+
     #phone:focus {
         scroll-margin-top: 100px;
         position: relative;
@@ -205,7 +220,7 @@ p {
 
     .pos-date-time-range {
         display: flex;
-        flex-direction: column !important;
+        /* flex-direction: column !important; */
         align-items: center;
     }
 
@@ -220,6 +235,13 @@ p {
 }
 
 @media (min-width: 500px) {
+
+    .pos-date-input,
+    .pos-datetime-input {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
     #phone:focus {
         scroll-margin-top: 100px;
         position: relative;
@@ -346,7 +368,7 @@ p {
 .bag-id-cell {
     width: 100%;
     border-bottom: 1px solid #007bff;
-    color: #007bff;
+    /* color: #007bff; */
     cursor: pointer;
 }
 
@@ -592,14 +614,12 @@ td {
 /* Date Range Inputs */
 .pos-date-input,
 .pos-datetime-input {
-    padding: 8px 12px;
-    font-size: 14px;
+    padding: 8px 5px;
     border: 1px solid #d1d1d1;
     border-radius: 8px;
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
     background: white;
-    margin-bottom: 10px;
 }
 
 .pos-date-input:focus,
@@ -608,9 +628,32 @@ td {
     box-shadow: 0 0 5px rgba(0, 112, 243, 0.3);
 }
 
+.accordion>input[type="checkbox"] {
+    position: absolute;
+    left: -100vw;
+}
+
+.accordion .content {
+    overflow-y: hidden;
+    height: 0;
+    transition: height 0.3s ease;
+}
+
+.accordion>input[type="checkbox"]:checked~.content {
+    height: auto;
+    overflow: visible;
+}
+
+.accordion label {
+    display: block;
+}
+
+
 .pos-date-time-range {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    padding: 0px 8px;
 }
 
 .avatar {
