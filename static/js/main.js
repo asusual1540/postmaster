@@ -230,8 +230,8 @@ $(document).ready(function () {
     });
 
     // Add click event to bag rows
-    $(document).on("click", ".bag-id-cell", function () {
-        let bagId = $(this).text().trim();
+    $(document).on("click", ".bag-row", function () {
+        let bagId = $(this).attr("bag_id");
         console.log("Fetching bag details for:", bagId);
         let token = getCookie("access");
         console.log("Access token:", token);
