@@ -673,6 +673,7 @@ function constructQueryString() {
 
 function fetchBags(token, queryParams) {
     $("#bags-loading-div").show();
+    $("#bag-error-message").text("");
     let url = constructQueryString(queryParams);
     // console.log("Fetching from URL:", url);
 
@@ -712,14 +713,23 @@ function fetchBags(token, queryParams) {
                 updateBagTable([]);
             }
         },
-        error: function (e) {
+        error: function (xhr, status, error) {
             let queryText = formatQueryParams(queryParams);
             $("#bag-query").text(`${queryText}`);
             $("#bags-loading-div").hide();
-            console.log("Error fetching data", e.responseJSON);
+
+            console.log("Error fetching data", xhr);
+
+            // Extracting meaningful error information
+            let errorMessage = `Failed to load data. Status: ${xhr.status} - ${xhr.statusText}`;
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMessage += `, Error: ${xhr.responseJSON.message}`;
+            } else if (xhr.responseText) {
+                errorMessage += `, Error: ${xhr.responseText}`;
+            }
+
+            $("#bag-error-message").text(errorMessage);
             updateBagTable([]);
-            // $("#bagTable").hide();
-            // $("#bag-pagination").hide();
         }
     });
 }
