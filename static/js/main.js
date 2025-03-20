@@ -1,17 +1,17 @@
-const API_AUTH_URL = "https://sso.ekdak.com";
-const API_GET_URL = "https://ekdak.com";
-const API_POST_URL = "https://t.ekdak.com";
-// const API_AUTH_URL = "http://192.168.1.18:8000";
-// const API_GET_URL = "http://192.168.1.18:8002";
-// const API_POST_URL = "http://192.168.1.18:8002";
+// const API_AUTH_URL = "https://sso.ekdak.com";
+// const API_GET_URL = "https://ekdak.com";
+// const API_POST_URL = "https://t.ekdak.com";
+const API_AUTH_URL = "http://192.168.1.18:8000";
+const API_GET_URL = "http://192.168.1.18:8002";
+const API_POST_URL = "http://192.168.1.18:8002";
 
 // Define queryParams globally so it can be accessed across filters & pagination
-var current_date = new Date();
+let current_date = new Date();
 current_date.setHours(current_date.getHours() + 6); // Shift time forward by 6 hours
-var create_from = current_date.toISOString().split("T")[0] + "T00:00";
-var create_to = current_date.toISOString().slice(0, 16);
+let create_from = current_date.toISOString().split("T")[0] + "T00:00";
+let create_to = current_date.toISOString().slice(0, 16);
 
-var queryParams = {
+let queryParams = {
     page: 1,
     per_page: 10,
     bag_id: "",
@@ -24,10 +24,10 @@ var queryParams = {
     created_at_to: create_to
 };
 function resetQueryParams() {
-    var current_date = new Date();
+    let current_date = new Date();
     current_date.setHours(current_date.getHours() + 6); // Shift time forward by 6 hours
-    var create_from = current_date.toISOString().split("T")[0] + "T00:00";
-    var create_to = current_date.toISOString().slice(0, 16);
+    let create_from = current_date.toISOString().split("T")[0] + "T00:00";
+    let create_to = current_date.toISOString().slice(0, 16);
 
     queryParams = {
         page: 1,
@@ -43,7 +43,7 @@ function resetQueryParams() {
     };
     return queryParams;
 }
-var bagItemQueryParams = {
+let bagItemQueryParams = {
     page: 1,
     per_page: 10,
     bag_id: "",
@@ -54,31 +54,31 @@ var bagItemQueryParams = {
     status: "all"
 };
 
-var cache = {};
-var bag_items_cache = {};
+let cache = {};
+let bag_items_cache = {};
 
 $(document).ready(function () {
-    var selectedArticles = new Set();
-    var hasSelectedArticles = false;
+    let selectedArticles = new Set();
+    let hasSelectedArticles = false;
     // Function to toggle row selection
 
     // // Get today's date
-    // var now = new Date();
+    // let now = new Date();
 
     // // Format the date-time properly for datetime-local input (YYYY-MM-DDTHH:MM)
     // function formatDateTime(date) {
-    //     var year = date.getFullYear();
-    //     var month = String(date.getMonth() + 1).padStart(2, "0"); // Ensure two digits
-    //     var day = String(date.getDate()).padStart(2, "0");
-    //     var hours = String(date.getHours()).padStart(2, "0");
-    //     var minutes = String(date.getMinutes()).padStart(2, "0");
+    //     let year = date.getFullYear();
+    //     let month = String(date.getMonth() + 1).padStart(2, "0"); // Ensure two digits
+    //     let day = String(date.getDate()).padStart(2, "0");
+    //     let hours = String(date.getHours()).padStart(2, "0");
+    //     let minutes = String(date.getMinutes()).padStart(2, "0");
 
     //     return `${year}-${month}-${day}T${hours}:${minutes}`;
     // }
 
     // // Set from = start of today (00:00:00)
-    // var todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
-    // var todayEnd = now; // Current time
+    // let todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+    // let todayEnd = now; // Current time
 
     // Set values in the datetime-local inputs
     $("#created_at_from").val(create_from)
@@ -90,8 +90,8 @@ $(document).ready(function () {
 
 
 
-    var token = getCookie("access");
-    // console.log("Access token:", token);
+    let token = getCookie("access");
+    console.log("Access token:", token);
     if (!token) {
         console.log("No token found. Showing login form.");
         $(".authenticating").hide();
@@ -116,9 +116,9 @@ $(document).ready(function () {
         console.log("Window Delivery Button Clicked");
         $("#article-details-loading-div").show();
         $("#window-delivery-btn").hide();
-        var item_id = $("#article-item-id").text().trim();
-        var articleSenderPhone = $("#article-sen-contact").text().trim();
-        var bookedBranchCode = $("#article-booked-branch-code").text().trim();
+        let item_id = $("#article-item-id").text().trim();
+        let articleSenderPhone = $("#article-sen-contact").text().trim();
+        let bookedBranchCode = $("#article-booked-branch-code").text().trim();
         console.log("Item ID:", item_id);
         console.log("Article Sender Phone:", articleSenderPhone);
         try {
@@ -148,7 +148,7 @@ $(document).ready(function () {
                 },
                 error: function (xhr) {
                     $("#article-details-loading-div").hide();
-                    var response = JSON.parse(xhr.responseText);
+                    let response = JSON.parse(xhr.responseText);
                     alert("Error: " + response.message);
                     $("#window-delivery-btn").show();
                 }
@@ -171,7 +171,7 @@ $(document).ready(function () {
 
     });
 
-    var originalHeight = $(window).height();
+    let originalHeight = $(window).height();
 
     $(window).on('resize', function () {
 
@@ -191,10 +191,10 @@ $(document).ready(function () {
 
     $(document).on("click", "#filter_apply", function () {
         // Get values from input fields
-        var createdAtFrom = document.getElementById("created_at_from").value;
-        var createdAtTo = document.getElementById("created_at_to").value;
-        var bagId = document.getElementById("bag_id").value.trim();
-        var status = document.getElementById("bag_status").value;
+        let createdAtFrom = document.getElementById("created_at_from").value;
+        let createdAtTo = document.getElementById("created_at_to").value;
+        let bagId = document.getElementById("bag_id").value.trim();
+        let status = document.getElementById("bag_status").value;
 
         // Reset queryParams to default
         // queryParams = {
@@ -224,30 +224,30 @@ $(document).ready(function () {
         }
         console.log("Query params:", queryParams);
         // Fetch bags with updated filters
-        var token = getCookie("access");
+        let token = getCookie("access");
         // console.log("Access token:", token);
         fetchBags(token, queryParams);
     });
 
     // Add click event to bag rows
     $(document).on("click", ".bag-row", function () {
-        var bagId = $(this).attr("bag_id");
-        // console.log("Fetching bag details for:", bagId);
-        var token = getCookie("access");
-        // console.log("Access token:", token);
+        let bagId = $(this).attr("bag_id");
+        console.log("Fetching bag details for:", bagId);
+        let token = getCookie("access");
+        console.log("Access token:", token);
         bagItemQueryParams.bag_id = bagId;
         openBagItemsModal(token, bagItemQueryParams);
     });
 
     // Attach event to article row click
     $(document).on("click", ".bag-article-row", function () {
-        var articleId = $(this).attr("article_id");
-        // console.log("Fetching article details for:", articleId);
+        let articleId = $(this).attr("article_id");
+        console.log("Fetching article details for:", articleId);
         openArticleDetailsModal(articleId);
     });
     // Attach event to add bag click
     $(document).on("click", "#receive_bag", function () {
-        var bag_id = $("#bag_id").val().trim();
+        let bag_id = $("#bag_id").val().trim();
         if (!bag_id) {
             alert("Bag ID is required. Please scan or search a bag.");
             return;
@@ -277,10 +277,10 @@ $(document).ready(function () {
     });
 
     $(document).on("click", "#scan-bag-btn", function () {
-        var bagId = $("#scan-bag-input").val().trim();
+        let bagId = $("#scan-bag-input").val().trim();
         console.log("Scanned bag ID:", bagId);
         if (bagId) {
-            var accessToken = getCookie("access");
+            let accessToken = getCookie("access");
             // console.log("Access token:", accessToken);
             bagItemQueryParams.bag_id = bagId;
             fetchScannedBagItems(accessToken, bagItemQueryParams);
@@ -303,20 +303,18 @@ $(document).ready(function () {
         $("#login-loading-div").show();
         // Get values from input fields
         console.log("Login button clicked");
-        var phone = $('#phone').val().trim();
-        var password = $('#password').val().trim();
-        var errorMsg = $('#login-error');
-        errorMsg.text('');
+        let phone = $('#phone').val().trim();
+        let password = $('#password').val().trim();
+        let errorMsg = $('#login-error');
 
         // Simple validation
         if (phone === '' || password === '') {
-            $("#login-loading-div").hide();
             errorMsg.text('Phone number and password are required.');
             return;
         }
 
         // API request payload
-        var requestData = {
+        let requestData = {
             username: `${phone}`,
             password: password,
             group: "post-master",
@@ -332,7 +330,6 @@ $(document).ready(function () {
                 if (response.status === "success") {
                     hideLogin();
                     showHeaderStyles();
-                    $("#login-loading-div").hide();
 
                     console.log("Login successful:", response);
                     if (response && response["username"]) {
@@ -356,7 +353,7 @@ $(document).ready(function () {
             },
             error: function (xhr) {
                 console.error("Login request failed:", xhr);
-                var errorText = xhr.responseJSON ? xhr.responseJSON.message : 'Login request failed.';
+                let errorText = xhr.responseJSON ? xhr.responseJSON.message : 'Login request failed.';
                 errorMsg.text(errorText);
                 $("#login-loading-div").hide();
             }
@@ -373,7 +370,7 @@ $(document).ready(function () {
     // verifyUser();
     // Function to toggle row selection
     function toggleArticleSelection(articleId, rowElement, forceSelect = null) {
-        var shouldSelect = forceSelect !== null ? forceSelect : !selectedArticles.has(articleId);
+        let shouldSelect = forceSelect !== null ? forceSelect : !selectedArticles.has(articleId);
 
         if (shouldSelect) {
             selectedArticles.add(articleId);
@@ -390,21 +387,21 @@ $(document).ready(function () {
 
     // Attach click event for row selection
     $(document).on("click", ".scan-bag-article-row", function () {
-        var articleId = $(this).attr("article_id");
+        let articleId = $(this).attr("article_id");
         toggleArticleSelection(articleId, $(this));
     });
 
     // Checkbox selection
     $(document).on("change", ".article-checkbox", function () {
-        var articleId = $(this).closest("tr").attr("article_id");
-        var rowElement = $(this).closest("tr");
+        let articleId = $(this).closest("tr").attr("article_id");
+        let rowElement = $(this).closest("tr");
         toggleArticleSelection(articleId, rowElement);
     });
 
     // Select All Button
     $("#select-all-articles").on("click", function () {
         $(".scan-bag-article-row").each(function () {
-            var articleId = $(this).attr("article_id");
+            let articleId = $(this).attr("article_id");
             if (!selectedArticles.has(articleId)) {
                 selectedArticles.add(articleId);
                 $(this).addClass("selected-row");
@@ -422,13 +419,10 @@ $(document).ready(function () {
         updateButtonsState();
     });
 
-    $(document).on("click", "#clear_search_btn", function () {
-        $("#bag_id").val("");
-    });
 
     $(document).on("click", "#clear_filter", function () {
         console.log("Clearing filters");
-        var query_params = resetQueryParams();
+        let query_params = resetQueryParams();
         $("#bag_status").val(query_params.status);
         $("#bag_id").val(query_params.bag_id);
         $("#created_at_from").val(query_params.created_at_from);
@@ -444,7 +438,7 @@ $(document).ready(function () {
             return;
         }
         console.log("Receiving articles:", Array.from(selectedArticles));
-        var total_selected = selectedArticles.size;
+        let total_selected = selectedArticles.size;
         selectedArticles.clear();
         $(".selected-row").removeClass("selected-row");
         $(".article-checkbox").prop("checked", false);
@@ -468,10 +462,10 @@ $(document).ready(function () {
 
     // Search and Select an Article
     $("#scan-article-btn").on("click", function () {
-        var searchQuery = $("#scan-article-input").val().trim();
+        let searchQuery = $("#scan-article-input").val().trim();
         if (!searchQuery) return;
 
-        var matchingRow = $(`.scan-bag-article-row[article_id="${searchQuery}"]`);
+        let matchingRow = $(`.scan-bag-article-row[article_id="${searchQuery}"]`);
         if (matchingRow.length) {
             toggleArticleSelection(searchQuery, matchingRow);
         } else {
@@ -481,14 +475,14 @@ $(document).ready(function () {
 
     // Function to update button states
     function updateButtonsState() {
-        var hasSelection = selectedArticles.size > 0;
+        let hasSelection = selectedArticles.size > 0;
         $("#receive-selected, #delete-selected, #deselect-all-articles").prop("disabled", !hasSelection);
         $("#scanned-bag-items-table_selected").text(`Selected Articles: ${selectedArticles.size}`);
     }
 
     $(document).on("click", "#receive-bag-details-btn", function () {
-        var bag_id = $("#bag-detail-id").text().trim();
-        // console.log("Receiving bag details for:", bag_id);
+        let bag_id = $("#bag-detail-id").text().trim();
+        console.log("Receiving bag details for:", bag_id);
         closeBagItemsModal();
         openReceiveBagModal(bag_id);
 
@@ -499,12 +493,12 @@ $(document).ready(function () {
     });
 
     $(document).on("click", "#print_pos", function () {
-        // var text = "dummy text for print";
-        var allBagIds = $(".bag-row").map(function () {
+        // let text = "dummy text for print";
+        let allBagIds = $(".bag-row").map(function () {
             return $(this).attr("bag_id");
         }).get();
         console.log("All Bag IDs:", allBagIds);
-        var text = allBagIds.join("\n");
+        let text = allBagIds.join("\n");
         POSPrinting(text);
     });
 
@@ -648,7 +642,7 @@ function showApp(token, queryParams) {
 }
 
 function constructQueryString() {
-    var url = `${API_GET_URL}/v1/dms-legacy-core-logs/get-bags/?page=${queryParams.page}&per_page=${queryParams.per_page}`;
+    let url = `${API_GET_URL}/v1/dms-legacy-core-logs/get-bags/?page=${queryParams.page}&per_page=${queryParams.per_page}`;
 
     if (queryParams.bag_id) url += `&bag_id=${queryParams.bag_id}`;
     if (queryParams.dest_branch_code) url += `&dest_branch_code=${queryParams.dest_branch_code}`;
@@ -658,13 +652,13 @@ function constructQueryString() {
     if (queryParams.status && queryParams.status !== "all") url += `&status=${queryParams.status}`;
 
     if (queryParams.created_at_from) {
-        var [dateFrom, timeFrom] = queryParams.created_at_from.split("T");
+        let [dateFrom, timeFrom] = queryParams.created_at_from.split("T");
         url += `&create_date_from=${dateFrom}`
         url += `&create_time_from=${timeFrom}`
     };
 
     if (queryParams.created_at_to) {
-        var [dateTo, timeTo] = queryParams.created_at_to.split("T");
+        let [dateTo, timeTo] = queryParams.created_at_to.split("T");
         url += `&create_date_to=${dateTo}`
         url += `&create_time_to=${timeTo}`
     };
@@ -675,7 +669,7 @@ function constructQueryString() {
 function fetchBags(token, queryParams) {
     $("#bags-loading-div").show();
     $("#bag-error-message").text("");
-    var url = constructQueryString(queryParams);
+    let url = constructQueryString(queryParams);
     // console.log("Fetching from URL:", url);
 
     // Check cache to avoid unnecessary API calls
@@ -694,11 +688,11 @@ function fetchBags(token, queryParams) {
         headers: { "Authorization": `Bearer ${token}` },
         success: function (response) {
             $("#bags-loading-div").hide();
-            // console.log("Data fetched successfully", response);
+            console.log("Data fetched successfully", response);
             if (response.results && response.results.length > 0) {
 
-                var queryText = formatQueryParams(queryParams);
-                $("#bag-query").text(`Total: ${response.total}, ${queryText}`);
+                let queryText = formatQueryParams(queryParams);
+                $("#bag-query").text(`${queryText}`);
 
                 // Store response in cache
                 cache[url] = response;
@@ -709,20 +703,20 @@ function fetchBags(token, queryParams) {
 
             } else {
                 console.log("No records found");
-                var queryText = formatQueryParams(queryParams);
+                let queryText = formatQueryParams(queryParams);
                 $("#bag-query").text(`${queryText}`);
                 updateBagTable([]);
             }
         },
         error: function (xhr, status, error) {
-            var queryText = formatQueryParams(queryParams);
+            let queryText = formatQueryParams(queryParams);
             $("#bag-query").text(`${queryText}`);
             $("#bags-loading-div").hide();
 
             console.log("Error fetching data", xhr);
 
             // Extracting meaningful error information
-            var errorMessage = `Failed to load data. Status: ${xhr.status} - ${xhr.statusText}`;
+            let errorMessage = `Failed to load data. Status: ${xhr.status} - ${xhr.statusText}`;
             if (xhr.responseJSON && xhr.responseJSON.message) {
                 errorMessage += `, Error: ${xhr.responseJSON.message}`;
             } else if (xhr.responseText) {
@@ -745,7 +739,7 @@ function formatDateTime(dateTimeStr) {
     const month = months[dateObj.getMonth()];
     // const year = String(dateObj.getFullYear()).slice(-2);
 
-    var hours = dateObj.getHours();
+    let hours = dateObj.getHours();
     const minutes = String(dateObj.getMinutes()).padStart(2, '0');
     const ampm = hours >= 12 ? "pm" : "am";
 
@@ -765,12 +759,11 @@ function updateBagTable(data) {
 
     data.forEach(bag => {
         // console.log("Bag:", bag);
-        var bag_date = formatDateTime(`${bag.Create_Date} ${bag.Create_Time}`);
         $("#bagTable tbody").append(`
             <tr class="bag-row" bag_id="${bag.Bag_ID}">
                 <td>${bag.Bag_ID}</td>
                 <td>${bag.Create_Total_Item_Count}(${bag.Delivered_Item_Count}/<span style="color: #ff2800">${bag.Create_Total_Item_Count - bag.Delivered_Item_Count}</span>)</td>
-                <td>${bag_date}</td>
+                <td>${bag.Create_Date} ${bag.Create_Time}</td>
                 <td>${bag.Status}</td>
             </tr>
         `);
@@ -794,7 +787,7 @@ function openBagItemsModal(token, queryParams) {
 
 
 function constructBagItemQueryString(bagItemQueryParams) {
-    var url = `${API_GET_URL}/v1/dms-legacy-core-logs/get-bag-items/?page=${bagItemQueryParams.page}&per_page=${bagItemQueryParams.per_page}`;
+    let url = `${API_GET_URL}/v1/dms-legacy-core-logs/get-bag-items/?page=${bagItemQueryParams.page}&per_page=${bagItemQueryParams.per_page}`;
 
     if (bagItemQueryParams.bag_id) url += `&bag_id=${bagItemQueryParams.bag_id}`;
     if (bagItemQueryParams.branch_code) url += `&branch_code=${bagItemQueryParams.branch_code}`;
@@ -804,13 +797,13 @@ function constructBagItemQueryString(bagItemQueryParams) {
     if (bagItemQueryParams.status && bagItemQueryParams.status !== "all") url += `&status=${bagItemQueryParams.status}`;
 
     // if (bagItemQueryParams.created_at_from) {
-    //     var [dateFrom, timeFrom] = bagItemQueryParams.created_at_from.split("T");
+    //     let [dateFrom, timeFrom] = bagItemQueryParams.created_at_from.split("T");
     //     url += `&create_date_from=${dateFrom}`
     //     url += `&create_time_from=${timeFrom}`
     // };
 
     // if (bagItemQueryParams.created_at_to) {
-    //     var [dateTo, timeTo] = bagItemQueryParams.created_at_to.split("T");
+    //     let [dateTo, timeTo] = bagItemQueryParams.created_at_to.split("T");
     //     url += `&create_date_to=${dateTo}`
     //     url += `&create_time_to=${timeTo}`
     // };
@@ -824,21 +817,21 @@ function getBagIdFromUrl(url) {
 // Function to fetch bag items
 function fetchBagItems(token, bagItemQueryParams) {
     $("#bag-items-loading-div").show();
-    var url = constructBagItemQueryString(bagItemQueryParams);
+    let url = constructBagItemQueryString(bagItemQueryParams);
     // console.log("Fetching from URL:", url);
 
     // Check cache to avoid unnecessary API calls
     if (bag_items_cache[url]) {
         $("#bag-items-loading-div").hide();
         // console.log("Using cached data:", bag_items_cache[url]);
-        var _bagid = getBagIdFromUrl(bag_items_cache[url])
+        let _bagid = getBagIdFromUrl(bag_items_cache[url])
         updateBagItemsTable(bag_items_cache[url], _bagid);
         updatePagination("bag-items-table", "bag-items-pagination", bag_items_cache[url].page, bag_items_cache[url].total, bag_items_cache[url].per_page, fetchBagItems);
         return;
     }
 
-    // var url = `http://localhost:8002/v1/dms-legacy-core-logs/get-bag-items/?bag_id=${bagId}&page=1&per_page=15`;
-    var _bagid = getBagIdFromUrl(url)
+    // let url = `http://localhost:8002/v1/dms-legacy-core-logs/get-bag-items/?bag_id=${bagId}&page=1&per_page=15`;
+    let _bagid = getBagIdFromUrl(url)
     $.ajax({
         url: url,
         type: "GET",
@@ -860,19 +853,18 @@ function fetchBagItems(token, bagItemQueryParams) {
 
 // Function to fetch bag items
 function fetchScannedBagItems(token, bagItemQueryParams) {
-    var url = constructBagItemQueryString(bagItemQueryParams);
+    let url = constructBagItemQueryString(bagItemQueryParams);
     // console.log("Fetching from scan URL:", url);
 
     // Check cache to avoid unnecessary API calls
     if (bag_items_cache[url]) {
         // console.log("Using cached data:", bag_items_cache[url]);
         updateScanBagItemsTable(bag_items_cache[url].results);
-        $("#scanned-bag-items-table_total").text(`Total: ${bag_items_cache[url].total}`);
         updatePagination("scanned-bag-items-table", "scanned-bag-items-pagination", bag_items_cache[url].page, bag_items_cache[url].total, bag_items_cache[url].per_page, fetchScannedBagItems);
         return;
     }
 
-    // var url = `http://localhost:8002/v1/dms-legacy-core-logs/get-bag-items/?bag_id=${bagId}&page=1&per_page=15`;
+    // let url = `http://localhost:8002/v1/dms-legacy-core-logs/get-bag-items/?bag_id=${bagId}&page=1&per_page=15`;
 
     $.ajax({
         url: url,
@@ -881,7 +873,6 @@ function fetchScannedBagItems(token, bagItemQueryParams) {
         success: function (response) {
             // console.log("Bag items fetched:", response);
             updateScanBagItemsTable(response.results);
-            $("#scanned-bag-items-table_total").text(`Total: ${response.total}`);
             updatePagination("scanned-bag-items-table", "scanned-bag-items-pagination", response.page, response.total, response.per_page, fetchScannedBagItems);
             $("#receive-all").prop("disabled", response.results.length === 0);
         },
@@ -896,7 +887,7 @@ function fetchScannedBagItems(token, bagItemQueryParams) {
 function updateBagItemsTable(data, bagId) {
     $(".bag-item-title-value").text(`${bagId}`);
     $(".bag-item-article-value").text(`${data.total}`);
-    var tbody = $("#bag-items-table tbody");
+    let tbody = $("#bag-items-table tbody");
     tbody.empty();
 
     if (!data || !data.results || data.results == null || data.results.length === 0) {
@@ -905,7 +896,7 @@ function updateBagItemsTable(data, bagId) {
     }
 
     data.results.forEach(item => {
-        var _status = item.Delivery_Status;
+        let _status = item.Delivery_Status;
         if (_status == "Del_To_Rec") {
             _status = "Delivered";
         }
@@ -939,7 +930,7 @@ function updateScanBagItemsTable(data) {
         $(".scanned-bag-item-title").text(`Articles in ${data[0].Bag_ID}`);
     }
 
-    var tbody = $("#scanned-bag-items-table tbody");
+    let tbody = $("#scanned-bag-items-table tbody");
     tbody.empty();
 
     if (data.length === 0) {
@@ -948,7 +939,7 @@ function updateScanBagItemsTable(data) {
     }
 
     data.forEach((item, index) => {
-        var _status = item.Delivery_Status;
+        let _status = item.Delivery_Status;
         if (_status == "Del_To_Rec") {
             _status = "Delivered";
         }
@@ -994,9 +985,9 @@ function openReceiveBagModal(bag_id) {
     $("#scan-bag-item-id").text(bag_id);
     // Fetch and populate the mail line options when modal opens
     fetchMailLineOptions();
-    // console.log("Scanned bag ID:", bag_id);
+    console.log("Scanned bag ID:", bag_id);
     if (bag_id) {
-        var accessToken = getCookie("access");
+        let accessToken = getCookie("access");
         // console.log("Access token:", accessToken);
         bagItemQueryParams.bag_id = bag_id;
         fetchScannedBagItems(accessToken, bagItemQueryParams);
@@ -1006,20 +997,20 @@ function openReceiveBagModal(bag_id) {
 // Function to fetch article details
 function fetchArticleDetails(articleId) {
     $("#article-details-loading-div").show();
-    var token = getCookie("access");
+    let token = getCookie("access");
     // console.log("Access token:", token);
-    var url = `${API_GET_URL}/v1/dms-legacy-core-logs/get-bag-item-detail/?item_id=${articleId}`;
+    let url = `${API_GET_URL}/v1/dms-legacy-core-logs/get-bag-item-detail/?item_id=${articleId}`;
 
     $.ajax({
         url: url,
         type: "GET",
         headers: { "Authorization": `Bearer ${token}` },
         success: function (response) {
-            // console.log("Article details fetched:", response);
+            console.log("Article details fetched:", response);
             updateArticleDetailsModal(response);
             $("#article-details-loading-div").hide();
-            var tracking_logs = response.tracking_logs;
-            var log_statuses = tracking_logs.map(log => log.Status);
+            let tracking_logs = response.tracking_logs;
+            let log_statuses = tracking_logs.map(log => log.Status);
             if (log_statuses.includes("Del_To_Rec") || log_statuses.includes("Ret_To_Sen") || log_statuses.includes("Lost") || log_statuses.includes("Garbage") || log_statuses.includes("Expired")) {
                 $("#window-delivery-btn").hide();
             } else {
@@ -1036,8 +1027,8 @@ function fetchArticleDetails(articleId) {
 
 // // Function to update modal content
 // function updateArticleDetailsModal(data) {
-//     var details = data.article_details;
-//     var trackingLogs = data.tracking_logs;
+//     let details = data.article_details;
+//     let trackingLogs = data.tracking_logs;
 
 //     $("#article-item-id").text(details.Item_ID);
 //     $("#article-item-type").text(details.Item_Type);
@@ -1059,7 +1050,7 @@ function fetchArticleDetails(articleId) {
 //     }
 
 //     // Construct vertical stepper
-//     var stepperHtml = trackingLogs.map(log => `
+//     let stepperHtml = trackingLogs.map(log => `
 //         <div class="step">
 //             <div class="step-circle"></div>
 //             <div class="step-content">
@@ -1076,9 +1067,9 @@ function fetchArticleDetails(articleId) {
 
 // Function to update modal content with table instead of stepper
 function updateArticleDetailsModal(data) {
-    // console.log("Data:", data);
-    var details = data.article_details;
-    var trackingLogs = data.tracking_logs;
+    console.log("Data:", data);
+    let details = data.article_details;
+    let trackingLogs = data.tracking_logs;
 
     $("#article-item-id").text(details.Item_ID);
     $("#article-item-type").text(details.Item_Type);
@@ -1097,33 +1088,27 @@ function updateArticleDetailsModal(data) {
 
 
     // Construct table rows for tracking history
-    var tableHtml = `
+    let tableHtml = `
         <table class="pm_table_style">
             <thead>
                 <tr>
                     <th>Status</th>
+                    <th>Remarks</th>
+                    <th>Event Date</th>
+                    <th>Event Time</th>
                     <th>Branch Info</th>
-                    <th>Date</th>
                 </tr>
             </thead>
             <tbody>
-                ${trackingLogs && trackingLogs.map(log => {
-        let date_formated = formatDateTime(`${log.Event_Date} ${log.Event_Time}`);
-        var status = log.Status.replace(/_/g, "");
-        status = status.replace("Item", "");
-        status = status.replace("item", "");
-        // var remarks = log.Remarks.replace(/_/g, "");
-        // remarks = remarks.replace("Item", "");
-        // remarks = remarks.replace("item", "");
-        return `
+                ${trackingLogs.map(log => `
                     <tr>
-                        <td><strong>${status}</strong></td>
-                        
+                        <td><strong>${log.Status}</strong></td>
+                        <td>${log.Remarks}</td>
+                        <td>${log.Event_Date}</td>
+                        <td>${log.Event_Time}</td>
                         <td>${log.Branch_Info}</td>
-                        <td>${date_formated}</td>
                     </tr>
-                `;
-    }).join("")}
+                `).join("")}
             </tbody>
         </table>
     `;
@@ -1139,8 +1124,8 @@ function closeArticleDetailsModal() {
 }
 
 // function updateBagPagination(currentPage, totalRecords, perPage) {
-//     var totalPages = Math.ceil(totalRecords / perPage);
-//     var paginationContainer = $("#bag-pagination");
+//     let totalPages = Math.ceil(totalRecords / perPage);
+//     let paginationContainer = $("#bag-pagination");
 
 //     document.getElementById("total_bags").innerText = `Total Bags : ${totalRecords}`;
 
@@ -1156,16 +1141,16 @@ function closeArticleDetailsModal() {
 //     console.log("Current page:", currentPage);
 //     console.log("Total records:", totalRecords);
 
-//     var paginationHtml = '';
+//     let paginationHtml = '';
 
 //     if (totalPages <= 6) {
 //         // Show all pages if 6 or less
-//         for (var i = 1; i <= totalPages; i++) {
+//         for (let i = 1; i <= totalPages; i++) {
 //             paginationHtml += `<button class="bag-pagination-btn ${i == currentPage ? 'page-active' : ''}" data-page="${i}">${i}</button>`;
 //         }
 //     } else {
 //         // First 4 pages
-//         for (var i = 1; i <= 4; i++) {
+//         for (let i = 1; i <= 4; i++) {
 //             paginationHtml += `<button class="bag-pagination-btn ${i == currentPage ? 'page-active' : ''}" data-page="${i}">${i}</button>`;
 //         }
 
@@ -1189,10 +1174,10 @@ function closeArticleDetailsModal() {
 
 //     // Add click event listener to pagination buttons
 //     $(document).on("click", ".bag-pagination-btn", function () {
-//         var token = getCookie("access");
+//         let token = getCookie("access");
 //         console.log("Access token:", token);
 
-//         var newPage = parseInt($(this).attr("data-page"));
+//         let newPage = parseInt($(this).attr("data-page"));
 //         queryParams.page = newPage;
 
 //         fetchBags(token, queryParams);
@@ -1206,8 +1191,8 @@ function closeArticleDetailsModal() {
 
 
 // function updateBagItemPagination(currentPage, totalRecords, perPage) {
-//     var totalPages = Math.ceil(totalRecords / perPage);
-//     var paginationContainer = $("#scan-bag-item-pagination");
+//     let totalPages = Math.ceil(totalRecords / perPage);
+//     let paginationContainer = $("#scan-bag-item-pagination");
 
 //     document.getElementById("total_scanned_bag_items").innerText = `Total Bag Items : ${totalRecords}`;
 
@@ -1223,16 +1208,16 @@ function closeArticleDetailsModal() {
 //     console.log("Current page:", currentPage);
 //     console.log("Total records:", totalRecords);
 
-//     var paginationHtml = '';
+//     let paginationHtml = '';
 
 //     if (totalPages <= 6) {
 //         // Show all pages if 6 or less
-//         for (var i = 1; i <= totalPages; i++) {
+//         for (let i = 1; i <= totalPages; i++) {
 //             paginationHtml += `<button class="bag-pagination-btn ${i == currentPage ? 'page-active' : ''}" data-page="${i}">${i}</button>`;
 //         }
 //     } else {
 //         // First 4 pages
-//         for (var i = 1; i <= 4; i++) {
+//         for (let i = 1; i <= 4; i++) {
 //             paginationHtml += `<button class="bag-pagination-btn ${i == currentPage ? 'page-active' : ''}" data-page="${i}">${i}</button>`;
 //         }
 
@@ -1256,10 +1241,10 @@ function closeArticleDetailsModal() {
 
 //     // Add click event listener to pagination buttons
 //     $(document).on("click", ".bag-pagination-btn", function () {
-//         var token = getCookie("access");
+//         let token = getCookie("access");
 //         console.log("Access token:", token);
 
-//         var newPage = parseInt($(this).attr("data-page"));
+//         let newPage = parseInt($(this).attr("data-page"));
 //         queryParams.page = newPage;
 
 //         fetchBags(token, queryParams);
@@ -1271,32 +1256,32 @@ function closeArticleDetailsModal() {
 // }
 
 function updatePagination(tableId, paginationContainerId, currentPage, totalRecords, perPage, fetchFunction) {
-    var totalPages = Math.ceil(totalRecords / perPage);
-    var paginationContainer = $("#" + paginationContainerId);
+    let totalPages = Math.ceil(totalRecords / perPage);
+    let paginationContainer = $("#" + paginationContainerId);
 
     if (!paginationContainer.length) {
         console.warn(`Pagination container '${paginationContainerId}' not found.`);
         return;
     }
 
-    // var totalElement = document.getElementById(`${tableId}_total`);
-    // if (totalElement) {
-    //     totalElement.innerText = `Total: ${totalRecords}`;
-    // }
+    let totalElement = document.getElementById(`${tableId}_total`);
+    if (totalElement) {
+        totalElement.innerText = `Total: ${totalRecords}`;
+    }
 
     // console.log("Total pages:", totalPages);
     // console.log("Current page:", currentPage);
     // console.log("Total records:", totalRecords);
 
     // ✅ Safely get arrows or create them if missing
-    var prevArrow = paginationContainer.find(".pos-pagination-arrow-prev").prop("outerHTML") ||
+    let prevArrow = paginationContainer.find(".pos-pagination-arrow-prev").prop("outerHTML") ||
         `<button class="pos-pagination-arrow pos-pagination-arrow-prev" aria-label="Previous Page" id="prev${tableId}Page">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                         </svg>
                     </button>`;
 
-    var nextArrow = paginationContainer.find(".pos-pagination-arrow-next").prop("outerHTML") ||
+    let nextArrow = paginationContainer.find(".pos-pagination-arrow-next").prop("outerHTML") ||
         `<button class="pos-pagination-arrow pos-pagination-arrow-next" aria-label="Next Page" id="next${tableId}Page">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5 15.75 12l-7.5 7.5" />
@@ -1306,14 +1291,14 @@ function updatePagination(tableId, paginationContainerId, currentPage, totalReco
     // Remove only pagination numbers and dots, keeping arrows intact
     paginationContainer.find(".pos-pagination-btn, .pos-pagination-dots").remove();
 
-    var paginationHtml = '';
+    let paginationHtml = '';
 
     if (totalPages <= 6) {
-        for (var i = 1; i <= totalPages; i++) {
+        for (let i = 1; i <= totalPages; i++) {
             paginationHtml += `<button class="pos-pagination-btn ${i == currentPage ? 'page-active' : ''}" data-page="${i}">${i}</button>`;
         }
     } else {
-        for (var i = 1; i <= 3; i++) {
+        for (let i = 1; i <= 3; i++) {
             paginationHtml += `<button class="pos-pagination-btn ${i == currentPage ? 'page-active' : ''}" data-page="${i}">${i}</button>`;
         }
 
@@ -1336,18 +1321,18 @@ function updatePagination(tableId, paginationContainerId, currentPage, totalReco
 
     // Add click event listener for pagination
     $(document).on("click", `#${paginationContainerId} .pos-pagination-btn`, function () {
-        var token = getCookie("access");
+        let token = getCookie("access");
         // console.log("Access token:", token);
         // console.log("queryParams:", queryParams);
-        var newPage = parseInt($(this).attr("data-page"));
+        let newPage = parseInt($(this).attr("data-page"));
         if (tableId == "scanned-bag-items-table") {
             bagItemQueryParams.page = newPage;
-            var _bag_id = $("#bag-detail-id").text();
+            let _bag_id = $("#bag-detail-id").text();
             bagItemQueryParams.bag_id = _bag_id;
             fetchFunction(token, bagItemQueryParams);
         } else if (tableId == "bag-items-table") {
             bagItemQueryParams.page = newPage;
-            var _bag_id = $("#bag-detail-id").text();
+            let _bag_id = $("#bag-detail-id").text();
             bagItemQueryParams.bag_id = _bag_id;
             fetchFunction(token, bagItemQueryParams);
         }
@@ -1365,7 +1350,7 @@ function updatePagination(tableId, paginationContainerId, currentPage, totalReco
     // Add click event listener for pagination
     $(document).on("click", `#${paginationContainerId} .pos-pagination-arrow-prev`, function () {
         if (currentPage === 1) return;
-        var token = getCookie("access");
+        let token = getCookie("access");
         // console.log("Access token:", token);
 
         if (tableId == "scanned-bag-items-table") {
@@ -1383,7 +1368,7 @@ function updatePagination(tableId, paginationContainerId, currentPage, totalReco
     // Add click event listener for pagination
     $(document).on("click", `#${paginationContainerId} .pos-pagination-arrow-next`, function () {
         if (currentPage === totalPages) return
-        var token = getCookie("access");
+        let token = getCookie("access");
         // console.log("Access token:", token);
         if (tableId == "scanned-bag-items-table") {
             bagItemQueryParams.page = bagItemQueryParams.page + 1;
@@ -1397,8 +1382,8 @@ function updatePagination(tableId, paginationContainerId, currentPage, totalReco
 
 
 
-    var prevArrowElement = $(`#${paginationContainerId} .pos-pagination-arrow-prev`);
-    var nextArrowElement = $(`#${paginationContainerId} .pos-pagination-arrow-next`);
+    let prevArrowElement = $(`#${paginationContainerId} .pos-pagination-arrow-prev`);
+    let nextArrowElement = $(`#${paginationContainerId} .pos-pagination-arrow-next`);
 
     if (prevArrowElement.length) prevArrowElement.prop("disabled", currentPage === 1);
     if (nextArrowElement.length) nextArrowElement.prop("disabled", currentPage === totalPages);
@@ -1407,7 +1392,7 @@ function updatePagination(tableId, paginationContainerId, currentPage, totalReco
 
 // Function to fetch mail line options from API and populate the select dropdown
 function fetchMailLineOptions() {
-    var token = getCookie("access");
+    let token = getCookie("access");
     // console.log("Access token:", token);
     $.ajax({
         url: `${API_GET_URL}/v1/dms-legacy-core-logs/get-line-list/`,
@@ -1416,12 +1401,12 @@ function fetchMailLineOptions() {
         headers: { "Authorization": `Bearer ${token}` },
         success: function (response) {
             if (response.data && response.data.length > 0) {
-                var select = $("#custom-select");
+                let select = $("#custom-select");
                 select.empty(); // Clear previous options
 
                 response.data.forEach(item => {
-                    var optionText = `${item.Category}: ${item.Name} ${item.Caption}`;
-                    var optionValue = `${item.ID}`; // You can customize this if needed
+                    let optionText = `${item.Category}: ${item.Name} ${item.Caption}`;
+                    let optionValue = `${item.ID}`; // You can customize this if needed
 
                     select.append(`<option value="${optionValue}">${optionText}</option>`);
                 });
@@ -1441,11 +1426,11 @@ function receiveSelectedArticles() {
     }
     alert(`Receiving articles: ${Array.from(selectedArticles)}`);
     return
-    var selectedArticles = [];
+    let selectedArticles = [];
 
     $("#scanned-bag-items-table tbody tr.selected").each(function () {
-        var articleID = $(this).attr("article_id");
-        var status = $(this).find("td:nth-child(3)").text(); // Getting status column
+        let articleID = $(this).attr("article_id");
+        let status = $(this).find("td:nth-child(3)").text(); // Getting status column
 
         // Ensure correct formatting for API
         selectedArticles.push(`${articleID}<>${status}`);
@@ -1456,9 +1441,9 @@ function receiveSelectedArticles() {
         return;
     }
 
-    var bagID = $("#scan-bag-input").val(); // Assuming scanned bag input contains bag ID
+    let bagID = $("#scan-bag-input").val(); // Assuming scanned bag input contains bag ID
 
-    var requestData = {
+    let requestData = {
         item_info: selectedArticles,
         bag_id: bagID
     };
@@ -1485,25 +1470,25 @@ function receiveSelectedArticles() {
 
 // Function to receive all bags
 function receiveAllBagItems() {
-    var bag_id = $("#scan-bag-item-id").text();
+    let bag_id = $("#scan-bag-item-id").text();
     if (!bag_id) {
         alert("Please scan a bag first.");
         return;
     }
-    var total_items = $("#scanned-bag-items-table_total").text();
-    var total = total_items.split(":")[1].trim();
+    let total_items = $("#scanned-bag-items-table_total").text();
+    let total = total_items.split(":")[1].trim();
     if (total == 0) {
         alert("No items available.");
         return;
     }
     alert(`Receiving ${total} articles in bag: ${bag_id}`);
-    var selectedMailLine = $("#custom-select").val(); // Get selected mail line
+    let selectedMailLine = $("#custom-select").val(); // Get selected mail line
 
-    var scannedBags = [];
+    let scannedBags = [];
     $("#scanned-bag-items-table tbody tr").each(function () {
-        var bagID = $(this).attr("article_id");
-        // var marking = $(this).find("td:nth-child(3)").text(); // Assuming status is in column 3
-        var marking = "0"; // Default marking
+        let bagID = $(this).attr("article_id");
+        // let marking = $(this).find("td:nth-child(3)").text(); // Assuming status is in column 3
+        let marking = "0"; // Default marking
         if (!marking) marking = "0"; // Default marking
 
         scannedBags.push(`${bagID}<>${marking}`);
@@ -1514,7 +1499,7 @@ function receiveAllBagItems() {
         return;
     }
 
-    var requestData = {
+    let requestData = {
         bag_id: scannedBags,
         mail_line_code: selectedMailLine
     };
@@ -1539,7 +1524,7 @@ function receiveAllBagItems() {
 }
 
 function formatQueryParams(queryParams) {
-    var readableParts = [];
+    let readableParts = [];
 
     // Format bag_id
     if (queryParams.bag_id) {
@@ -1577,16 +1562,16 @@ function formatQueryParams(queryParams) {
 
     // Format date and time
     if (queryParams.created_at_from && queryParams.created_at_to) {
-        var fromDateTime = new Date(queryParams.created_at_from);
-        var toDateTime = new Date(queryParams.created_at_to);
+        let fromDateTime = new Date(queryParams.created_at_from);
+        let toDateTime = new Date(queryParams.created_at_to);
 
-        var optionsDate = { day: '2-digit', month: 'short', year: '2-digit' };
-        var optionsTime = { hour: '2-digit', minute: '2-digit', hour12: true };
+        let optionsDate = { day: '2-digit', month: 'short', year: '2-digit' };
+        let optionsTime = { hour: '2-digit', minute: '2-digit', hour12: true };
 
-        var formattedFromDate = fromDateTime.toLocaleDateString('en-US', optionsDate);
-        var formattedFromTime = fromDateTime.toLocaleTimeString('en-US', optionsTime).toLowerCase();
-        var formattedToDate = toDateTime.toLocaleDateString('en-US', optionsDate);
-        var formattedToTime = toDateTime.toLocaleTimeString('en-US', optionsTime).toLowerCase();
+        let formattedFromDate = fromDateTime.toLocaleDateString('en-US', optionsDate);
+        let formattedFromTime = fromDateTime.toLocaleTimeString('en-US', optionsTime).toLowerCase();
+        let formattedToDate = toDateTime.toLocaleDateString('en-US', optionsDate);
+        let formattedToTime = toDateTime.toLocaleTimeString('en-US', optionsTime).toLowerCase();
 
         readableParts.push(`From ${formattedFromDate} ${formattedFromTime} to ${formattedToDate} ${formattedToTime}`);
     }

@@ -99,11 +99,7 @@ p {
 
 #scan_btn {
     margin: 0px;
-    margin-right: 12px;
-}
-
-#clear_search_btn {
-    margin: 0px;
+    margin-left: 8px;
 }
 
 #bag_id {
@@ -143,47 +139,12 @@ p {
 .controls-container {
     display: flex;
     flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    margin: 8px 8px 0px 8px;
-}
-
-.search-controls {
-    position: absolute;
-    right: 0;
-    top: 0;
-    display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-#logout-btn-container {
-    margin-right: 4px;
-}
-
-#logout-btn img {
-    margin-right: 4px;
-}
-
-.logo-container img {
-    margin-left: 4px;
+    margin: 8px 8px;
 }
 
 @media (min-width: 300px) {
-    .pos-select {
-        font-size: 11px;
-    }
-
-    .pos-btn {
-        padding: 6px 6px;
-        font-size: 14px;
-    }
-
-    .pos-datetime-input {
-        padding: 8px 6px;
-        font-size: 10px;
-    }
-
     #phone:focus {
         scroll-margin-top: 100px;
         position: relative;
@@ -200,9 +161,12 @@ p {
         display: none;
     }
 
+    .logo-container img {
+        display: none;
+    }
 
     .pm_table_style {
-        font-size: 12px !important;
+        font-size: 14px !important;
     }
 
     .pm_table_style th,
@@ -210,8 +174,12 @@ p {
         padding: 6px 0px;
     }
 
+
+
+
     .pos-date-time-range {
         display: flex;
+        flex-direction: column !important;
         align-items: center;
     }
 
@@ -223,20 +191,6 @@ p {
 }
 
 @media (min-width: 400px) {
-    .pos-select {
-        font-size: 12px;
-    }
-
-    .pos-btn {
-        padding: 8px 8px;
-        font-size: 14px;
-    }
-
-    .pos-datetime-input {
-        padding: 8px 6px;
-        font-size: 11px;
-    }
-
     #phone:focus {
         scroll-margin-top: 100px;
         position: relative;
@@ -251,6 +205,7 @@ p {
 
     .pos-date-time-range {
         display: flex;
+        flex-direction: column !important;
         align-items: center;
     }
 
@@ -265,20 +220,6 @@ p {
 }
 
 @media (min-width: 500px) {
-    .pos-select {
-        font-size: 14px;
-    }
-
-    .pos-btn {
-        padding: 8px 10px;
-        font-size: 14px;
-    }
-
-    .pos-datetime-input {
-        padding: 8px 6px;
-        font-size: 14px;
-    }
-
     #phone:focus {
         scroll-margin-top: 100px;
         position: relative;
@@ -302,20 +243,6 @@ p {
 }
 
 @media (min-width: 600px) {
-    .pos-select {
-        font-size: 14px;
-    }
-
-    .pos-btn {
-        padding: 8px 12px;
-        font-size: 14px;
-    }
-
-    .pos-datetime-input {
-        padding: 8px 10px;
-        font-size: 14px;
-    }
-
     #phone:focus {
         scroll-margin-top: 100px;
         position: relative;
@@ -339,10 +266,6 @@ p {
 }
 
 @media (min-width: 700px) {
-    .pos-datetime-input {
-        padding: 8px 12px;
-        font-size: 14px;
-    }
 
     #filters input,
     #filters select {
@@ -508,7 +431,6 @@ td {
     /* text-align: center; */
     overflow-x: hidden;
     overflow-y: auto;
-    max-height: 100vh;
 }
 
 .bag-items-container-header {
@@ -534,10 +456,10 @@ td {
 
 
 .article-details-title-header {
-    font-size: 16px;
+    font-size: 20px;
     font-weight: bold;
     margin: 0px;
-    /* padding: 10px 0px 10px 0px; */
+    padding: 10px 0px 10px 0px;
 }
 
 /* Article Details Modal */
@@ -552,7 +474,7 @@ td {
 
 /* Article Details Modal */
 .article-details-container-header {
-    padding: 8px 8px 0px 8px;
+    padding: 8px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -563,18 +485,12 @@ td {
     padding: 8px;
     display: flex;
     justify-content: space-between;
-    font-size: 14px;
-}
-
-#window-delivery-btn {
-    margin-right: 4px;
 }
 
 .optional-article-details {
     padding: 8px;
     display: flex;
     justify-content: space-between;
-    font-size: 14px;
 }
 
 .article-details-value {
@@ -673,25 +589,18 @@ td {
     box-shadow: 0 0 5px rgba(0, 112, 243, 0.3);
 }
 
-#created_at_from {
-    margin-right: 4px;
-}
-
-#created_at_to {
-    margin-left: 4px;
-}
-
 /* Date Range Inputs */
 .pos-date-input,
 .pos-datetime-input {
+    padding: 8px 12px;
+    font-size: 14px;
     border: 1px solid #d1d1d1;
-    border-radius: 6px;
+    border-radius: 8px;
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
     background: white;
-    flex: 1;
+    margin-bottom: 10px;
 }
-
 
 .pos-date-input:focus,
 .pos-datetime-input:focus {
@@ -702,8 +611,6 @@ td {
 .pos-date-time-range {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin: 0px 8px;
 }
 
 .avatar {
@@ -728,15 +635,14 @@ td {
 }
 
 .pos-btn {
+    padding: 8px 12px;
+    font-size: 14px;
     border: 1px solid #d1d1d1;
     background: white;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s;
     width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .pos-btn:hover {
@@ -811,10 +717,9 @@ td {
 
 .bag-query {
     margin: 0px;
-    padding: 8px 0px 0px 8px;
+    padding: 10px 0px 0px 10px;
     font-size: 14px;
     margin-bottom: 8px;
-    text-align: center;
 }
 
 .pos-search-btn {
@@ -855,7 +760,8 @@ td {
 .pos-select {
     flex: 1;
     margin: 0px 8px;
-    padding: 10px 12px;
+    padding: 8px 12px;
+    font-size: 14px;
     border: 1px solid #d1d1d1;
     border-radius: 8px;
     background: white;

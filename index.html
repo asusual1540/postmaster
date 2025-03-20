@@ -11,7 +11,7 @@
 <body>
     <div class="header" id="header" style="display: none;">
         <div class="logo-container">
-            <img src="/static/images/logo-post-dark.png" alt="Logo" width="37">
+            <img src="/static/images/logo-post-dark.png" alt="Logo" width="40">
             <p class="site-title">পোস্টমাষ্টার</p>
         </div>
         <div class="user-container">
@@ -20,10 +20,7 @@
                 <img src="/static/images/avatar.png" alt="User">
             </div>
             <div class="pos-btn-container" id="logout-btn-container">
-
-                <button class="pos-btn" id="logout-btn"><img src="/static/images/logout.png" alt="Logout" width="20">
-                    <p>Logout</p>
-                </button>
+                <button class="pos-btn" id="logout-btn">Logout</button>
             </div>
         </div>
     </div>
@@ -56,39 +53,24 @@
                     </select>
                 </div>
                 <div class="pos-search-box">
-                    <!-- <button class="pos-search-btn" id="scan_btn">Scan</button> -->
+                    <button class="pos-search-btn" id="scan_btn">Scan</button>
                     <input type="text" id="bag_id" class="pos-search-input" placeholder="Bag ID..." autocomplete="off">
-                    <div class="search-controls">
-                        <img src="/static/images/close-search.png" alt="Scan" width="37" id="clear_search_btn">
-                        <img src="/static/images/camera-outline.png" alt="Scan" width="37" id="scan_btn">
-                    </div>
                 </div>
 
             </div>
             <div class="controls-container">
-
+                <div>
+                    <p id="bagTable_total">Total Bags : </p>
+                </div>
                 <div class="pos-btn-container">
                     <button class="pos-btn" id="print_pos"
-                        style="background-color: #0070f3; color: white;margin-right: 4px;">
-                        <img src="/static/images/print.png" alt="Print" width="20">
-                        <p>Print</p>
-                    </button>
+                        style="background-color: #0070f3; color: white;margin-right: 4px;">Print</button>
                     <button class="pos-btn" id="clear_filter"
-                        style="background-color: #0070f3; color: white;margin-right: 4px;">
-                        <img src="/static/images/clear.png" alt="Clear" width="20">
-                        <p>Clear</p>
-                    </button>
+                        style="background-color: #0070f3; color: white;margin-right: 4px;">Clear</button>
                     <button class="pos-btn" id="filter_apply"
-                        style="background-color: #0070f3; color: white;margin-right: 4px;">
-                        <img src="/static/images/search.png" alt="Search" width="20">
-
-                        <p>Search</p>
-                    </button>
+                        style="background-color: #0070f3; color: white;margin-right: 4px;">Search</button>
                     <button class="pos-btn" id="receive_bag"
-                        style="background-color: #0070f3; color: white;margin-right: 4px;">
-                        <img src="/static/images/receive.png" alt="Receive" width="20">
-                        <p>Receive</p>
-                    </button>
+                        style="background-color: #0070f3; color: white;margin-right: 4px;">Receive</button>
                 </div>
                 <!-- <div class="pos-select-wrapper"
                     style="width: 30%; display: flex; flex-direction: row; justify-content: space-between; align-items: center;">
@@ -170,8 +152,7 @@
                 <div class="form-group">
                     <!-- <label for="password-input">Password:</label> -->
                     <div class="pos-input-wrapper">
-                        <input type="text" id="phone" class="pos-input" placeholder="Enter username..."
-                            autocomplete="off">
+                        <input type="text" id="phone" class="pos-input" placeholder="Enter username...">
                     </div>
                 </div>
                 <!-- <input type="text" id="phone" placeholder="Phone Number"> -->
@@ -179,8 +160,7 @@
                 <div class="form-group">
                     <!-- <label for="password-input">Password:</label> -->
                     <div class="pos-input-wrapper">
-                        <input type="password" id="password" class="pos-input" placeholder="Enter password..."
-                            autocomplete="off">
+                        <input type="password" id="password" class="pos-input" placeholder="Enter password...">
                         <button type="button" class="pos-password-toggle" onclick="togglePasswordVisibility()">
                             <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                 stroke-width="1.5" stroke="currentColor" class="eye-icon">
@@ -430,14 +410,10 @@
         <div class="article-details-container">
             <div class="article-details-container-header">
                 <p class="article-details-title-header">Article Details</p>
-
-            </div>
-            <div class="pos-btn-container" style="padding: 8px;">
-
-                <button class="pos-btn" id="window-delivery-btn"
-                    style="display: none;background-color: #0070f3; color: white;">Window Delivery</button>
-                <button class="pos-btn" onclick="closeArticleDetailsModal()"
-                    style="background-color: #0070f3; color: white;">Close</button>
+                <div class="pos-btn-container">
+                    <button class="pos-btn" id="window-delivery-btn"
+                        style="display: none;background-color: #0070f3; color: white;">Window Delivery</button>
+                </div>
             </div>
             <div class="loading-div" id="article-details-loading-div" style="display: none;">
                 <div class="loading-container">
