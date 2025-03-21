@@ -145,6 +145,9 @@ p {
 }
 
 @media (min-width: 300px) {
+    .pos-select {
+        font-size: 11px;
+    }
 
     .pos-date-input,
     .pos-datetime-input {
@@ -173,7 +176,7 @@ p {
     }
 
     .pm_table_style {
-        font-size: 14px !important;
+        font-size: 13px !important;
     }
 
     .pm_table_style th,
@@ -197,6 +200,9 @@ p {
 }
 
 @media (min-width: 400px) {
+    .pos-select {
+        font-size: 12px;
+    }
 
     .pos-date-input,
     .pos-datetime-input {
@@ -232,6 +238,9 @@ p {
 }
 
 @media (min-width: 500px) {
+    .pos-select {
+        font-size: 13px;
+    }
 
     .pos-date-input,
     .pos-datetime-input {
@@ -262,6 +271,9 @@ p {
 }
 
 @media (min-width: 600px) {
+    .pos-select {
+        font-size: 14px;
+    }
 
     .pos-date-input,
     .pos-datetime-input {
@@ -457,6 +469,7 @@ td {
     /* text-align: center; */
     overflow-x: hidden;
     overflow-y: auto;
+    max-height: 100vh;
 }
 
 .bag-items-container-header {
@@ -795,7 +808,6 @@ td {
     flex: 1;
     margin: 0px 8px;
     padding: 8px 12px;
-    font-size: 14px;
     border: 1px solid #d1d1d1;
     border-radius: 8px;
     background: white;
