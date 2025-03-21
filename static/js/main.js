@@ -732,26 +732,41 @@ function fetchBags(token, queryParams) {
         }
     });
 }
-
 function formatDateTime(dateTimeStr) {
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-    const dateObj = new Date(dateTimeStr);
+    // Split the date and time parts from the input string
+    var dateTimeParts = dateTimeStr.split(" ");
+    var dateParts = dateTimeParts[0].split("-");
+    var timeParts = dateTimeParts[1].split(":");
 
-    const day = dateObj.getDate();
-    const month = months[dateObj.getMonth()];
-    // const year = String(dateObj.getFullYear()).slice(-2);
+    var year = parseInt(dateParts[0], 10);
+    var month = parseInt(dateParts[1], 10) - 1; // JS months are 0-indexed
+    var day = parseInt(dateParts[2], 10);
 
-    let hours = dateObj.getHours();
-    const minutes = String(dateObj.getMinutes()).padStart(2, '0');
-    const ampm = hours >= 12 ? "pm" : "am";
+    var hours = parseInt(timeParts[0], 10);
+    var minutes = timeParts[1];
+    var ampm = (hours >= 12) ? "pm" : "am";
 
-    hours = hours % 12 || 12; // Convert to 12-hour format
+    // Convert hours to 12-hour format
+    if (hours > 12) {
+        hours = hours - 12;
+    } else if (hours === 0) {
+        hours = 12;
+    }
 
-    return `${day} ${month}, ${String(hours).padStart(2, '0')}:${minutes}${ampm}`;
+    // Build the formatted date string
+    return day + " " + months[month] + ", " + padZero(hours) + ":" + minutes + ampm;
 }
 
+// Helper function for padding single digit numbers
+function padZero(number) {
+    if (number < 10) {
+        return "0" + number;
+    }
+    return number.toString();
+}
 
 function updateBagTable(data) {
     // console.log("Updating bag table with data:", data);
