@@ -145,6 +145,13 @@ p {
 }
 
 @media (min-width: 300px) {
+
+    .pos-date-input,
+    .pos-datetime-input {
+        padding: 8px 6px;
+        font-size: 11px;
+    }
+
     #phone:focus {
         scroll-margin-top: 100px;
         position: relative;
@@ -179,7 +186,6 @@ p {
 
     .pos-date-time-range {
         display: flex;
-        flex-direction: column !important;
         align-items: center;
     }
 
@@ -191,6 +197,13 @@ p {
 }
 
 @media (min-width: 400px) {
+
+    .pos-date-input,
+    .pos-datetime-input {
+        padding: 8px 8px;
+        font-size: 12px;
+    }
+
     #phone:focus {
         scroll-margin-top: 100px;
         position: relative;
@@ -205,7 +218,6 @@ p {
 
     .pos-date-time-range {
         display: flex;
-        flex-direction: column !important;
         align-items: center;
     }
 
@@ -220,6 +232,13 @@ p {
 }
 
 @media (min-width: 500px) {
+
+    .pos-date-input,
+    .pos-datetime-input {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+
     #phone:focus {
         scroll-margin-top: 100px;
         position: relative;
@@ -243,6 +262,13 @@ p {
 }
 
 @media (min-width: 600px) {
+
+    .pos-date-input,
+    .pos-datetime-input {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
     #phone:focus {
         scroll-margin-top: 100px;
         position: relative;
@@ -582,7 +608,15 @@ td {
 
 
 
+#created_at_from {
+    flex: 1;
+    margin-right: 4px;
+}
 
+#created_at_to {
+    flex: 1;
+    margin-left: 4px;
+}
 
 .pos-select:focus {
     border-color: #0070f3;
@@ -592,14 +626,11 @@ td {
 /* Date Range Inputs */
 .pos-date-input,
 .pos-datetime-input {
-    padding: 8px 12px;
-    font-size: 14px;
     border: 1px solid #d1d1d1;
     border-radius: 8px;
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
     background: white;
-    margin-bottom: 10px;
 }
 
 .pos-date-input:focus,
@@ -611,6 +642,9 @@ td {
 .pos-date-time-range {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    margin-left: 8px;
+    margin-right: 8px;
 }
 
 .avatar {
