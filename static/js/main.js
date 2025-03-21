@@ -692,7 +692,7 @@ function fetchBags(token, queryParams) {
             if (response.results && response.results.length > 0) {
 
                 let queryText = formatQueryParams(queryParams);
-                $("#bag-query").text(`${queryText}`);
+                $("#bag-query").text(`Total: ${response.total}, ${queryText}`);
 
                 // Store response in cache
                 cache[url] = response;
@@ -704,13 +704,13 @@ function fetchBags(token, queryParams) {
             } else {
                 console.log("No records found");
                 let queryText = formatQueryParams(queryParams);
-                $("#bag-query").text(`${queryText}`);
+                $("#bag-query").text(`Total: ${response.total}, ${queryText}`);
                 updateBagTable([]);
             }
         },
         error: function (xhr, status, error) {
             let queryText = formatQueryParams(queryParams);
-            $("#bag-query").text(`${queryText}`);
+            $("#bag-query").text(`Total: ${response.total}, ${queryText}`);
             $("#bags-loading-div").hide();
 
             console.log("Error fetching data", xhr);
@@ -1264,10 +1264,10 @@ function updatePagination(tableId, paginationContainerId, currentPage, totalReco
         return;
     }
 
-    let totalElement = document.getElementById(`${tableId}_total`);
-    if (totalElement) {
-        totalElement.innerText = `Total: ${totalRecords}`;
-    }
+    // let totalElement = document.getElementById(`${tableId}_total`);
+    // if (totalElement) {
+    //     totalElement.innerText = `Total: ${totalRecords}`;
+    // }
 
     // console.log("Total pages:", totalPages);
     // console.log("Current page:", currentPage);
