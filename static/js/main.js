@@ -419,6 +419,10 @@ $(document).ready(function () {
         updateButtonsState();
     });
 
+    $(document).on("change", "#bag_id", function () {
+        console.log("Bag ID changed:", $(this).val().trim());
+        queryParams.bag_id = $(this).val().trim();
+    });
 
     $(document).on("click", "#clear_filter", function () {
         console.log("Clearing filters");
@@ -759,11 +763,12 @@ function updateBagTable(data) {
 
     data.forEach(bag => {
         // console.log("Bag:", bag);
+        var formattedtime = formatDateTime(bag.Create_Date + " " + bag.Create_Time);
         $("#bagTable tbody").append(`
             <tr class="bag-row" bag_id="${bag.Bag_ID}">
                 <td>${bag.Bag_ID}</td>
                 <td>${bag.Create_Total_Item_Count}(${bag.Delivered_Item_Count}/<span style="color: #ff2800">${bag.Create_Total_Item_Count - bag.Delivered_Item_Count}</span>)</td>
-                <td>${bag.Create_Date} ${bag.Create_Time}</td>
+                <td>${formattedtime}</td>
                 <td>${bag.Status}</td>
             </tr>
         `);
