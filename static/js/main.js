@@ -1,9 +1,7 @@
-const API_AUTH_URL = "https://sso.ekdak.com";
-const API_GET_URL = "https://ekdak.com";
-const API_POST_URL = "https://t.ekdak.com";
-// const API_AUTH_URL = "http://192.168.1.18:8000";
-// const API_GET_URL = "http://192.168.1.18:8002";
-// const API_POST_URL = "http://192.168.1.18:8002";
+// const API_AUTH_URL = "https://sso.ekdak.com";
+// const API_GET_URL = "https://ekdak.com";
+const API_AUTH_URL = "http://192.168.1.18:8000";
+const API_GET_URL = "http://192.168.1.18:8002";
 
 // Define queryParams globally so it can be accessed across filters & pagination
 let current_date = new Date();
@@ -56,10 +54,12 @@ let bagItemQueryParams = {
 
 let cache = {};
 let bag_items_cache = {};
+let mail_lines_cache = {};
+let selectedArticles = new Set();
+let hasSelectedArticles = false;
 
 $(document).ready(function () {
-    let selectedArticles = new Set();
-    let hasSelectedArticles = false;
+    selectedArticles.clear();
     // Function to toggle row selection
 
     // // Get today's date
@@ -121,44 +121,54 @@ $(document).ready(function () {
         let bookedBranchCode = $("#article-booked-branch-code").text().trim();
         console.log("Item ID:", item_id);
         console.log("Article Sender Phone:", articleSenderPhone);
-        try {
-            $.ajax({
-                url: `${API_POST_URL}/deliver_article`,
-                type: "POST",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                },
-                data: JSON.stringify({
-                    "flag": "Del_To_Rec",
-                    "get_item_id": item_id,
-                    "get_rec_contact": "0",
-                    "get_sen_contact": (articleSenderPhone.length > 0) ? articleSenderPhone : "0",
-                    "booked_branch_code": bookedBranchCode,
-                    "image_src": "0",
-                    "image_pod": "0"
-                }),
-                success: function (response) {
-                    $("#article-details-loading-div").hide();
-                    if (response.status === "success") {
-                        alert("Success: " + response.message);
-                    } else {
+
+        const confirmationMessage = `Delivering article ${item_id}. Do you want to proceed?`;
+        if (confirm(confirmationMessage)) {
+            try {
+                $.ajax({
+                    url: `${API_GET_URL}/v1/dms-legacy-core-logs/deliver_article/`,
+                    type: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    data: JSON.stringify({
+                        "flag": "Del_To_Rec",
+                        "get_item_id": item_id,
+                        "get_rec_contact": "0",
+                        "get_sen_contact": (articleSenderPhone.length > 0) ? articleSenderPhone : "0",
+                        "booked_branch_code": bookedBranchCode,
+                        "image_src": "0",
+                        "image_pod": "0"
+                    }),
+                    success: function (response) {
+                        $("#article-details-loading-div").hide();
+                        if (response.status === "success") {
+                            alert("Success: " + response.message);
+                            closeArticleDetailsModal();
+                        } else {
+                            alert("Error: " + response.message);
+                        }
+                    },
+                    error: function (xhr) {
+                        $("#article-details-loading-div").hide();
+                        let response = JSON.parse(xhr.responseText);
                         alert("Error: " + response.message);
+                        $("#window-delivery-btn").show();
                     }
-                },
-                error: function (xhr) {
-                    $("#article-details-loading-div").hide();
-                    let response = JSON.parse(xhr.responseText);
-                    alert("Error: " + response.message);
-                    $("#window-delivery-btn").show();
-                }
-            });
+                });
+            }
+            catch (error) {
+                console.error("Error fetching data", error);
+                $("#article-details-loading-div").hide();
+                $("#window-delivery-btn").show();
+            }
+        } else {
+            // User cancelled, do nothing
+            console.log("User cancelled the action.");
         }
-        catch (error) {
-            console.error("Error fetching data", error);
-            $("#article-details-loading-div").hide();
-            $("#window-delivery-btn").show();
-        }
+
+
 
     });
 
@@ -265,7 +275,7 @@ $(document).ready(function () {
     // Close modal on clicking the backdrop
     $(document).on("click", "#receive-bag-backdrop", function (event) {
         if (event.target.id === "receive-bag-backdrop") {
-            closeAddBagModal();
+            closeBagReceiveModal();
         }
     });
 
@@ -382,7 +392,7 @@ $(document).ready(function () {
             rowElement.find(".article-checkbox").prop("checked", false);
         }
 
-        updateButtonsState();
+        updateButtonsState(selectedArticles);
     }
 
     // Attach click event for row selection
@@ -400,15 +410,34 @@ $(document).ready(function () {
 
     // Select All Button
     $("#select-all-articles").on("click", function () {
-        $(".scan-bag-article-row").each(function () {
-            let articleId = $(this).attr("article_id");
-            if (!selectedArticles.has(articleId)) {
-                selectedArticles.add(articleId);
-                $(this).addClass("selected-row");
-                $(this).find(".article-checkbox").prop("checked", true);
+        $("#scan-bag-items-loading-div").show();
+        console.log("Selecting all articles", selectedArticles);
+        let token = getCookie("access");
+        let _bag_id = $("#scan-bag-item-id").text().trim();
+        $.ajax({
+            url: `${API_GET_URL}/v1/dms-legacy-core-logs/get-bag-item-list/?bag_id=${_bag_id}`,
+            type: "GET",
+            contentType: "application/json",
+            headers: { "Authorization": `Bearer ${token}` },
+            success: function (response) {
+                $("#scan-bag-items-loading-div").hide();
+                console.log("get-bag-item-list:", response);
+                if (response.results && response.results.length > 0) {
+                    response.results.forEach(item => {
+                        console.log("adding item:", item);
+                        selectedArticles.add(item);
+                    });
+                }
+                console.log("Selected Articles from select all button click:", selectedArticles);
+                updateButtonsState(selectedArticles);
+                fetchScannedBagItems(token, bagItemQueryParams);
+            },
+            error: function (err) {
+                $("#scan-bag-items-loading-div").hide();
+                console.log("Error fetching data", err);
             }
         });
-        updateButtonsState();
+
     });
 
     // Deselect All Button
@@ -416,13 +445,9 @@ $(document).ready(function () {
         selectedArticles.clear();
         $(".scan-bag-article-row").removeClass("selected-row");
         $(".article-checkbox").prop("checked", false);
-        updateButtonsState();
+        updateButtonsState(selectedArticles);
     });
 
-    $(document).on("change", "#bag_id", function () {
-        console.log("Bag ID changed:", $(this).val().trim());
-        queryParams.bag_id = $(this).val().trim();
-    });
 
     $(document).on("click", "#clear_filter", function () {
         console.log("Clearing filters");
@@ -441,13 +466,38 @@ $(document).ready(function () {
             alert("No articles selected.");
             return;
         }
-        console.log("Receiving articles:", Array.from(selectedArticles));
-        let total_selected = selectedArticles.size;
+        var articles = Array.from(selectedArticles);
+        console.log("Receiving articles:", articles);
+        let total_selected = articles.length;
         selectedArticles.clear();
         $(".selected-row").removeClass("selected-row");
-        $(".article-checkbox").prop("checked", false);
-        updateButtonsState();
-        alert(`Receiving ${total_selected} articles from bag ${bagItemQueryParams.bag_id}`);
+        updateButtonsState(selectedArticles);
+        // alert(`Receiving ${total_selected} articles from bag ${bagItemQueryParams.bag_id}`);
+
+        const remarks = "Received Bag: Successfully"; // Example remarks
+        var bagId = $("#scan-bag-item-id").text().trim();
+        // Display a confirmation dialog with the message
+        const confirmationMessage = `Receiving ${total_selected} articles from bag ${bagId}. Do you want to proceed?`;
+        if (confirm(confirmationMessage)) {
+            // User confirmed, proceed with the API calls
+
+            // Call receiveBag API
+            receiveBag(bagId, remarks).done(function () {
+                // Upon success of receiving bag, call receiveBagArticle API
+                const _remarks = "Received Article: Successfully"; // Example remarks
+                receiveBagArticle(articles, bagId, _remarks).done(function () {
+                    alert(`Successfully received ${total_selected} articles from bag ${bagId}`);
+                    closeBagReceiveModal();
+                }).fail(function () {
+                    alert("Error receiving articles.");
+                });
+            }).fail(function () {
+                alert("Error receiving the bag.");
+            });
+        } else {
+            // User cancelled, do nothing
+            console.log("User cancelled the action.");
+        }
     });
 
     // Delete Selected Articles
@@ -461,7 +511,7 @@ $(document).ready(function () {
             $(`.scan-bag-article-row[article_id="${articleId}"]`).remove();
         });
         selectedArticles.clear();
-        updateButtonsState();
+        updateButtonsState(selectedArticles);
     });
 
     // Search and Select an Article
@@ -478,11 +528,7 @@ $(document).ready(function () {
     });
 
     // Function to update button states
-    function updateButtonsState() {
-        let hasSelection = selectedArticles.size > 0;
-        $("#receive-selected, #delete-selected, #deselect-all-articles").prop("disabled", !hasSelection);
-        $("#scanned-bag-items-table_selected").text(`Selected Articles: ${selectedArticles.size}`);
-    }
+
 
     $(document).on("click", "#receive-bag-details-btn", function () {
         let bag_id = $("#bag-detail-id").text().trim();
@@ -505,12 +551,13 @@ $(document).ready(function () {
         let text = allBagIds.join("\n");
         POSPrinting(text);
     });
-
-
-
-
 });
 
+function updateButtonsState(selected_articles) {
+    let hasSelection = selected_articles.size > 0;
+    $("#receive-selected, #delete-selected, #deselect-all-articles").prop("disabled", !hasSelection);
+    $("#scanned-bag-items-table_selected").text(`Selected Articles: ${selected_articles.size}`);
+}
 
 function getScan() {
     if (window.pos) {
@@ -696,7 +743,7 @@ function fetchBags(token, queryParams) {
             if (response.results && response.results.length > 0) {
 
                 let queryText = formatQueryParams(queryParams);
-                $("#bag-query").text(`Total: ${response.total}, ${queryText}`);
+                $("#bag-query").text(`${queryText}`);
 
                 // Store response in cache
                 cache[url] = response;
@@ -708,13 +755,13 @@ function fetchBags(token, queryParams) {
             } else {
                 console.log("No records found");
                 let queryText = formatQueryParams(queryParams);
-                $("#bag-query").text(`Total: ${response.total}, ${queryText}`);
+                $("#bag-query").text(`${queryText}`);
                 updateBagTable([]);
             }
         },
         error: function (xhr, status, error) {
             let queryText = formatQueryParams(queryParams);
-            $("#bag-query").text(`Total: ${response.total}, ${queryText}`);
+            $("#bag-query").text(`${queryText}`);
             $("#bags-loading-div").hide();
 
             console.log("Error fetching data", xhr);
@@ -732,41 +779,26 @@ function fetchBags(token, queryParams) {
         }
     });
 }
+
 function formatDateTime(dateTimeStr) {
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-    // Split the date and time parts from the input string
-    var dateTimeParts = dateTimeStr.split(" ");
-    var dateParts = dateTimeParts[0].split("-");
-    var timeParts = dateTimeParts[1].split(":");
+    const dateObj = new Date(dateTimeStr);
 
-    var year = parseInt(dateParts[0], 10);
-    var month = parseInt(dateParts[1], 10) - 1; // JS months are 0-indexed
-    var day = parseInt(dateParts[2], 10);
+    const day = dateObj.getDate();
+    const month = months[dateObj.getMonth()];
+    // const year = String(dateObj.getFullYear()).slice(-2);
 
-    var hours = parseInt(timeParts[0], 10);
-    var minutes = timeParts[1];
-    var ampm = (hours >= 12) ? "pm" : "am";
+    let hours = dateObj.getHours();
+    const minutes = String(dateObj.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? "pm" : "am";
 
-    // Convert hours to 12-hour format
-    if (hours > 12) {
-        hours = hours - 12;
-    } else if (hours === 0) {
-        hours = 12;
-    }
+    hours = hours % 12 || 12; // Convert to 12-hour format
 
-    // Build the formatted date string
-    return day + " " + months[month] + ", " + padZero(hours) + ":" + minutes + ampm;
+    return `${day} ${month}, ${String(hours).padStart(2, '0')}:${minutes}${ampm}`;
 }
 
-// Helper function for padding single digit numbers
-function padZero(number) {
-    if (number < 10) {
-        return "0" + number;
-    }
-    return number.toString();
-}
 
 function updateBagTable(data) {
     // console.log("Updating bag table with data:", data);
@@ -778,12 +810,11 @@ function updateBagTable(data) {
 
     data.forEach(bag => {
         // console.log("Bag:", bag);
-        var formattedtime = formatDateTime(bag.Create_Date + " " + bag.Create_Time);
         $("#bagTable tbody").append(`
             <tr class="bag-row" bag_id="${bag.Bag_ID}">
                 <td>${bag.Bag_ID}</td>
                 <td>${bag.Create_Total_Item_Count}(${bag.Delivered_Item_Count}/<span style="color: #ff2800">${bag.Create_Total_Item_Count - bag.Delivered_Item_Count}</span>)</td>
-                <td>${formattedtime}</td>
+                <td>${bag.Create_Date} ${bag.Create_Time}</td>
                 <td>${bag.Status}</td>
             </tr>
         `);
@@ -843,9 +874,10 @@ function fetchBagItems(token, bagItemQueryParams) {
     // Check cache to avoid unnecessary API calls
     if (bag_items_cache[url]) {
         $("#bag-items-loading-div").hide();
-        // console.log("Using cached data:", bag_items_cache[url]);
-        let _bagid = getBagIdFromUrl(bag_items_cache[url])
+        console.log("Using cached data:", bag_items_cache[url]);
+        let _bagid = getBagIdFromUrl(url);
         updateBagItemsTable(bag_items_cache[url], _bagid);
+        console.log("bag_items_cache_ bagid", _bagid);
         updatePagination("bag-items-table", "bag-items-pagination", bag_items_cache[url].page, bag_items_cache[url].total, bag_items_cache[url].per_page, fetchBagItems);
         return;
     }
@@ -859,6 +891,8 @@ function fetchBagItems(token, bagItemQueryParams) {
         success: function (response) {
             $("#bag-items-loading-div").hide();
             // console.log("Bag items fetched:", response);
+            // Store response in cache
+            bag_items_cache[url] = response;
             updateBagItemsTable(response, _bagid);
             updatePagination("bag-items-table", "bag-items-pagination", response.page, response.total, response.per_page, fetchBagItems);
 
@@ -873,12 +907,14 @@ function fetchBagItems(token, bagItemQueryParams) {
 
 // Function to fetch bag items
 function fetchScannedBagItems(token, bagItemQueryParams) {
+    $("#scan-bag-items-loading-div").show();
     let url = constructBagItemQueryString(bagItemQueryParams);
     // console.log("Fetching from scan URL:", url);
 
     // Check cache to avoid unnecessary API calls
     if (bag_items_cache[url]) {
-        // console.log("Using cached data:", bag_items_cache[url]);
+        $("#scan-bag-items-loading-div").hide();
+        console.log("Using cached data:", bag_items_cache[url]);
         updateScanBagItemsTable(bag_items_cache[url].results);
         updatePagination("scanned-bag-items-table", "scanned-bag-items-pagination", bag_items_cache[url].page, bag_items_cache[url].total, bag_items_cache[url].per_page, fetchScannedBagItems);
         return;
@@ -891,12 +927,16 @@ function fetchScannedBagItems(token, bagItemQueryParams) {
         type: "GET",
         headers: { "Authorization": `Bearer ${token}` },
         success: function (response) {
-            // console.log("Bag items fetched:", response);
+            // store response in cache
+            bag_items_cache[url] = response;
+            $("#scan-bag-items-loading-div").hide();
+            console.log("Bag items fetched:", response);
             updateScanBagItemsTable(response.results);
             updatePagination("scanned-bag-items-table", "scanned-bag-items-pagination", response.page, response.total, response.per_page, fetchScannedBagItems);
             $("#receive-all").prop("disabled", response.results.length === 0);
         },
         error: function (e) {
+            $("#scan-bag-items-loading-div").hide();
             console.error("Error fetching bag items", e);
             $("#scanned-bag-items-table tbody").html('<tr><td colspan="3">Failed to load data</td></tr>');
         }
@@ -957,6 +997,8 @@ function updateScanBagItemsTable(data) {
         tbody.append("<tr><td colspan='3'>No records found</td></tr>");
         return;
     }
+    console.log("selectedArticles while updating table", selectedArticles);
+
 
     data.forEach((item, index) => {
         let _status = item.Delivery_Status;
@@ -968,8 +1010,10 @@ function updateScanBagItemsTable(data) {
         } else if (_status == "Landed") {
             _status = "Received";
         }
+        var isSelectedArticle = selectedArticles.has(item.Item_Bag_ID);
+        console.log(`Item ${item.Item_Bag_ID} is selected: ${isSelectedArticle}`);
         tbody.append(`
-            <tr class="scan-bag-article-row" article_id="${item.Item_Bag_ID}">
+            <tr class="scan-bag-article-row ${isSelectedArticle ? "selected-row" : ""}" article_id="${item.Item_Bag_ID}">
                 <td>${index + 1}</td>
                 <td>${item.Item_Bag_ID}</td>
                 <td>${_status}</td>
@@ -978,11 +1022,23 @@ function updateScanBagItemsTable(data) {
             </tr>
         `);
     });
+
+    // $(".scan-bag-article-row").each(function () {
+    //     let articleId = $(this).attr("article_id");
+    //     if (!selectedArticles.has(articleId)) {
+    //         selectedArticles.add(articleId);
+    //         $(this).addClass("selected-row");
+    //         $(this).find(".article-checkbox").prop("checked", true);
+    //     }
+    // });
+    updateButtonsState(selectedArticles);
 }
 
 // Function to close modal
-function closeAddBagModal() {
+function closeBagReceiveModal() {
     $("#receive-bag-backdrop").hide();
+    selectedArticles.clear();
+    $(".scan-bag-article-row").removeClass("selected-row");
 }
 
 // Function to close modal
@@ -1007,6 +1063,7 @@ function openReceiveBagModal(bag_id) {
     fetchMailLineOptions();
     console.log("Scanned bag ID:", bag_id);
     if (bag_id) {
+        console.log("selectedArticles", selectedArticles);
         let accessToken = getCookie("access");
         // console.log("Access token:", accessToken);
         bagItemQueryParams.bag_id = bag_id;
@@ -1284,10 +1341,10 @@ function updatePagination(tableId, paginationContainerId, currentPage, totalReco
         return;
     }
 
-    // let totalElement = document.getElementById(`${tableId}_total`);
-    // if (totalElement) {
-    //     totalElement.innerText = `Total: ${totalRecords}`;
-    // }
+    let totalElement = document.getElementById(`${tableId}_total`);
+    if (totalElement) {
+        totalElement.innerText = `Total: ${totalRecords}`;
+    }
 
     // console.log("Total pages:", totalPages);
     // console.log("Current page:", currentPage);
@@ -1412,6 +1469,18 @@ function updatePagination(tableId, paginationContainerId, currentPage, totalReco
 
 // Function to fetch mail line options from API and populate the select dropdown
 function fetchMailLineOptions() {
+    if (mail_lines_cache && mail_lines_cache.data && mail_lines_cache.data.length > 0) {
+        let select = $("#custom-select");
+        select.empty(); // Clear previous options
+
+        mail_lines_cache.data.forEach(item => {
+            let optionText = `${item.Category}: ${item.Name} ${item.Caption}`;
+            let optionValue = `${item.ID}`; // You can customize this if needed
+
+            select.append(`<option value="${optionValue}">${optionText}</option>`);
+        });
+        return;
+    }
     let token = getCookie("access");
     // console.log("Access token:", token);
     $.ajax({
@@ -1597,4 +1666,57 @@ function formatQueryParams(queryParams) {
     }
 
     return `${readableParts.join(", ")}`;
+}
+
+
+// Function to handle the receive bag API call
+function receiveBag(bagId, remarks) {
+    let token = getCookie("access");
+    let mail_line_selected = $("#custom-select").val();
+    console.log("Mail line selected:", mail_line_selected);
+    return $.ajax({
+        url: `${API_GET_URL}/v1/dms-legacy-core-logs/receive_bag/`,
+        type: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        },
+        data: JSON.stringify({
+            "bag_id": [`${bagId}<>${remarks}`],
+            "mail_line_code": mail_line_selected // Example mail line code
+        }),
+        success: function (response) {
+            console.log("Bag received successfully:", response);
+        },
+        error: function (xhr, status, error) {
+            console.error("Error receiving bag:", error);
+        }
+    });
+}
+
+// Function to handle the receive articles API call
+function receiveBagArticle(articles, bag_id, remarks) {
+    let token = getCookie("access");
+    const itemInfo = articles.map(article => {
+        return `${article}<>${remarks}`; // Create item_info in format item_id<>remarks
+    });
+
+    return $.ajax({
+        url: `${API_GET_URL}/v1/dms-legacy-core-logs/receive_bag_article/`,
+        type: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        },
+        data: JSON.stringify({
+            "item_info": itemInfo,
+            "bag_id": bag_id // Replace with actual bag ID
+        }),
+        success: function (response) {
+            console.log("Articles received successfully:", response);
+        },
+        error: function (xhr, status, error) {
+            console.error("Error receiving articles:", error);
+        }
+    });
 }

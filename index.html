@@ -53,8 +53,9 @@
                     </select>
                 </div>
                 <div class="pos-search-box">
-                    <button class="pos-search-btn" id="scan_btn">Scan</button>
+
                     <input type="text" id="bag_id" class="pos-search-input" placeholder="Bag ID..." autocomplete="off">
+                    <button class="pos-search-btn" id="scan_btn">Scan</button>
                 </div>
 
             </div>
@@ -200,20 +201,12 @@
                 <div class="pos-btn-container">
 
                     <div class="pos-btn-container">
-                        <button onclick="closeAddBagModal()" class="pos-btn"
+                        <button onclick="closeBagReceiveModal()" class="pos-btn"
                             style="background-color: #0070f3; color: white;margin: 10px 8px;">Close</button>
                     </div>
                 </div>
             </div>
-            <!-- Search for Articles -->
-            <div class="form-group pos-search-container">
-                <div class="pos-search-box">
-                    <input type="text" id="scan-article-input" class="pos-search-input" placeholder="Scan Article ...">
-                    <button class="pos-search-btn" id="scan-article-btn">
-                        <p>Search</p>&#128269;
-                    </button>
-                </div>
-            </div>
+
             <div class="form-group">
                 <!-- <label for="custom-select">Mail Line:</label> -->
                 <div class="pos-select-wrapper" id="mail-line-select">
@@ -235,7 +228,15 @@
                 </div>
             </div> -->
 
-
+            <!-- Search for Articles -->
+            <div class="form-group pos-search-container">
+                <div class="pos-search-box">
+                    <input type="text" id="scan-article-input" class="pos-search-input" placeholder="Scan Article ...">
+                    <button class="pos-search-btn" id="scan-article-btn">
+                        <p>Search</p>&#128269;
+                    </button>
+                </div>
+            </div>
             <!-- Action Buttons -->
             <!-- Action Buttons -->
             <!-- Action Buttons -->
@@ -246,14 +247,20 @@
 
             </div>
             <div class="pos-btn-container">
-                <button class="pos-btn" id="receive-all" disabled style="margin: 5px;">Receive Bag</button>
-                <button class="pos-btn" id="receive-selected" disabled style="margin: 5px;">Receive
-                    Article</button>
+
+                <button class="pos-btn" id="receive-selected" disabled
+                    style="margin: 5px;background-color: #0070f3;color: aliceblue;">Receive</button>
 
             </div>
 
 
+            <div class="loading-div" id="scan-bag-items-loading-div" style="display: none;">
+                <div class="loading-container">
+                    <img src="/static/images/loader.gif" alt="Logo" width="50">
+                    <p>Loading</p>
+                </div>
 
+            </div>
 
 
             <div">
@@ -312,12 +319,11 @@
 
 
                 <div class="pos-btn-container">
-                    <button onclick="closeAddBagModal()" class="pos-btn"
+                    <button onclick="closeBagReceiveModal()" class="pos-btn"
                         style="background-color: #0070f3; color: white;margin: 10px 8px;">Close</button>
                 </div>
         </div>
 
-    </div>
     </div>
 
     <!-- Bag Items Modal -->

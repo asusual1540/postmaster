@@ -99,7 +99,7 @@ p {
 
 #scan_btn {
     margin: 0px;
-    margin-left: 8px;
+    margin-right: 8px;
 }
 
 #bag_id {
@@ -682,7 +682,7 @@ td {
 }
 
 .pos-btn {
-    padding: 8px 12px;
+    padding: 12px 12px;
     font-size: 14px;
     border: 1px solid #d1d1d1;
     background: white;
@@ -743,7 +743,7 @@ td {
 
 .pos-search-input {
     flex: 1;
-    padding: 10px 12px;
+    padding: 12px 12px;
     margin: 0px 8px;
     font-size: 14px;
     border: 1px solid #d1d1d1;
@@ -807,7 +807,7 @@ td {
 .pos-select {
     flex: 1;
     margin: 0px 8px;
-    padding: 8px 12px;
+    padding: 12px 12px;
     border: 1px solid #d1d1d1;
     border-radius: 8px;
     background: white;
