@@ -166,6 +166,8 @@ $(document).ready(function () {
         } else {
             // User cancelled, do nothing
             console.log("User cancelled the action.");
+            $("#window-delivery-btn").show();
+            $("#article-details-loading-div").hide();
         }
 
 
