@@ -1,7 +1,7 @@
-// const API_AUTH_URL = "https://sso.ekdak.com";
-// const API_GET_URL = "https://ekdak.com";
-const API_AUTH_URL = "http://192.168.1.18:8000";
-const API_GET_URL = "http://192.168.1.18:8002";
+const API_AUTH_URL = "https://sso.ekdak.com";
+const API_GET_URL = "https://ekdak.com";
+// const API_AUTH_URL = "http://192.168.1.18:8000";
+// const API_GET_URL = "http://192.168.1.18:8002";
 
 // Define queryParams globally so it can be accessed across filters & pagination
 let current_date = new Date();
