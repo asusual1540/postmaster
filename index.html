@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Postmaster</title>
+    <title>Postmaster App</title>
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 
@@ -16,19 +16,27 @@
         </div>
         <div class="user-container">
             <p id="login-username"></p>
-            <div class="avatar" id="avatar-container">
+            <div class="avatar" id="avatar-container" style="cursor: pointer;">
                 <img src="/static/images/avatar.png" alt="User">
-            </div>
-            <div class="pos-btn-container" id="logout-btn-container">
-                <button class="pos-btn" id="logout-btn">Logout</button>
             </div>
         </div>
     </div>
 
+
+
     <!-- Main Content -->
     <div id="app-container" class="app-container">
+        <div class="tab-div">
+            <div class="pos-btn-container">
+                <button class="pos-btn tab-button active-tab" id="dms">DMS</button>
+            </div>
+            <div class="pos-btn-container">
+                <button class="pos-btn tab-button" id="inventory">Inventory</button>
+            </div>
+        </div>
 
-        <div class="main-content">
+        <!-- DMS Content -->
+        <div id="dms-content" class="main-content">
 
             <!-- New Date Time Range Picker -->
             <div class="form-group">
@@ -137,6 +145,11 @@
                 </button>
             </div>
         </div>
+
+        <!-- Inventory Content -->
+        <div id="inventory-content" class="main-content" style="display: none;">
+            <!-- Inventory table will be loaded here dynamically -->
+        </div>
     </div>
 
     <div class="backdrop" id="login-backdrop" style="display: none;">
@@ -146,6 +159,7 @@
                 <div class="login-form-image">
                     <img src="/static/images/logo-red.png" alt="Logo" width="68px">
                 </div>
+
                 <p class="login-form-title">পোস্টমাষ্টার লগইন</p>
 
                 <div class="form-group">
@@ -486,6 +500,28 @@
                     style="background-color: #0070f3;color: white;margin: 10px 8px;">Close</button>
             </div>
 
+        </div>
+    </div>
+
+    <!-- Avatar Modal -->
+    <div id="avatar-backdrop" class="backdrop" style="display: none;">
+        <div id="avatar-container-modal" class="avatar-modal-container">
+            <div style="text-align: center;">
+                <div class="login-form-image">
+                    <img src="/static/images/avatar.png" alt="Avatar" width="68px">
+                </div>
+                <p class="login-form-title" id="modal-username">User Profile</p>
+
+                <div class="pos-btn-container" style="margin: 20px 0;">
+                    <button class="pos-btn" id="logout-btn"
+                        style="background-color: #dc3545; color: white; width: 120%; padding: 12px 24px;">Logout</button>
+                </div>
+
+                <div class="pos-btn-container">
+                    <button class="pos-btn" id="close-avatar-modal"
+                        style="background-color: #6c757d; color: white; width: 120%; padding: 12px 24px;">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 

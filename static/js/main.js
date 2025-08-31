@@ -1,7 +1,7 @@
-const API_AUTH_URL = "https://sso.ekdak.com";
-const API_GET_URL = "https://ekdak.com";
-// const API_AUTH_URL = "http://192.168.1.18:8000";
-// const API_GET_URL = "http://192.168.1.18:8002";
+// const API_AUTH_URL = "https://sso.ekdak.com";
+// const API_GET_URL = "https://ekdak.com";
+const API_AUTH_URL = "http://192.168.1.18:8000";
+const API_GET_URL = "http://192.168.1.18:8002";
 
 // Define queryParams globally so it can be accessed across filters & pagination
 let current_date = new Date();
@@ -176,11 +176,60 @@ $(document).ready(function () {
 
     $(document).on("click", "#logout-btn", function () {
         console.log("Logging out...");
+        // Close the avatar modal if it's open
+        $("#avatar-backdrop").hide();
         showLogin();
         deleteCookie("access");
         deleteCookie("refresh");
         console.log("No token found. Showing login form.");
 
+    });
+
+    // Tab switching functionality
+    $(document).on("click", "#dms", function () {
+        switchTab('dms');
+    });
+
+    $(document).on("click", "#inventory", function () {
+        switchTab('inventory');
+    });
+
+    function switchTab(tabName) {
+        // Remove active class from all tab buttons
+        $('.tab-button').removeClass('active-tab');
+
+        // Hide all content divs
+        $('#dms-content').hide();
+        $('#inventory-content').hide();
+
+        // Show selected content and make button active
+        if (tabName === 'dms') {
+            $('#dms-content').show();
+            $('#dms').addClass('active-tab');
+        } else if (tabName === 'inventory') {
+            $('#inventory-content').show();
+            $('#inventory').addClass('active-tab');
+            // Load inventory data when inventory tab is selected
+            loadInventoryData();
+        }
+    }
+
+    // Avatar modal functionality
+    $(document).on("click", "#avatar-container", function () {
+        const username = $("#login-username").text();
+        $("#modal-username").text(username || "User Profile");
+        $("#avatar-backdrop").show();
+    });
+
+    $(document).on("click", "#close-avatar-modal", function () {
+        $("#avatar-backdrop").hide();
+    });
+
+    // Close avatar modal when clicking outside
+    $(document).on("click", "#avatar-backdrop", function (e) {
+        if (e.target === this) {
+            $("#avatar-backdrop").hide();
+        }
     });
 
     let originalHeight = $(window).height();
@@ -322,6 +371,7 @@ $(document).ready(function () {
         // Simple validation
         if (phone === '' || password === '') {
             errorMsg.text('Phone number and password are required.');
+            $("#login-loading-div").hide(); // Hide loader when validation fails
             return;
         }
 
@@ -661,6 +711,7 @@ function restoreHeaderStyles() {
 
 function showLogin() {
     $(".authenticating").hide();
+    $("#login-loading-div").hide(); // Reset login loading indicator
     $("#login-backdrop").show();
     $("#login-container").show();
     $("#login-form").show();
@@ -1721,4 +1772,367 @@ function receiveBagArticle(articles, bag_id, remarks) {
             console.error("Error receiving articles:", error);
         }
     });
+}
+
+// Inventory Management Functions
+const inventoryDummyData = {
+    "status": "success",
+    "message": "Inventory data fetched successfully",
+    "page": 1,
+    "per_page": 10,
+    "total": 30,
+    "data": [
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345001",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345002",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345003",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345004",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345005",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345006",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345007",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345008",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345009",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345010",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345011",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345012",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345013",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345014",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345015",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345016",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345017",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345018",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345019",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345020",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345021",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345022",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345023",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345024",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345025",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345026",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345027",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345028",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345029",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        },
+        {
+            "inventory": "sim_inventory",
+            "quantity": 1,
+            "serial_no": "01512345030",
+            "name": "Teletalk SIM",
+            "description": "Prepaid/postpaid",
+            "current_status": "Item Added"
+        }
+    ]
+};
+
+function renderInventoryTable(data) {
+    let tableHTML = `
+        <div class="inventory-header">
+            <h3>Inventory Management</h3>
+            <div class="inventory-stats">
+                <span>Total Items: ${data.total}</span>
+                <span>Page: ${data.page}</span>
+                <span>Per Page: ${data.per_page}</span>
+            </div>
+        </div>
+        <div class="table-container">
+            <table class="inventory-table">
+                <thead>
+                    <tr>
+                        <th>Serial No</th>
+                        <th>Name</th>
+                        <th>Inventory Type</th>
+                        <th>Quantity</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+
+    data.data.forEach(item => {
+        tableHTML += `
+            <tr>
+                <td>${item.serial_no}</td>
+                <td>${item.name}</td>
+                <td>${item.inventory}</td>
+                <td>${item.quantity}</td>
+                <td>${item.description}</td>
+                <td><span class="status-badge status-${item.current_status.toLowerCase().replace(/\s+/g, '-')}">${item.current_status}</span></td>
+                <td><button class="deliver-btn" data-serial="${item.serial_no}" data-name="${item.name}">Deliver</button></td>
+            </tr>
+        `;
+    });
+
+    tableHTML += `
+                </tbody>
+            </table>
+        </div>
+        <div class="inventory-pagination">
+            <button class="pos-btn" id="prevInventoryPage">Previous</button>
+            <span>Page ${data.page} of ${Math.ceil(data.total / data.per_page)}</span>
+            <button class="pos-btn" id="nextInventoryPage">Next</button>
+        </div>
+    `;
+
+    return tableHTML;
+}
+
+function loadInventoryData() {
+    // Simulate API call with dummy data
+    const inventoryContent = renderInventoryTable(inventoryDummyData);
+    $('#inventory-content').html(inventoryContent);
+}
+
+// Event handler for deliver button
+$(document).on('click', '.deliver-btn', function () {
+    const serialNo = $(this).data('serial');
+    const itemName = $(this).data('name');
+
+    // Show confirmation dialog
+    if (confirm(`Are you sure you want to deliver ${itemName} (Serial: ${serialNo})?`)) {
+        // Disable the button to prevent multiple clicks
+        $(this).prop('disabled', true).text('Delivering...');
+
+        // Simulate delivery process
+        setTimeout(() => {
+            $(this).prop('disabled', false).text('Delivered').addClass('delivered');
+
+            // Update status in the same row
+            const statusCell = $(this).closest('tr').find('.status-badge');
+            statusCell.removeClass().addClass('status-badge status-delivered').text('Delivered');
+
+            console.log(`Item delivered: ${itemName} (Serial: ${serialNo})`);
+
+            // You can add actual API call here
+            // deliverItem(serialNo);
+        }, 1500);
+    }
+});
+
+// Function to handle actual delivery API call (placeholder)
+function deliverItem(serialNo) {
+    // This function can be implemented to make actual API calls
+    console.log(`Delivering item with serial: ${serialNo}`);
+    // Example API call structure:
+    /*
+    $.ajax({
+        url: `${API_GET_URL}/v1/inventory/deliver/`,
+        type: 'POST',
+        headers: {
+            'Authorization': `Bearer ${getCookie("access")}`,
+            'Content-Type': 'application/json'
+        },
+        data: JSON.stringify({
+            serial_no: serialNo
+        }),
+        success: function(response) {
+            console.log("Item delivered successfully:", response);
+        },
+        error: function(xhr, status, error) {
+            console.error("Error delivering item:", error);
+        }
+    });
+    */
 }
