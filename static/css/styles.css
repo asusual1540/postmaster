@@ -434,6 +434,10 @@ td {
 
 .loader {}
 
+.login-inputs {
+    max-width: 500px;
+}
+
 .login-container {
     display: flex;
     flex-direction: column;
@@ -639,12 +643,14 @@ td {
 
 
 
-#created_at_from {
+#created_at_from,
+#inventory_created_at_from {
     flex: 1;
     margin-right: 4px;
 }
 
-#created_at_to {
+#created_at_to,
+#inventory_created_at_to {
     flex: 1;
     margin-left: 4px;
 }

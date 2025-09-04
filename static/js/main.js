@@ -1,7 +1,10 @@
-// const API_AUTH_URL = "https://sso.ekdak.com";
-// const API_GET_URL = "https://ekdak.com";
-const API_AUTH_URL = "http://192.168.1.18:8000";
-const API_GET_URL = "http://192.168.1.18:8002";
+const API_AUTH_URL = "https://sso.ekdak.com";
+const API_GET_URL = "https://ekdak.com";
+// const API_AUTH_URL = "http://192.168.1.18:8000";
+// const API_GET_URL = "http://192.168.1.18:8002";
+
+const API_GET_INVENTORY_URL = "https://corporate.ekdak.com";
+
 
 // Define queryParams globally so it can be accessed across filters & pagination
 let current_date = new Date();
@@ -52,14 +55,58 @@ let bagItemQueryParams = {
     status: "all"
 };
 
+let inventoryQueryParams = {
+    page: 1,
+    per_page: 10,
+    slug: "1217-teletalk-sim",
+    nid_status: 0,
+    status: 'all',
+    inventory_id: '',
+    serial_no: '',
+    start_date: '',
+    end_date: ''
+};
+
 let cache = {};
 let bag_items_cache = {};
 let mail_lines_cache = {};
+let inventory_cache = {};
 let selectedArticles = new Set();
 let hasSelectedArticles = false;
 
 $(document).ready(function () {
     selectedArticles.clear();
+
+    // // Add per_page select for inventory if not present
+    // if ($('#inventory_per_page').length === 0) {
+    //     $('#inventory-content').prepend(`
+    //         <div style="margin-bottom: 10px;">
+    //             <label for="inventory_per_page">Items per page:</label>
+    //             <select id="inventory_per_page">
+    //                 <option value="2">2</option>
+    //                 <option value="5">5</option>
+    //                 <option value="10" selected>10</option>
+    //                 <option value="15">15</option>
+    //                 <option value="30">30</option>
+    //                 <option value="50">50</option>
+    //                 <option value="100">100</option>
+    //                 <option value="500">500</option>
+    //                 <option value="1000">1000</option>
+    //             </select>
+    //         </div>
+    //     `);
+    // }
+
+    // // Set initial value from inventoryQueryParams
+    // $('#inventory_per_page').val(inventoryQueryParams.per_page);
+
+    // // Change event for inventory per_page
+    // $('#inventory_per_page').on('change', function () {
+    //     inventoryQueryParams.per_page = parseInt($(this).val());
+    //     inventoryQueryParams.page = 1;
+    //     fetchInventoryData(inventoryQueryParams);
+    // });
+
     // Function to toggle row selection
 
     // // Get today's date
@@ -81,8 +128,15 @@ $(document).ready(function () {
     // let todayEnd = now; // Current time
 
     // Set values in the datetime-local inputs
-    $("#created_at_from").val(create_from)
+    $("#created_at_from").val(create_from);
     $("#created_at_to").val(create_to);
+
+    $("#inventory_created_at_from").val(create_from);
+    $("#inventory_created_at_to").val(create_to);
+
+    // Initialize inventory query parameters with default dates (send full datetime)
+    inventoryQueryParams.start_date = create_from; // Send full datetime for API
+    inventoryQueryParams.end_date = create_to; // Send full datetime for API
 
     // Ensure queryParams also includes this default date range
     // queryParams.created_at_from = formatDateTime(todayStart);
@@ -602,6 +656,102 @@ $(document).ready(function () {
         console.log("All Bag IDs:", allBagIds);
         let text = allBagIds.join("\n");
         POSPrinting(text);
+    });
+
+    // Inventory pagination event handlers
+    $(document).on("click", "#prevInventoryPage", function () {
+        console.log("Previous button clicked, current page:", inventoryQueryParams.page);
+        if (inventoryQueryParams.page > 1) {
+            inventoryQueryParams.page--;
+            console.log("Moving to page:", inventoryQueryParams.page);
+            fetchInventoryData(inventoryQueryParams);
+        } else {
+            console.log("Already on first page, cannot go back");
+        }
+    });
+
+    $(document).on("click", "#nextInventoryPage", function () {
+        console.log("Next button clicked, current page:", inventoryQueryParams.page);
+        // We need to check if we're not on the last page
+        // This will be handled by the button disable state, but let's add safety check
+        if (!$(this).prop('disabled')) {
+            inventoryQueryParams.page++;
+            console.log("Moving to page:", inventoryQueryParams.page);
+            fetchInventoryData(inventoryQueryParams);
+        }
+    });
+
+    // Inventory filter and search event handlers
+    $(document).on("click", "#inventory_filter_apply", function () {
+        // Get filter values
+        let status = $('#inventory_status').val();
+        let serialNo = $('#inventory_id').val(); // Using inventory_id input for serial number search
+        let createdFrom = $('#inventory_created_at_from').val();
+        let createdTo = $('#inventory_created_at_to').val();
+
+        // Send full datetime to API (no need to split, send as-is)
+        let startDate = createdFrom || ''; // Send full datetime string
+        let endDate = createdTo || ''; // Send full datetime string
+
+        // Update query parameters
+        inventoryQueryParams.page = 1; // Reset to first page
+        inventoryQueryParams.status = status;
+        inventoryQueryParams.serial_no = serialNo; // Map to serial_no parameter
+        inventoryQueryParams.inventory_id = ''; // Clear inventory_id since we're using serial_no
+        inventoryQueryParams.start_date = startDate;
+        inventoryQueryParams.end_date = endDate;
+
+        console.log("Search filters applied:", {
+            status: status,
+            serial_no: serialNo,
+            start_date: startDate,
+            end_date: endDate,
+            page: inventoryQueryParams.page
+        });
+
+        // Fetch data with new filters
+        fetchInventoryData(inventoryQueryParams);
+    });
+
+    $(document).on("click", "#inventory_clear_filter", function () {
+        // Clear all filter inputs
+        $('#inventory_status').val('all');
+        $('#inventory_id').val('');
+        $('#inventory_created_at_from').val('');
+        $('#inventory_created_at_to').val('');
+
+        // Reset query parameters to default
+        inventoryQueryParams.page = 1;
+        inventoryQueryParams.status = 'all';
+        inventoryQueryParams.inventory_id = '';
+        inventoryQueryParams.serial_no = ''; // Clear serial number search
+        inventoryQueryParams.start_date = ''; // Clear start date
+        inventoryQueryParams.end_date = ''; // Clear end date
+
+        console.log("Filters cleared - showing all data");
+
+        // Fetch data with cleared filters
+        fetchInventoryData(inventoryQueryParams);
+    });
+
+    $(document).on("click", "#inventory_scan_btn", function () {
+        // Handle scan functionality (placeholder for now)
+        let inventoryId = $('#inventory_id').val();
+        if (inventoryId) {
+            // You can add barcode scanning logic here
+            console.log('Scanning inventory ID:', inventoryId);
+            // Trigger search with the scanned ID
+            $('#inventory_filter_apply').click();
+        }
+    });
+
+    // Event handler for numbered pagination buttons
+    $(document).on("click", ".pos-pagination-btn", function () {
+        const page = $(this).data('page');
+        if (page && page !== inventoryQueryParams.page) {
+            inventoryQueryParams.page = page;
+            fetchInventoryData(inventoryQueryParams);
+        }
     });
 });
 
@@ -2028,7 +2178,71 @@ const inventoryDummyData = {
 function renderInventoryTable(data) {
     let tableHTML = `
         <div class="inventory-header">
-            <h3>Inventory Management</h3>
+             <h3>Inventory Management</h3>
+            <div class="inventory-stats">
+                <span>Total Items: ${data.meta ? data.meta.total : 0}</span>
+                <span>Page: ${data.meta ? data.meta.current_page : 1}</span>
+                <span>Per Page: ${data.meta ? data.meta.per_page : 10}</span>
+            </div>
+        </div>
+        <div class="table-container">
+            <table class="inventory-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Serial No</th>
+                        <th>Name</th>
+                        <th>Inventory Slug</th>
+                        <th>Quantity</th>
+                        <th>Status</th>
+                        <th>Created At</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+
+    if (data.data && data.data.length > 0) {
+        data.data.forEach(item => {
+            tableHTML += `
+                <tr>
+                    <td>${item.id || 'N/A'}</td>
+                    <td>${item.serial_no || 'N/A'}</td>
+                    <td>${item.name || 'N/A'}</td>
+                    <td>${item.inventory_slug || 'N/A'}</td>
+                    <td>${item.quantity || 'N/A'}</td>
+                    <td><span class="status-badge status-${(item.current_status || 'unknown').toLowerCase().replace(/\s+/g, '-')}">${item.current_status || 'Unknown'}</span></td>
+                    <td>${item.created_at || 'N/A'}</td>
+                    <td><button class="deliver-btn" data-id="${item.id}" data-serial="${item.serial_no}" data-name="${item.name}">Deliver</button></td>
+                </tr>
+            `;
+        });
+    } else {
+        tableHTML += `
+            <tr>
+                <td colspan="8">No inventory items found</td>
+            </tr>
+        `;
+    }
+
+    tableHTML += `
+                </tbody>
+            </table>
+        </div>
+        <div class="inventory-pagination">
+            <button class="pos-btn" id="prevInventoryPage" ${(!data.meta || data.meta.current_page === 1) ? 'disabled' : ''}>Previous</button>
+            <span>Page ${data.meta ? data.meta.current_page : 1} of ${data.meta ? data.meta.last_page : 1}</span>
+            <button class="pos-btn" id="nextInventoryPage" ${(!data.meta || data.meta.current_page === data.meta.last_page) ? 'disabled' : ''}>Next</button>
+        </div>
+    `;
+
+    return tableHTML;
+}
+
+function renderInventoryTabledd(data) {
+    let tableHTML = `
+        <div class="inventory-header">
+             <h3>Inventory Management</h3>
             <div class="inventory-stats">
                 <span>Total Items: ${data.total}</span>
                 <span>Page: ${data.page}</span>
@@ -2079,10 +2293,178 @@ function renderInventoryTable(data) {
     return tableHTML;
 }
 
+function fetchInventoryData(queryParams) {
+    let token = getCookie("access");
+
+    if (!token) {
+        console.log("No access token found for inventory data");
+        $('#inventory-error-message').text('No access token found. Please login first.').show();
+        return;
+    }
+
+    // Show loading state
+    $('#inventory-loading-div').show();
+    $('#inventory-error-message').hide();
+
+    let url = constructInventoryQueryString(queryParams);
+    console.log("Fetching inventory from URL:", url);
+
+    // Check cache first
+    if (inventory_cache[url]) {
+        $('#inventory-loading-div').hide();
+        console.log("Using cached inventory data:", inventory_cache[url]);
+        updateInventoryTable(inventory_cache[url].data);
+        updateInventoryPagination(inventory_cache[url].meta);
+        return;
+    }
+
+    $.ajax({
+        url: url,
+        type: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+        },
+        success: function (response) {
+            console.log("Inventory data fetched successfully", response);
+            $('#inventory-loading-div').hide();
+
+            // Cache the response
+            inventory_cache[url] = response;
+
+            if (response.success && response.data && response.data.length > 0) {
+                updateInventoryTable(response.data);
+                updateInventoryPagination(response.meta);
+            } else {
+                console.log("No inventory records found");
+                updateInventoryTable([]);
+                updateInventoryPagination({
+                    current_page: 1,
+                    per_page: queryParams.per_page,
+                    total: 0,
+                    last_page: 1
+                });
+            }
+        },
+        error: function (xhr, status, error) {
+            console.log("Error fetching inventory data", xhr);
+            $('#inventory-loading-div').hide();
+
+            let errorMessage = `Failed to load inventory data. Status: ${xhr.status} - ${xhr.statusText}`;
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMessage += `, Error: ${xhr.responseJSON.message}`;
+            } else if (xhr.responseText) {
+                errorMessage += `, Error: ${xhr.responseText}`;
+            }
+
+            $('#inventory-error-message').text(errorMessage).show();
+            updateInventoryTable([]);
+        }
+    });
+}
+
+function updateInventoryTable(data) {
+    console.log("Updating inventory table with data:", data);
+    let tbody = $('#inventoryTable tbody');
+    tbody.empty();
+
+    if (!data || data.length === 0) {
+        tbody.append('<tr><td colspan="8">No records found</td></tr>');
+        return;
+    }
+
+    data.forEach(item => {
+        tbody.append(`
+            <tr>
+                <td>${item.id}</td>
+                <td>${item.serial_no}</td>
+                <td>${item.name}</td>
+                <td>${item.inventory_slug}</td>
+                <td>${item.quantity}</td>
+                <td><span class="status-badge status-${item.current_status.toLowerCase()}">${item.current_status}</span></td>
+                <td>${item.created_at}</td>
+                <td><button class="pos-btn deliver-btn" data-serial="${item.serial_no}" data-name="${item.name}">Deliver</button></td>
+            </tr>
+        `);
+    });
+}
+
+function updateInventoryPagination(meta) {
+    console.log("Updating inventory pagination with meta:", meta);
+
+    if (!meta) {
+        meta = {
+            current_page: 1,
+            last_page: 1,
+            total: 0,
+            per_page: inventoryQueryParams.per_page
+        };
+    }
+
+    // Update text display if there's a container for it
+    if ($('#inventory-total-items').length > 0) {
+        $('#inventory-total-items').text(`Total Items: ${meta.total}`);
+    }
+
+    // Update pagination buttons for numbered pages
+    let paginationHtml = '';
+    if (meta.last_page <= 6) {
+        // Show all pages if 6 or less
+        for (let i = 1; i <= meta.last_page; i++) {
+            paginationHtml += `<button class="pos-pagination-btn ${i == meta.current_page ? 'page-active' : ''}" data-page="${i}">${i}</button>`;
+        }
+    } else {
+        // First few pages
+        for (let i = 1; i <= Math.min(4, meta.last_page); i++) {
+            paginationHtml += `<button class="pos-pagination-btn ${i == meta.current_page ? 'page-active' : ''}" data-page="${i}">${i}</button>`;
+        }
+
+        if (meta.current_page > 4 && meta.current_page < meta.last_page - 2) {
+            paginationHtml += `<span class="pos-pagination-dots">...</span>`;
+            paginationHtml += `<button class="pos-pagination-btn page-active" data-page="${meta.current_page}">${meta.current_page}</button>`;
+        } else if (meta.last_page > 4) {
+            paginationHtml += `<span class="pos-pagination-dots">...</span>`;
+        }
+
+        // Last few pages
+        if (meta.last_page > 4) {
+            paginationHtml += `<button class="pos-pagination-btn ${meta.last_page - 1 == meta.current_page ? 'page-active' : ''}" data-page="${meta.last_page - 1}">${meta.last_page - 1}</button>`;
+            paginationHtml += `<button class="pos-pagination-btn ${meta.last_page == meta.current_page ? 'page-active' : ''}" data-page="${meta.last_page}">${meta.last_page}</button>`;
+        }
+    }
+
+    // Insert numbered pagination buttons into the page numbers container
+    $('#inventory-page-numbers').html(paginationHtml);
+
+    // Update button states
+    $('#prevInventoryPage').prop('disabled', meta.current_page <= 1);
+    $('#nextInventoryPage').prop('disabled', meta.current_page >= meta.last_page);
+}
+
 function loadInventoryData() {
-    // Simulate API call with dummy data
-    const inventoryContent = renderInventoryTable(inventoryDummyData);
-    $('#inventory-content').html(inventoryContent);
+    // Reset to page 1 and default per_page for first time load
+    inventoryQueryParams.page = 1;
+    inventoryQueryParams.per_page = parseInt($('#inventory_per_page').val()) || 10;
+
+    // Set status to 'all' by default to show all data
+    inventoryQueryParams.status = 'all';
+    inventoryQueryParams.inventory_id = '';
+    inventoryQueryParams.serial_no = ''; // Clear serial number search
+
+    // Set initial dates if they exist in the UI, otherwise clear (send full datetime)
+    let fromDate = $('#inventory_created_at_from').val();
+    let toDate = $('#inventory_created_at_to').val();
+    inventoryQueryParams.start_date = fromDate || ''; // Send full datetime string
+    inventoryQueryParams.end_date = toDate || ''; // Send full datetime string
+
+    // Also reset the UI elements to reflect default values
+    $('#inventory_status').val('all');
+    $('#inventory_id').val('');
+
+    console.log("Loading inventory data with params:", inventoryQueryParams);
+
+    // Fetch real inventory data using our new function
+    fetchInventoryData(inventoryQueryParams);
 }
 
 // Event handler for deliver button
@@ -2135,4 +2517,51 @@ function deliverItem(serialNo) {
         }
     });
     */
+}
+
+// Helper to construct inventory API URL
+function constructInventoryQueryString(params) {
+    console.log("constructInventoryQueryString called with params:", params);
+    let url = `${API_GET_INVENTORY_URL}/api/v1/teletalk/order-inventory-item-list?page=${params.page}&per_page=${params.per_page}`;
+    if (params.status && params.status !== 'all') url += `&status=${params.status}`;
+    if (params.serial_no) url += `&serial=${params.serial_no}`;
+    if (params.start_date) url += `&start_date=${params.start_date}`;
+    if (params.end_date) url += `&end_date=${params.end_date}`;
+    console.log("Final inventory API URL:", url);
+    return url;
+}
+
+// Inventory fetch with cache
+function fetchInventoryData(params) {
+    $('#inventory-loading-div').show();
+    let url = constructInventoryQueryString(params);
+
+    if (inventory_cache[url]) {
+        $('#inventory-loading-div').hide();
+        console.log("Using cached inventory data:", inventory_cache[url]);
+        updateInventoryTable(inventory_cache[url].data);
+        updateInventoryPagination(inventory_cache[url].meta);
+        return;
+    }
+
+    $.ajax({
+        url: url,
+        type: 'GET',
+        headers: {
+            "Authorization": `Bearer ${live_postmaster_token}`,
+            "Content-Type": "application/json"
+        },
+        success: function (response) {
+            $('#inventory-loading-div').hide();
+            console.log("Inventory data fetched successfully:", response);
+            inventory_cache[url] = response;
+            updateInventoryTable(response.data);
+            updateInventoryPagination(response.meta);
+        },
+        error: function (xhr) {
+            $('#inventory-loading-div').hide();
+            console.error("Error fetching inventory data:", xhr);
+            $('#inventoryTable tbody').html('<tr><td colspan="8">Failed to load data</td></tr>');
+        }
+    });
 }
